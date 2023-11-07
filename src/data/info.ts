@@ -3,32 +3,24 @@ When I'm not in my coding groove, you'll catch me gaming with friends, or trying
 
 export const info = {
   baseUrl: "https://alexraskin.com",
-  logo: "GP.",
+  logo: "AR.",
   h1: "Hello, I'm Alex Raskin",
-  h2: "I'm a creative technologist",
+  h2: "I like to code things",
   h3: about,
   ctas: [
     {
-      label: "Phone",
-      href: "tel:+918888259999",
+      label: "Github",
+      href: "https://github.com/alexraskin",
     },
     {
       label: "Email",
-      href: "mailto:hi@gavn.in",
+      href: "mailto:root@alexraskin.com",
     },
   ],
   socials: [
     {
-      icon: "fab fa-youtube",
-      href: "https://youtube.com",
-    },
-    {
       icon: "fab fa-twitter",
-      href: "https://twitter.com",
-    },
-    {
-      icon: "fab fa-facebook-f",
-      href: "https://facebook.com",
-    },
+      href: "https://twitter.com/raskin_alex",
+    }
   ],
 };
