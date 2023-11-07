@@ -1,0 +1,71 @@
+---
+import { Image } from "@astrojs/image/components";
+import Layout from "../layouts/Layout.astro";
+import { info } from "@data";
+import plant from "/src/assets/plant.png";
+---
+
+<Layout title={info.h1}>
+  <header>
+    <div class="container mx-auto px-5 py-10">
+      <span
+        class="text-3xl font-black py-1 px-3 rounded-full text-white bg-neutral-500"
+        >{info.logo}</span
+      >
+    </div>
+  </header>
+  <main class="flex-1 lg:grid place-items-center relative z-20">
+    <div
+      class="container mx-auto px-5 py-10 lg:py-20 flex items-center flex-col justify-center"
+    >
+      <h1
+        class="text-balance text-center text-4xl lg:text-6xl font-black text-neutral-700"
+      >
+        {info.h1}
+      </h1>
+      <h2
+        class="text-balance text-center text-2xl lg:text-3xl font-semibold mt-2 lg:mt-4 text-neutral-500"
+      >
+        {info.h2}
+      </h2>
+      <p class="text-balance text-center text-sm mt-2 lg:mt-4 text-neutral-600">
+        {info.h3}
+      </p>
+      <span class="my-8 w-full max-w-2xl h-0.5 bg-neutral-300"></span>
+      <div class="flex items-center gap-8">
+        {
+          info.ctas.map((cta) => (
+            <a
+              class="py-2 px-8 bg-neutral-900 text-white border-2 border-neutral-900 hover:text-neutral-900 hover:bg-transparent font-bold transition-colors"
+              href={cta.href}
+            >
+              {cta.label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </main>
+  <footer class="max-lg:absolute top-0 right-0">
+    <div class="container mx-auto px-5 py-10">
+      <div
+        class="flex items-center justify-end gap-8 text-2xl text-neutral-500"
+      >
+        {
+          info.socials.map((social) => (
+            <a href={social.href}>
+              <i class={social.icon} />
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </footer>
+  <Image
+    class="absolute bottom-0 left-0 max-w-[60vw] z-0"
+    src={plant}
+    alt="plant"
+    height={400}
+    width={336}
+  />
+</Layout>
