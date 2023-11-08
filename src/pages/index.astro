@@ -1,5 +1,5 @@
 ---
-import { Image } from "@astrojs/image/components";
+import { Image } from 'astro:assets'
 import Layout from "../layouts/Layout.astro";
 import { info } from "@data";
 import anime from "/src/assets/anime.png";
@@ -64,7 +64,7 @@ import anime from "/src/assets/anime.png";
   <Image
     class="absolute bottom-0 left-0 max-w-[60vw] z-0"
     src={anime}
-    alt="plant"
+    alt="anime"
     height={400}
     width={336}
   />

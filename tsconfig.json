@@ -8,7 +8,8 @@
       "@layouts/*": ["src/layouts/*"],
       "@data": ["src/data/info"],
       "@utils": ["src/utils"],
-      "@types": ["src/types"]
+      "@types": ["src/types"],
+      "types": ["astro/client"]
     }
   }
 }
