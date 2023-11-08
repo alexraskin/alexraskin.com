@@ -4,7 +4,7 @@ When I'm not in my coding groove, you'll catch me gaming with friends, or trying
 export const info = {
   baseUrl: "https://alexraskin.com",
   logo: "AR.",
-  h1: "Hello, I'm Alex Raskin",
+  h1: "Hi there, I'm Alex",
   h2: "I like to code things",
   h3: about,
   ctas: [
