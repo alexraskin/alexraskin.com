@@ -18,7 +18,7 @@ export const info = {
     },
     {
       label: "Cosmo",
-      href: "https://cosmo.twizy.sh/"
+      href: "https://cosmo.alexraskin.com/"
     }
   ],
   socials: [
