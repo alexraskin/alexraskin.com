@@ -18,7 +18,7 @@ export const info = {
     },
     {
       label: "Cosmo",
-      href: "https://cosmo.alexraskin.com/"
+      href: "https://cat.network/"
     }
   ],
   socials: [
