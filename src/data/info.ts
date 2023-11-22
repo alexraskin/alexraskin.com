@@ -16,6 +16,10 @@ export const info = {
       label: "Email",
       href: "mailto:root@alexraskin.com",
     },
+    {
+      label: "Cosmo",
+      href: "https://cosmo.twizy.sh/"
+    }
   ],
   socials: [
     {

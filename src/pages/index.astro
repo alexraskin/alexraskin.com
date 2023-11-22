@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets'
 import Layout from "../layouts/Layout.astro";
 import { info } from "@data";
-import anime from "../assets/anime.png";
+import image from "../assets/image.png";
 ---
 
 <Layout title={info.h1}>
@@ -63,7 +63,7 @@ import anime from "../assets/anime.png";
   </footer>
   <Image
     class="absolute bottom-0 left-0 max-w-[60vw] z-0"
-    src={anime}
+    src={image}
     alt="anime"
     height={400}
     width={336}
