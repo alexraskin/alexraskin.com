@@ -1,7 +1,7 @@
 import { Hono, Context } from 'hono'
 import { Chalk } from 'chalk';
 import boxen from 'boxen'
-import indexHtml from './index.html'
+import indexHtml from '../public/index.html'
 
 const app = new Hono()
 
@@ -12,7 +12,7 @@ const getCard = () => {
   const highlight = chk.cyan;
 
   const output = `
-              ${chk.green.bold("Alex Raskin")}
+                ${chk.green.bold("Alex Raskin")}
       DevOps Engineer Based in America
   
   ${linkTitle("Twitter")}   ${pale("https://")}twitter.com/${highlight("raskin_alex")}
