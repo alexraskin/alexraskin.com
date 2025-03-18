@@ -33,9 +33,10 @@
         <div id="lastfm-status" class="text-lg mb-8 flex items-center">
             <span class="mr-2">🎵</span>
             <span id="now-playing">Checking music status...</span>
+            <a href="https://github.com/alexraskin/lastfm-now-playing" target="_blank" class="ml-2 text-sm opacity-75 hover:opacity-100">(source)</a>
         </div>
         <ul class="space-y-4 text-lg">
-            <li><a href="https://twitter.com/raskin_alex" target="_blank">Twitter</a></li>
+            <li><a href="https://twitter.com/notalexraskin" target="_blank">Twitter</a></li>
             <li><a href="https://github.com/alexraskin" target="_blank">Github</a></li>
             <li><a href="https://bsky.app/profile/alexraskin.bsky.social" target="_blank">Bluesky</a></li>
         </ul>
@@ -58,9 +59,6 @@
                 const nowPlayingElement = document.getElementById('now-playing');
                 if (data && data.nowPlaying) {
                     nowPlayingElement.textContent = `Listening to "${data.track}" by ${data.artist}`;
-                    if (data.album) {
-                        nowPlayingElement.textContent += ` (${data.album})`;
-                    }
                 } else {
                     nowPlayingElement.textContent = "Not listening to anything";
                 }
@@ -73,9 +71,6 @@
 
         // Update on page load
         document.addEventListener('DOMContentLoaded', updateNowPlaying);
-        
-        // Refresh every 30 seconds
-        setInterval(updateNowPlaying, 30000);
     </script>
 </body>
 </html>
