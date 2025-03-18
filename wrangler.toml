@@ -1,8 +1,0 @@
-name = "alexraskin"
-compatibility_date = "2023-12-01"
-node_compat = true
-
-routes = [
-  { pattern = "alexraskin.com", custom_domain = true },
-  { pattern = "alexraskin.com/", zone_name = "alexraskin.com"}
-]
