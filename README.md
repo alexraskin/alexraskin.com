@@ -1,6 +1,6 @@
 # alexraskin.com
 
-A simple Go web server that returns a personal website. It has two response types:
+A simple Go web server that returns my personal website. It has two response types:
 - A formatted plain text card for terminal clients (curl, HTTPie)
 - HTML content for web browsers
 
