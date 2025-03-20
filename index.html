@@ -142,7 +142,7 @@
     <div class="code-line">}</div>
     <div class="code-line">&nbsp;</div>
     <div class="code-line"><span class="keyword">func</span> <span class="function">catPhotos</span>() {</div>
-    <div class="code-line indent">🐱 fmt.Println(<a href="https://cosmo.alexraskin.com" target="_blank" class="string" style="text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">"cat photos"</a>)</div>
+    <div class="code-line indent">🐱 fmt.Println(<a href="https://cosmothecat.net" target="_blank" class="string" style="text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">"cat photos"</a>)</div>
     <div class="code-line">}</div>
     <div class="code-line">&nbsp;</div>
     <div class="code-line comment">// made with ❤️</div>
@@ -166,20 +166,19 @@
       .then(data => {
         const nowPlayingElement = document.getElementById('now-playing');
         if (data && data.nowPlaying) {
-          nowPlayingElement.textContent = `"${data.track}" by ${data.artist}`;
+          nowPlayingElement.textContent = `"${data.track} by ${data.artist}"`;
         } else if (data && data.track && data.artist) {
-          nowPlayingElement.textContent = `"${data.track}" by ${data.artist}`;
+          nowPlayingElement.textContent = `"${data.track} by ${data.artist}"`;
         } else {
-          nowPlayingElement.textContent = `Not listening to anything`;
+          nowPlayingElement.textContent = `"Not listening to anything"`;
         }
       })
       .catch(error => {
         console.error('Error fetching now playing data:', error);
-        document.getElementById('now-playing').textContent = `An error occurred while fetching now playing data.`;
+        document.getElementById('now-playing').textContent = `"An error occurred while fetching now playing data."`;
       });
     }
 
-    // Update on page load
     document.addEventListener('DOMContentLoaded', updateNowPlaying);
   </script>
 </body>
