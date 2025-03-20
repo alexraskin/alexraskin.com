@@ -167,13 +167,15 @@
         const nowPlayingElement = document.getElementById('now-playing');
         if (data && data.nowPlaying) {
           nowPlayingElement.textContent = `"${data.track}" by ${data.artist}`;
+        } else if (data && data.track && data.artist) {
+          nowPlayingElement.textContent = `"${data.track}" by ${data.artist}`;
         } else {
-          nowPlayingElement.textContent = `"Who of You Will Persevere?" by Eidola`;
+          nowPlayingElement.textContent = `Not listening to anything`;
         }
       })
       .catch(error => {
         console.error('Error fetching now playing data:', error);
-        document.getElementById('now-playing').textContent = `"Who of You Will Persevere?" by Eidola`;
+        document.getElementById('now-playing').textContent = `An error occurred while fetching now playing data.`;
       });
     }
 
