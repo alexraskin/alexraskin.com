@@ -6,13 +6,11 @@ func GetCard() string {
 +---------------------------------------------------------------------+
 |                                                                     |
 |                          Alex Raskin                                |
-|              DevOps Engineer Based in America                       |
+|                        DevOps Engineer                       		  |
 |                                                                     |
-|     Twitter   https://twitter.com/raskin_alex                       |
+|     Twitter   https://twitter.com/notalexraskin                     |
 |                                                                     |
 |     Github    https://github.com/alexraskin                         |
-|                                                                     |
-|     Bluesky   https://bsky.app/profile/alexraskin.bsky.social       |
 |                                                                     |
 +---------------------------------------------------------------------+
 `
