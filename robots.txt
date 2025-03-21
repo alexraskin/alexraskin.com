@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: /.git/
+
+# Allow all search engines to index the site
+User-agent: Googlebot
+Allow: /
+User-agent: Bingbot  
+Allow: /
+User-agent: DuckDuckBot
+Allow: /
 
 Sitemap: https://alexraskin.com/sitemap.xml 
