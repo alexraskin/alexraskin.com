@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
   updateNowPlaying();
-  setInterval(updateNowPlaying, 30000);
 });
 
 function updateNowPlaying() {
