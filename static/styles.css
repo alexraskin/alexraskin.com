@@ -1,0 +1,109 @@
+:root {
+    --comment-color: #6a737d;
+    --keyword-color: #cc7832;
+    --string-color: #6a8759;
+    --type-color: #8aa4c8;
+    --function-color: #ffc66d;
+    --text-color: #d6deeb;
+    --background-color: #0d1117;
+    --selection-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .code-container {
+    max-width: 600px;
+    width: 100%;
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .code-line {
+    margin-bottom: 6px;
+    white-space: pre-wrap;
+  }
+  
+  .comment {
+    color: var(--comment-color);
+  }
+  
+  .keyword {
+    color: var(--keyword-color);
+  }
+  
+  .string {
+    color: var(--string-color);
+  }
+  
+  .type {
+    color: var(--type-color);
+  }
+  
+  .function {
+    color: var(--function-color);
+  }
+  
+  .indent {
+    padding-left: 20px;
+  }
+  
+  .double-indent {
+    padding-left: 40px;
+  }
+  
+  .footer {
+    color: var(--comment-color);
+    font-size: 14px;
+  }
+  
+  .refresh-icon {
+    display: inline-block;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #888;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    border-radius: 50%;
+    padding: 3px;
+  }
+
+  .refresh-icon:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transform: scale(1.1);
+  }
+  
+  .rotating {
+    animation: spin 1s linear infinite;
+    color: var(--keyword-color);
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  @media (max-width: 640px) {
+    .code-container {
+      font-size: 14px;
+    }
+  }
