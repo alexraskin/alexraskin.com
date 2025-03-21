@@ -11,7 +11,7 @@ function updateNowPlaying() {
   }
   nowPlayingElement.textContent = "Loading...";
   
-  fetch('https://playing.alexraskin.com/twizycat', {
+  fetch('https://lastfm.alexraskin.com/twizycat', {
     method: 'GET',
     headers: {
       'Accept': 'application/json'
