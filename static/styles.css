@@ -39,7 +39,7 @@
   
   .code-line {
     margin-bottom: 6px;
-    white-space: pre;
+    white-space: pre-wrap;
   }
   
   .comment {
@@ -82,23 +82,15 @@
   .refresh-icon {
     display: inline-block;
     margin-left: 8px;
+    animation: spin 2s linear infinite;
     cursor: pointer;
-    font-size: 16px;
-    color: #888;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-    border-radius: 50%;
-    padding: 3px;
-  }
-
-  .refresh-icon:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    transform: scale(1.1);
   }
   
-  .rotating {
-    animation: spin 1s linear infinite;
-    color: var(--keyword-color);
+  .refresh-icon {
+    display: inline-block;
+    margin-left: 8px;
+    animation: spin 2s linear infinite;
+    cursor: pointer;
   }
   
   @keyframes spin {
@@ -110,11 +102,4 @@
     .code-container {
       font-size: 14px;
     }
-  }
-
-  #now-playing {
-    display: inline-block;
-    max-width: 300px;
-    white-space: normal;
-    word-wrap: break-word;
   }
