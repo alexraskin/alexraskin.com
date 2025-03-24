@@ -39,7 +39,7 @@
   
   .code-line {
     margin-bottom: 6px;
-    white-space: pre-wrap;
+    white-space: pre;
   }
   
   .comment {
@@ -62,12 +62,16 @@
     color: var(--function-color);
   }
   
-  .indent {
-    padding-left: 20px;
+  .code-line.indent {
+    padding-left: 20px !important;
   }
   
-  .double-indent {
-    padding-left: 40px;
+  .code-line.double-indent {
+    padding-left: 40px !important;
+  }
+
+  .code-line.triple-indent {
+    padding-left: 60px !important;
   }
   
   .footer {
