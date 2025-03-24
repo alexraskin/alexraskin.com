@@ -40,6 +40,8 @@
     <div class="code-line indent"><a href="https://twitter.com/notalexraskin" target="_blank" rel="noopener" class="string" style="text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">"twitter.com/notalexraskin" <i class="fa-solid fa-up-right-from-square fa-2xs"></i></a></div>
     <div class="code-line">)</div>
     <div class="code-line">&nbsp;</div>
+    <div class="code-line"><span class="keyword">type</span> <span class="type">Cat</span> <span class="keyword">struct</span> { Name <span class="type">string</span>; Website <span class="type">string</span> }</div>
+    <div class="code-line">&nbsp;</div>
     <div class="code-line"><span class="keyword">type</span> <span class="type">Engineer</span> <span class="keyword">struct</span> {</div>
     <div class="code-line indent">Name        <span class="type">string</span></div>
     <div class="code-line indent">Passions    <span class="type">string</span></div>
@@ -53,15 +55,18 @@
     <div class="code-line double-indent">Specialties: <span class="string">"devOps, IaC, cloud, automation"</span>,</div>
     <div class="code-line indent">}</div>
     <div class="code-line indent">&nbsp;</div>
+    <div class="code-line comment indent">// meet my coworker</div>
+    <div class="code-line indent">cosmo := <span class="type">Cat</span>{</div>
+    <div class="code-line double-indent">Name:    <span class="string">"cosmo"</span>,</div>
+    <div class="code-line double-indent">Website: <a href="https://cosmothecat.net" target="_blank" class="string">"https://cosmothecat.net"</a>,</div>
+    <div class="code-line indent">}</div>
+    <div class="code-line">&nbsp;</div>
     <div class="code-line indent">fmt.Println(me)</div>
+    <div class="code-line indent">fmt.Println(cosmo)</div>
     <div class="code-line">}</div>
     <div class="code-line">&nbsp;</div>
     <div class="code-line"><span class="keyword">func</span> <span class="function">nowPlaying</span>() {</div>
     <div class="code-line indent">fmt.Println(<a href="https://github.com/alexraskin/lastfm-now-playing" target="_blank" rel="noopener" class="string" style="text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><span id="now-playing" class="string">"Loading..."</span></a>) <i class="fas fa-sync-alt refresh-icon" onclick="updateNowPlaying()"></i></div>
-    <div class="code-line">}</div>
-    <div class="code-line">&nbsp;</div>
-    <div class="code-line"><span class="keyword">func</span> <span class="function">viewCatPhotos</span>() {</div>
-    <div class="code-line indent">fmt.Println(<a href="https://cosmothecat.net" target="_blank" rel="noopener" class="string" style="text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">"here"</a>)</div>
     <div class="code-line">}</div>
     <div class="code-line">&nbsp;</div>
     <div class="code-line comment">// <a href="https://github.com/alexraskin/alexraskin.com" target="_blank" rel="noopener" class="string" style="text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">source <i class="fa-solid fa-up-right-from-square fa-2xs"></i></a></div>
