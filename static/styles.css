@@ -111,3 +111,10 @@
       font-size: 14px;
     }
   }
+
+  #now-playing {
+    display: inline-block;
+    max-width: 300px;
+    white-space: normal;
+    word-wrap: break-word;
+  }
