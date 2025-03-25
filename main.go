@@ -29,7 +29,7 @@ func main() {
 		10,
 		time.Minute,
 		httprate.WithLimitHandler(func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, "https://http.cat/429", http.StatusTemporaryRedirect)
+			http.ServeFile(w, r, "public/429.html")
 		}),
 	))
 
@@ -49,7 +49,7 @@ func main() {
 	})
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "https://http.cat/404", http.StatusTemporaryRedirect)
+		http.ServeFile(w, r, "public/404.html")
 	})
 
 	log.Printf("Server starting on http://localhost:%s", *port)
