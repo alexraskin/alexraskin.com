@@ -1,14 +1,14 @@
 services:
-  alexraskin-web:
+  alexraskin-dev:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: alexraskin-web
     ports:
-      - "8000:8000"
+      - "9000:9000"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/ping"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9000/ping"]
       interval: 30s
       timeout: 10s
       retries: 3
