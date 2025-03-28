@@ -1,66 +1,42 @@
 package main
 
 import (
+	"embed"
 	"flag"
-	"log"
+	"log/slog"
 	"net/http"
-	"time"
+	"os"
+	"os/signal"
+	"syscall"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/httprate"
+	"github.com/alexraskin/alexraskin.com/alexraskin"
+)
+
+var (
+	//go:embed public/*
+	embeddedPublic embed.FS
+
+	//go:embed assets/*
+	embeddedAssets embed.FS
 )
 
 func main() {
-
 	port := flag.String("port", "8000", "port to listen on")
 	flag.Parse()
 
-	r := chi.NewRouter()
+	server := alexraskin.NewServer(
+		*port,
+		http.DefaultClient,
+		embeddedPublic,
+		embeddedAssets,
+	)
 
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Use(cacheControl)
-	r.Use(middleware.Heartbeat("/ping"))
+	go server.Start()
+	defer server.Close()
 
-	r.Use(httprate.Limit(
-		10,
-		time.Minute,
-		httprate.WithLimitHandler(func(w http.ResponseWriter, r *http.Request) {
-			http.ServeFile(w, r, "public/429.html")
-		}),
-	))
-
-	fileServer := http.FileServer(http.Dir("static"))
-	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
-
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "public/index.html")
-	})
-
-	r.Get("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "static/robots.txt")
-	})
-
-	r.Get("/sitemap.xml", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "static/sitemap.xml")
-	})
-
-	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "public/404.html")
-	})
-
-	log.Printf("Server starting on http://localhost:%s", *port)
-	if err := http.ListenAndServe(":"+*port, r); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func cacheControl(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Cache-Control", "public, max-age=86400")
-		next.ServeHTTP(w, r)
-	})
+	slog.Info("started alexraskin.com", slog.Any("listen_addr", *port))
+	si := make(chan os.Signal, 1)
+	signal.Notify(si, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	<-si
+	slog.Info("shutting down alexraskin.com")
 }
