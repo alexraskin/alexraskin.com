@@ -13,8 +13,8 @@ ARG VERSION
 ARG COMMIT
 ARG BUILD_TIME
 
-RUN --mount=type=cache,id=go-build-cache,target=/root/.cache/go-build \
-    --mount=type=cache,id=go-pkg-cache,target=/go/pkg \
+RUN --mount=type=cache,id=alexraskin.com-go-build,target=/root/.cache/go-build \
+    --mount=type=cache,id=alexraskin.com-go-pkg,target=/go/pkg \
     CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags="-X 'main.version=$VERSION' -X 'main.commit=$COMMIT' -X 'main.buildTime=$BUILD_TIME'" -o alexraskin.com github.com/alexraskin/alexraskin.com
 
 FROM alpine
