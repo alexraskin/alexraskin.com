@@ -10,9 +10,6 @@ require (
 )
 
 require (
-	github.com/alecthomas/chroma/v2 v2.15.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
-	github.com/dlclark/regexp2 v1.11.4 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/neilotoole/errgroup v0.1.6 // indirect
 )

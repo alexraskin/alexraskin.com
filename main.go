@@ -39,6 +39,8 @@ func main() {
 		tmplFunc alexraskin.ExecuteTemplateFunc
 	)
 
+	slog.Info("Starting alexraskin.com...", slog.Any("version", version), slog.Any("commit", commit), slog.Any("buildTime", buildTime))
+
 	funcs := template.FuncMap{
 		"Content": func(content string) template.HTML {
 			return template.HTML(content)
