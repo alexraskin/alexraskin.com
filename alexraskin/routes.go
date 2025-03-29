@@ -1,8 +1,14 @@
 package alexraskin
 
 import (
+	"bytes"
+	"html/template"
 	"io"
+	"log/slog"
+	"mime"
 	"net/http"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -18,33 +24,166 @@ func (s *Server) Routes() http.Handler {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Heartbeat("/ping"))
+	r.Use(cacheControl)
 
 	r.Use(httprate.Limit(
-		10,
+		100,
 		time.Minute,
-		httprate.WithLimitHandler(serveFile(s.public, "429.html")),
+		httprate.WithLimitHandler(
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				http.Error(w, "Too many requests", http.StatusTooManyRequests)
+			}),
+		),
 	))
 
-	r.Mount("/assets", http.StripPrefix("/assets", http.FileServer(s.assets)))
+	r.Get("/assets/*", func(w http.ResponseWriter, r *http.Request) {
+		path := strings.TrimPrefix(r.URL.Path, "/assets/")
 
-	r.Handle("/robots.txt", serveFile(s.public, "robots.txt"))
-	r.Handle("/sitemap.xml", serveFile(s.public, "sitemap.xml"))
+		file, err := s.assets.Open(path)
+		if err != nil {
+			slog.Error("asset not found", slog.String("path", path), slog.Any("error", err))
+			http.Error(w, "Asset not found", http.StatusNotFound)
+			return
+		}
+		defer file.Close()
 
-	r.Get("/", serveFile(s.public, "index.html"))
+		stat, err := file.Stat()
+		if err != nil {
+			slog.Error("error getting file stat", slog.String("path", path), slog.Any("error", err))
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
 
-	r.NotFound(serveFile(s.public, "404.html"))
+		contentType := mime.TypeByExtension(filepath.Ext(path))
+		if contentType != "" {
+			w.Header().Set("Content-Type", contentType)
+		}
+
+		http.ServeContent(w, r, path, stat.ModTime(), file.(io.ReadSeeker))
+	})
+
+	r.Handle("/robots.txt", serveFile(s.assets, "robots.txt"))
+	r.Handle("/sitemap.xml", serveFile(s.assets, "sitemap.xml"))
+
+	r.Get("/", s.index)
+	r.Group(func(r chi.Router) {
+		r.Route("/api", func(r chi.Router) {
+			r.Route("/lastfm", func(r chi.Router) {
+				r.Get("/", s.lastfm)
+			})
+		})
+		r.Route("/", func(r chi.Router) {
+			r.Get("/", s.index)
+			r.Head("/", s.index)
+		})
+	})
+
+	r.NotFound(s.notFound)
 
 	return r
+}
+
+func (s *Server) index(w http.ResponseWriter, r *http.Request) {
+	readme, err := s.fetchGitHubProfile(r.Context())
+	if err != nil {
+		slog.Error("failed to fetch profile", slog.Any("error", err))
+		s.renderError(w, r, "Failed to fetch profile", http.StatusInternalServerError)
+		return
+	}
+
+	var buf bytes.Buffer
+	if err := s.md.Convert([]byte(readme), &buf); err != nil {
+		slog.Error("failed to convert markdown", slog.Any("error", err))
+		s.renderError(w, r, "Failed to convert markdown", http.StatusInternalServerError)
+		return
+	}
+
+	data := PageData{
+		Home: HomeData{
+			Content: template.HTML(buf.String()),
+		},
+	}
+
+	err = s.tmplFunc(w, "index.gohtml", data)
+	if err != nil {
+		slog.Error("template execution failed", slog.Any("error", err))
+		s.renderError(w, r, "Failed to render template", http.StatusInternalServerError)
+	}
+}
+
+func (s *Server) notFound(w http.ResponseWriter, r *http.Request) {
+	s.renderError(w, r, "Page not found", http.StatusNotFound)
+}
+
+func (s *Server) renderError(w http.ResponseWriter, r *http.Request, message string, status int) {
+	requestID := middleware.GetReqID(r.Context())
+	if requestID == "" {
+		requestID = "unknown"
+	}
+
+	data := PageData{
+		Error:     message,
+		Status:    status,
+		Path:      r.URL.Path,
+		RequestID: requestID,
+	}
+
+	w.WriteHeader(status)
+	err := s.tmplFunc(w, "error.gohtml", data)
+	if err != nil {
+		slog.Error("error template execution failed",
+			slog.Any("error", err),
+			slog.String("original_error", message),
+		)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+
+func (s *Server) lastfm(w http.ResponseWriter, r *http.Request) {
+	track, err := s.fetchLastFMTrack()
+	if err != nil {
+		slog.Error("failed to fetch lastfm data", slog.Any("error", err))
+		track = nil
+	}
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	data := struct {
+		Track *LastFMTrack
+	}{
+		Track: track,
+	}
+
+	if err := s.tmplFunc(w, "lastfm.gohtml", data); err != nil {
+		slog.Error("failed to execute lastfm template", slog.Any("error", err))
+	}
 }
 
 func serveFile(fs http.FileSystem, path string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		file, err := fs.Open(path)
 		if err != nil {
+			slog.Error("file not found", slog.String("path", path), slog.Any("error", err))
 			http.Error(w, "File not found", http.StatusNotFound)
 			return
 		}
 		defer file.Close()
+		contentType := mime.TypeByExtension(filepath.Ext(path))
+		if contentType != "" {
+			w.Header().Set("Content-Type", contentType)
+		}
 		_, _ = io.Copy(w, file)
 	}
+}
+
+func cacheControl(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/assets/") {
+			w.Header().Set("Cache-Control", "public, max-age=86400")
+			next.ServeHTTP(w, r)
+			return
+		}
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		next.ServeHTTP(w, r)
+	})
 }

@@ -1,22 +1,28 @@
-FROM golang:1.24-alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:1.24-alpine AS build
 
-WORKDIR /app
+WORKDIR /build
 
 COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o alexraskin-web .
+ARG TARGETOS
+ARG TARGETARCH
+ARG VERSION
+ARG COMMIT
+ARG BUILD_TIME
 
-FROM alpine:3.18
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/go/pkg \
+    CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags="-X 'main.version=$VERSION' -X 'main.commit=$COMMIT' -X 'main.buildTime=$BUILD_TIME'" -o alexraskin.com github.com/alexraskin/alexraskin.com
 
-WORKDIR /app
+FROM alpine
 
 RUN apk --no-cache add ca-certificates
 
-COPY --from=builder /app/alexraskin-web .
+COPY --from=build /build/alexraskin.com /bin/alexraskin.com
 
 EXPOSE 8000
 
-CMD ["./alexraskin-web", "-port", "8000"]
+CMD ["/bin/alexraskin.com", "-port", "8000"]
