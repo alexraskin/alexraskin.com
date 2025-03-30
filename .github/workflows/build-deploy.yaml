@@ -27,8 +27,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/alexraskin/test-web:latest
-            ghcr.io/alexraskin/test-web:${{ github.sha }}
+            ghcr.io/alexraskin/alexraskin.com:latest
+            ghcr.io/alexraskin/alexraskin.com:${{ github.sha }}
   # deploy:
   #   runs-on: ubuntu-latest
   #   needs:
