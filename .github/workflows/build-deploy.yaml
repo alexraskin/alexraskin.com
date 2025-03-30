@@ -46,7 +46,7 @@ jobs:
       with:
         name: alexraskin
         file: docker-stack.yml
-        host: tank.alexraskin.com
-        user: deploy
+        host: ${{ secrets.DOCKER_HOST }}
+        user: ${{ secrets.DOCKER_USER }}
         ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
         env_file: ./envfile
