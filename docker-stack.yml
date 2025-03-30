@@ -1,23 +1,29 @@
 services:
-  alexraskin-dev:
-    image: ghcr.io/alexraskin/alexraskin.com:${GIT_COMMIT_HASH:-latest}
+  alexraskin:
+    image: ghcr.io/alexraskin/alexraskin.com:
     networks:
       - traefik-public
-    labels:
+    deploy:
+      labels:
         - "traefik.enable=true"
         - "traefik.constraint-label=traefik-public"
-        - "traefik.http.routers.web-https.rule=Host(`alexraskin.dev`) || Host(`www.alexraskin.dev`)"
-        - "traefik.http.routers.web-https.entrypoints=https"
-        - "traefik.http.routers.web-https.tls=true"
-        - "traefik.http.routers.web-https.tls.certresolver=le"
-        - "traefik.http.routers.web-https.middlewares=non-www-to-www"
-        - "traefik.http.middlewares.non-www-to-www.redirectregex.regex=^https?://alexraskin\\.dev(.*)"
-        - "traefik.http.middlewares.non-www-to-www.redirectregex.replacement=https://www.alexraskin.dev$${1}"
-        - "traefik.http.middlewares.non-www-to-www.redirectregex.permanent=true"
-        - "traefik.http.services.web-https.loadbalancer.server.port=8000"
-    deploy:
+        - "traefik.http.routers.alexraskin-https.rule=Host(`alexraskin.com`) || Host(`www.alexraskin.com`)"
+        - "traefik.http.routers.alexraskin-https.entrypoints=https"
+        - "traefik.http.routers.alexraskin-https.tls=true"
+        - "traefik.http.routers.alexraskin-https.tls.certresolver=le"
+        - "traefik.http.routers.alexraskin-https.middlewares=alexraskin-non-www-to-www"
+        - "traefik.http.middlewares.alexraskin-non-www-to-www.redirectregex.regex=^https?://alexraskin\\.com(.*)"
+        - "traefik.http.middlewares.alexraskin-non-www-to-www.redirectregex.replacement=https://www.alexraskin.com$${1}"
+        - "traefik.http.middlewares.alexraskin-non-www-to-www.redirectregex.permanent=true"
+        - "traefik.http.services.alexraskin-https.loadbalancer.server.port=8000"
+
       update_config:
         order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 
 networks:
   traefik-public:
