@@ -1,6 +1,6 @@
 services:
   alexraskin:
-    image: ghcr.io/alexraskin/alexraskin.com:
+    image: ghcr.io/alexraskin/alexraskin.com:${GIT_COMMIT_HASH:-latest}
     networks:
       - traefik-public
     deploy:
