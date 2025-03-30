@@ -271,15 +271,29 @@ span.error {
 .error h1 {
     font-size: 3rem;
     color: var(--error-color);
+    margin-bottom: 0.5rem;
+}
+
+.error h2 {
+    margin-bottom: 2rem;
+    color: var(--accent-color);
 }
 
 .error-details {
-    margin: 2rem 0;
-    padding: 1rem;
-    background-color: var(--card-bg-color);
-    border-radius: 4px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: var(--nav-bg-color);
+    border-radius: 8px;
+    border: 1px solid var(--accent-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     display: inline-block;
     text-align: left;
+    max-width: 90%;
+}
+
+.error-details p {
+    margin-bottom: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
 }
 
 /* Footer */

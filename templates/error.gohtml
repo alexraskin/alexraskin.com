@@ -1,23 +1,29 @@
 {{ template "head.gohtml" . }}
 <body>
-{{ template "header.gohtml" . }}
-<main>
-	<div class="error">
-		<h1>Oops!</h1>
-		<h2>Something went wrong:</h2>
-		<div class="error-details">
-			<p>Message: {{ .Error }}</p>
-			<p>Status: {{ .Status }}</p>
-			<p>Path: {{ .Path }}</p>
-			<p>Request ID: {{ .RequestID }}</p>
+<div class="container">
+	{{ template "header.gohtml" . }}
+	<main>
+		<div class="error">
+			<h1>Oops!</h1>
+			<h2>Something went wrong:</h2>
+			<div class="error-details">
+				<p>Message: {{ .Error }}</p>
+				<p>Status: {{ .Status }}</p>
+				<p>Path: {{ .Path }}</p>
+				<p>Request ID: {{ .RequestID }}</p>
+			</div>
+			<h3>
+				Try again later.
+				<br/>
+				Or create an issue on <a href="https://github.com/alexraskin/alexraskin.com/issues/new">GitHub</a>
+			</h3>
 		</div>
-		<h3>
-			Try again later.
-			<br/>
-			Or create an issue on <a href="https://github.com/alexraskin/alexraskin.com/issues/new">GitHub</a>
-		</h3>
-	</div>
-</main>
-<script src="/assets/js/theme.js" async></script>
+	</main>
+	<footer>
+		<p>© 2025 - <a href="https://github.com/alexraskin" target="_blank">@alexraskin</a></p>
+	</footer>
+</div>
+<script src="/assets/js/theme.js" defer></script>
+<script src="/assets/js/script.js" defer></script>
 </body>
 </html> 
