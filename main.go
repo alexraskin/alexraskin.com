@@ -4,6 +4,7 @@ import (
 	"embed"
 	"flag"
 	"html/template"
+	"io"
 	"log/slog"
 	"net/http"
 	"os"
@@ -25,34 +26,45 @@ var (
 
 var (
 	//go:embed templates/**
-	embeddedTemplates embed.FS
+	Templates embed.FS
 
 	//go:embed assets
-	embeddedAssets embed.FS
+	Assets embed.FS
 )
 
 func main() {
 	port := flag.String("port", "8000", "port to listen on")
+	devMode := flag.Bool("dev", false, "run in dev mode")
 	flag.Parse()
 
 	var (
 		tmplFunc alexraskin.ExecuteTemplateFunc
+		assets   http.FileSystem
 	)
 
 	slog.Info("Starting alexraskin.com...", slog.Any("version", version), slog.Any("commit", commit), slog.Any("buildTime", buildTime))
 
-	funcs := template.FuncMap{
-		"Content": func(content string) template.HTML {
-			return template.HTML(content)
-		},
-	}
+	funcs := template.FuncMap{}
 
-	tmpl, err := template.New("").Funcs(funcs).ParseFS(embeddedTemplates, "templates/*.gohtml")
-	if err != nil {
-		slog.Error("failed to parse templates", slog.Any("error", err))
-		os.Exit(-1)
+	if *devMode {
+		slog.Info("running in dev mode")
+		tmplFunc = func(wr io.Writer, name string, data any) error {
+			tmpl, err := template.New("").Funcs(funcs).ParseGlob("templates/*.gohtml")
+			if err != nil {
+				return err
+			}
+			return tmpl.ExecuteTemplate(wr, name, data)
+		}
+		assets = http.Dir(".")
+	} else {
+		tmpl, err := template.New("").Funcs(funcs).ParseFS(Templates, "templates/*.gohtml")
+		if err != nil {
+			slog.Error("failed to parse templates", slog.Any("error", err))
+			os.Exit(-1)
+		}
+		tmplFunc = tmpl.ExecuteTemplate
+		assets = http.FS(Assets)
 	}
-	tmplFunc = tmpl.ExecuteTemplate
 
 	md := goldmark.New(
 		goldmark.WithExtensions(extension.GFM),
@@ -68,8 +80,7 @@ func main() {
 		alexraskin.FormatBuildVersion(version, commit, buildTime),
 		*port,
 		http.DefaultClient,
-		embeddedTemplates,
-		embeddedAssets,
+		assets,
 		tmplFunc,
 		md,
 	)

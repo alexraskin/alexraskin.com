@@ -36,32 +36,7 @@ func (s *Server) Routes() http.Handler {
 		),
 	))
 
-	r.Get("/assets/*", func(w http.ResponseWriter, r *http.Request) {
-		path := strings.TrimPrefix(r.URL.Path, "/assets/")
-
-		file, err := s.assets.Open(path)
-		if err != nil {
-			slog.Error("asset not found", slog.String("path", path), slog.Any("error", err))
-			http.Error(w, "Asset not found", http.StatusNotFound)
-			return
-		}
-		defer file.Close()
-
-		stat, err := file.Stat()
-		if err != nil {
-			slog.Error("error getting file stat", slog.String("path", path), slog.Any("error", err))
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-
-		contentType := mime.TypeByExtension(filepath.Ext(path))
-		if contentType != "" {
-			w.Header().Set("Content-Type", contentType)
-		}
-
-		http.ServeContent(w, r, path, stat.ModTime(), file.(io.ReadSeeker))
-	})
-
+	r.Mount("/assets", http.FileServer(s.assets))
 	r.Handle("/robots.txt", serveFile(s.assets, "robots.txt"))
 	r.Handle("/sitemap.xml", serveFile(s.assets, "sitemap.xml"))
 	r.Handle("/favicon.ico", serveFile(s.assets, "images/favicon.ico"))

@@ -1,12 +1,9 @@
 package alexraskin
 
 import (
-	"embed"
 	"errors"
 	"fmt"
 	"io"
-	"io/fs"
-	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -23,29 +20,18 @@ type Server struct {
 	port       string
 	httpClient *http.Client
 	server     *http.Server
-	templates  http.FileSystem
 	assets     http.FileSystem
 	tmplFunc   ExecuteTemplateFunc
 	md         goldmark.Markdown
 }
 
-func NewServer(version string, port string, httpClient *http.Client, rawTemplates embed.FS, rawAssets embed.FS, tmplFunc ExecuteTemplateFunc, md goldmark.Markdown) *Server {
-	templatesFS, err := fs.Sub(rawTemplates, "templates")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	assetsFS, err := fs.Sub(rawAssets, "assets")
-	if err != nil {
-		log.Fatal(err)
-	}
+func NewServer(version string, port string, httpClient *http.Client, assets http.FileSystem, tmplFunc ExecuteTemplateFunc, md goldmark.Markdown) *Server {
 
 	s := &Server{
 		version:    version,
 		port:       port,
 		httpClient: httpClient,
-		templates:  http.FS(templatesFS),
-		assets:     http.FS(assetsFS),
+		assets:     assets,
 		tmplFunc:   tmplFunc,
 		md:         md,
 	}
