@@ -48,5 +48,6 @@ jobs:
         file: docker-stack.yml
         host: ${{ secrets.DOCKER_HOST }}
         user: ${{ secrets.DOCKER_USER }}
+        port: ${{ secrets.DOCKER_PORT }}
         ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
         env_file: ./envfile
