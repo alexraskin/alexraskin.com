@@ -64,23 +64,26 @@ func (s *Server) Routes() http.Handler {
 
 	r.Handle("/robots.txt", serveFile(s.assets, "robots.txt"))
 	r.Handle("/sitemap.xml", serveFile(s.assets, "sitemap.xml"))
-
+	r.Handle("/favicon.ico", serveFile(s.assets, "images/favicon.ico"))
 	r.Get("/", s.index)
+	r.Head("/", s.index)
+	r.Get("/version", s.getVersion)
+	
 	r.Group(func(r chi.Router) {
 		r.Route("/api", func(r chi.Router) {
 			r.Route("/lastfm", func(r chi.Router) {
 				r.Get("/", s.lastfm)
 			})
 		})
-		r.Route("/", func(r chi.Router) {
-			r.Get("/", s.index)
-			r.Head("/", s.index)
-		})
 	})
 
 	r.NotFound(s.notFound)
 
 	return r
+}
+
+func (s *Server) getVersion(w http.ResponseWriter, _ *http.Request) {
+	_, _ = w.Write([]byte(s.version))
 }
 
 func (s *Server) index(w http.ResponseWriter, r *http.Request) {
