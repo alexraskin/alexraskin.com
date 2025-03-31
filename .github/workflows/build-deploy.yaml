@@ -20,12 +20,22 @@ jobs:
           registry: https://ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Prepare Version Info
+        run: |
+          echo "VERSION=$(git describe --tags)" >> $GITHUB_ENV
+          echo "COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "BUILD_TIME=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
+          build-args: |
+            VERSION=${{ env.VERSION }}
+            COMMIT=${{ env.COMMIT }}
+            BUILD_TIME=${{ env.BUILD_TIME }}
           tags: |
             ghcr.io/alexraskin/alexraskin.com:latest
             ghcr.io/alexraskin/alexraskin.com:${{ github.sha }}
