@@ -123,8 +123,6 @@ func (s *Server) lastfm(w http.ResponseWriter, r *http.Request) {
 		slog.Error("failed to fetch lastfm data", slog.Any("error", err))
 		track = nil
 	}
-	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	data := struct {
 		Track *LastFMTrack

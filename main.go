@@ -44,12 +44,10 @@ func main() {
 
 	slog.Info("Starting alexraskin.com...", slog.Any("version", version), slog.Any("commit", commit), slog.Any("buildTime", buildTime))
 
-	funcs := template.FuncMap{}
-
 	if *devMode {
 		slog.Info("running in dev mode")
 		tmplFunc = func(wr io.Writer, name string, data any) error {
-			tmpl, err := template.New("").Funcs(funcs).ParseGlob("templates/*.gohtml")
+			tmpl, err := template.New("").ParseGlob("templates/*.gohtml")
 			if err != nil {
 				return err
 			}
@@ -57,7 +55,7 @@ func main() {
 		}
 		assets = http.Dir(".")
 	} else {
-		tmpl, err := template.New("").Funcs(funcs).ParseFS(Templates, "templates/*.gohtml")
+		tmpl, err := template.New("").ParseFS(Templates, "templates/*.gohtml")
 		if err != nil {
 			slog.Error("failed to parse templates", slog.Any("error", err))
 			os.Exit(-1)
