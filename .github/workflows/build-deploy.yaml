@@ -41,7 +41,7 @@ jobs:
             ghcr.io/alexraskin/alexraskin.com:${{ github.sha }}
   deploy:
     needs:
-      - build
+      - build-and-push-image
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
