@@ -40,24 +40,14 @@ jobs:
             ghcr.io/alexraskin/alexraskin.com:latest
             ghcr.io/alexraskin/alexraskin.com:${{ github.sha }}
   deploy:
-    runs-on: ubuntu-latest
     needs:
-      - build-and-push-image
+      - build
+    runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: create env file
-      run: |
-        echo "GIT_COMMIT_HASH=${{ github.sha }}" >> ./envfile
-
-    - name: Docker Stack Deploy
-      uses: cssnr/stack-deploy-action@v1
-      with:
-        name: alexraskin
-        file: docker-stack.yml
-        host: ${{ secrets.DOCKER_HOST }}
-        user: ${{ secrets.DOCKER_USER }}
-        port: ${{ secrets.DOCKER_PORT }}
-        ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
-        env_file: ./envfile
+      - name: Deploy
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: "https://swarmctl.alexraskin.com/v1/update/alexraskin_web?image=ghcr.io/alexraskin/alexraskin.com:${{ github.sha }}"
+          method: "POST"
+          timeout: 60000
+          customHeaders: '{"Authorization": "${{ secrets.AUTH_TOKEN }}"}'
