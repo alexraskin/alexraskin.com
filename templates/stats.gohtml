@@ -1,0 +1,21 @@
+{{ template "head.gohtml" . }}
+<body>
+<div class="container">
+	{{ template "header.gohtml" . }}
+	<main>
+		<div class="error">
+			<h1 class="stats-title">Server Statistics</h1>
+			<div class="error-details">
+				<p>Go: {{ .Go }}</p>
+				<p>Uptime: {{ .Uptime }}</p>
+				<p>Memory used: {{ .MemoryUsed }} / {{ .TotalMemory }}</p>
+				<p>Garbage collected: {{ .GarbageCollected }}</p>
+				<p>Concurrent tasks: {{ .ConcurrentTasks }}</p>
+				<p>Goroutines: {{ .Goroutines }}</p>
+			</div>
+		</div>
+	</main>
+	{{ template "footer.gohtml" .}}
+</div>
+</body>
+</html>

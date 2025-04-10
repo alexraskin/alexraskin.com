@@ -2,19 +2,24 @@ package alexraskin
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"io"
 	"log/slog"
 	"mime"
 	"net/http"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httprate"
 )
+
+var statsStartTime = time.Now()
 
 func (s *Server) Routes() http.Handler {
 	r := chi.NewRouter()
@@ -43,7 +48,8 @@ func (s *Server) Routes() http.Handler {
 	r.Get("/", s.index)
 	r.Head("/", s.index)
 	r.Get("/version", s.getVersion)
-	
+	r.Get("/stats", s.stats)
+
 	r.Group(func(r chi.Router) {
 		r.Route("/api", func(r chi.Router) {
 			r.Route("/lastfm", func(r chi.Router) {
@@ -135,6 +141,34 @@ func (s *Server) lastfm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *Server) stats(w http.ResponseWriter, r *http.Request) {
+	stats := runtime.MemStats{}
+	runtime.ReadMemStats(&stats)
+
+	page := struct {
+		Go               string
+		Uptime           string
+		MemoryUsed       string
+		TotalMemory      string
+		GarbageCollected string
+		ConcurrentTasks  string
+		Goroutines       int
+	}{
+		Go:               runtime.Version(),
+		Uptime:           getDurationString(time.Since(statsStartTime)),
+		MemoryUsed:       humanize.Bytes(stats.Alloc),
+		TotalMemory:      humanize.Bytes(stats.Sys),
+		GarbageCollected: humanize.Bytes(stats.TotalAlloc),
+		ConcurrentTasks:  humanize.Comma(int64(runtime.NumGoroutine())),
+		Goroutines:       runtime.NumGoroutine(),
+	}
+
+	err := s.tmplFunc(w, "stats.gohtml", page)
+	if err != nil {
+		slog.Error("failed to execute stats template", slog.Any("error", err))
+	}
+}
+
 func serveFile(fs http.FileSystem, path string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		file, err := fs.Open(path)
@@ -162,4 +196,13 @@ func cacheControl(next http.Handler) http.Handler {
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		next.ServeHTTP(w, r)
 	})
+}
+
+func getDurationString(duration time.Duration) string {
+	return fmt.Sprintf(
+		"%0.2d:%02d:%02d",
+		int(duration.Hours()),
+		int(duration.Minutes())%60,
+		int(duration.Seconds())%60,
+	)
 }
