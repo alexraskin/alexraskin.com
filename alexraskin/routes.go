@@ -151,7 +151,6 @@ func (s *Server) stats(w http.ResponseWriter, r *http.Request) {
 		MemoryUsed       string
 		TotalMemory      string
 		GarbageCollected string
-		ConcurrentTasks  string
 		Goroutines       int
 	}{
 		Go:               runtime.Version(),
@@ -159,7 +158,6 @@ func (s *Server) stats(w http.ResponseWriter, r *http.Request) {
 		MemoryUsed:       humanize.Bytes(stats.Alloc),
 		TotalMemory:      humanize.Bytes(stats.Sys),
 		GarbageCollected: humanize.Bytes(stats.TotalAlloc),
-		ConcurrentTasks:  humanize.Comma(int64(runtime.NumGoroutine())),
 		Goroutines:       runtime.NumGoroutine(),
 	}
 
