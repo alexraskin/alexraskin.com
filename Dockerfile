@@ -26,6 +26,9 @@ RUN apk --no-cache add ca-certificates
 
 COPY --from=build /build/alexraskin.com /bin/alexraskin.com
 
+HEALTHCHECK --timeout=10s --start-period=60s --interval=60s \
+  CMD wget --spider -q http://localhost:8000/ping
+
 EXPOSE 8000
 
 ENTRYPOINT ["/bin/alexraskin.com"]
