@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"flag"
 	"html/template"
@@ -10,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/alexraskin/alexraskin.com/alexraskin"
 	"github.com/yuin/goldmark"
@@ -42,10 +44,17 @@ func main() {
 		assets   http.FileSystem
 	)
 
-	slog.Info("Starting alexraskin.com...", slog.Any("version", version), slog.Any("commit", commit), slog.Any("buildTime", buildTime))
+	logger := slog.Default()
+	if *devMode {
+		logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		}))
+	}
+
+	logger.Debug("Starting alexraskin.com...", slog.Any("version", version), slog.Any("commit", commit), slog.Any("buildTime", buildTime))
 
 	if *devMode {
-		slog.Info("running in dev mode")
+		logger.Debug("running in dev mode")
 		tmplFunc = func(wr io.Writer, name string, data any) error {
 			tmpl, err := template.New("").ParseGlob("templates/*.gohtml")
 			if err != nil {
@@ -57,7 +66,7 @@ func main() {
 	} else {
 		tmpl, err := template.New("").ParseFS(Templates, "templates/*.gohtml")
 		if err != nil {
-			slog.Error("failed to parse templates", slog.Any("error", err))
+			logger.Error("failed to parse templates", slog.Any("error", err))
 			os.Exit(-1)
 		}
 		tmplFunc = tmpl.ExecuteTemplate
@@ -74,21 +83,37 @@ func main() {
 		),
 	)
 
+	httpClient := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	server := alexraskin.NewServer(
 		alexraskin.FormatBuildVersion(version, commit, buildTime),
+		ctx,
 		*port,
-		http.DefaultClient,
+		httpClient,
 		assets,
 		tmplFunc,
 		md,
+		logger,
 	)
 
 	go server.Start()
-	defer server.Close()
 
-	slog.Info("started web server", slog.Any("listen_addr", *port))
+	ctx, cancel = context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		logger.Error("graceful shutdown failed", slog.Any("err", err))
+		server.Close()
+	}
+
+	logger.Debug("started web server", slog.Any("listen_addr", *port))
 	si := make(chan os.Signal, 1)
 	signal.Notify(si, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-si
-	slog.Info("shutting down web server")
+	logger.Debug("shutting down web server")
 }

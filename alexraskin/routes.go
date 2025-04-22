@@ -29,7 +29,7 @@ func (s *Server) Routes() http.Handler {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Heartbeat("/ping"))
-	r.Use(cacheControl)
+	r.Use(s.cacheControl)
 
 	r.Use(httprate.Limit(
 		100,
@@ -42,9 +42,9 @@ func (s *Server) Routes() http.Handler {
 	))
 
 	r.Mount("/assets", http.FileServer(s.assets))
-	r.Handle("/robots.txt", serveFile(s.assets, "robots.txt"))
-	r.Handle("/sitemap.xml", serveFile(s.assets, "sitemap.xml"))
-	r.Handle("/favicon.ico", serveFile(s.assets, "images/favicon.ico"))
+	r.Handle("/robots.txt", s.serveFile(s.assets, "robots.txt"))
+	r.Handle("/sitemap.xml", s.serveFile(s.assets, "sitemap.xml"))
+	r.Handle("/favicon.ico", s.serveFile(s.assets, "images/favicon.ico"))
 	r.Get("/", s.index)
 	r.Head("/", s.index)
 	r.Get("/version", s.getVersion)
@@ -68,16 +68,16 @@ func (s *Server) getVersion(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (s *Server) index(w http.ResponseWriter, r *http.Request) {
-	readme, err := s.fetchGitHubProfile(r.Context())
+	readme, err := s.fetchGitHubProfile()
 	if err != nil {
-		slog.Error("failed to fetch profile", slog.Any("error", err))
+		s.logger.Error("failed to fetch profile", slog.Any("error", err))
 		s.renderError(w, r, "Failed to fetch profile", http.StatusInternalServerError)
 		return
 	}
 
 	var buf bytes.Buffer
 	if err := s.md.Convert([]byte(readme), &buf); err != nil {
-		slog.Error("failed to convert markdown", slog.Any("error", err))
+		s.logger.Error("failed to convert markdown", slog.Any("error", err))
 		s.renderError(w, r, "Failed to convert markdown", http.StatusInternalServerError)
 		return
 	}
@@ -90,7 +90,7 @@ func (s *Server) index(w http.ResponseWriter, r *http.Request) {
 
 	err = s.tmplFunc(w, "index.gohtml", data)
 	if err != nil {
-		slog.Error("template execution failed", slog.Any("error", err))
+		s.logger.Error("template execution failed", slog.Any("error", err))
 		s.renderError(w, r, "Failed to render template", http.StatusInternalServerError)
 	}
 }
@@ -115,7 +115,7 @@ func (s *Server) renderError(w http.ResponseWriter, r *http.Request, message str
 	w.WriteHeader(status)
 	err := s.tmplFunc(w, "error.gohtml", data)
 	if err != nil {
-		slog.Error("error template execution failed",
+		s.logger.Error("error template execution failed",
 			slog.Any("error", err),
 			slog.String("original_error", message),
 		)
@@ -126,7 +126,7 @@ func (s *Server) renderError(w http.ResponseWriter, r *http.Request, message str
 func (s *Server) lastfm(w http.ResponseWriter, r *http.Request) {
 	track, err := s.fetchLastFMTrack()
 	if err != nil {
-		slog.Error("failed to fetch lastfm data", slog.Any("error", err))
+		s.logger.Error("failed to fetch lastfm data", slog.Any("error", err))
 		track = nil
 	}
 
@@ -137,7 +137,7 @@ func (s *Server) lastfm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := s.tmplFunc(w, "lastfm.gohtml", data); err != nil {
-		slog.Error("failed to execute lastfm template", slog.Any("error", err))
+		s.logger.Error("failed to execute lastfm template", slog.Any("error", err))
 	}
 }
 
@@ -154,7 +154,7 @@ func (s *Server) stats(w http.ResponseWriter, r *http.Request) {
 		Goroutines       int
 	}{
 		Go:               runtime.Version(),
-		Uptime:           getDurationString(time.Since(statsStartTime)),
+		Uptime:           s.getDurationString(time.Since(statsStartTime)),
 		MemoryUsed:       humanize.Bytes(stats.Alloc),
 		TotalMemory:      humanize.Bytes(stats.Sys),
 		GarbageCollected: humanize.Bytes(stats.TotalAlloc),
@@ -163,15 +163,15 @@ func (s *Server) stats(w http.ResponseWriter, r *http.Request) {
 
 	err := s.tmplFunc(w, "stats.gohtml", page)
 	if err != nil {
-		slog.Error("failed to execute stats template", slog.Any("error", err))
+		s.logger.Error("failed to execute stats template", slog.Any("error", err))
 	}
 }
 
-func serveFile(fs http.FileSystem, path string) http.HandlerFunc {
+func (s *Server) serveFile(fs http.FileSystem, path string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		file, err := fs.Open(path)
 		if err != nil {
-			slog.Error("file not found", slog.String("path", path), slog.Any("error", err))
+			s.logger.Error("file not found", slog.String("path", path), slog.Any("error", err))
 			http.Error(w, "File not found", http.StatusNotFound)
 			return
 		}
@@ -184,7 +184,7 @@ func serveFile(fs http.FileSystem, path string) http.HandlerFunc {
 	}
 }
 
-func cacheControl(next http.Handler) http.Handler {
+func (s *Server) cacheControl(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, "/assets/") {
 			w.Header().Set("Cache-Control", "public, max-age=86400")
@@ -196,7 +196,7 @@ func cacheControl(next http.Handler) http.Handler {
 	})
 }
 
-func getDurationString(duration time.Duration) string {
+func (s *Server) getDurationString(duration time.Duration) string {
 	return fmt.Sprintf(
 		"%0.2d:%02d:%02d",
 		int(duration.Hours()),

@@ -1,6 +1,7 @@
 package alexraskin
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -17,23 +18,27 @@ type ExecuteTemplateFunc func(wr io.Writer, name string, data any) error
 
 type Server struct {
 	version    string
+	ctx        context.Context
 	port       string
 	httpClient *http.Client
 	server     *http.Server
 	assets     http.FileSystem
 	tmplFunc   ExecuteTemplateFunc
 	md         goldmark.Markdown
+	logger     *slog.Logger
 }
 
-func NewServer(version string, port string, httpClient *http.Client, assets http.FileSystem, tmplFunc ExecuteTemplateFunc, md goldmark.Markdown) *Server {
+func NewServer(version string, ctx context.Context, port string, httpClient *http.Client, assets http.FileSystem, tmplFunc ExecuteTemplateFunc, md goldmark.Markdown, logger *slog.Logger) *Server {
 
 	s := &Server{
 		version:    version,
+		ctx:        ctx,
 		port:       port,
 		httpClient: httpClient,
 		assets:     assets,
 		tmplFunc:   tmplFunc,
 		md:         md,
+		logger:     logger,
 	}
 
 	s.server = &http.Server{
@@ -46,14 +51,18 @@ func NewServer(version string, port string, httpClient *http.Client, assets http
 
 func (s *Server) Start() {
 	if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		slog.Error("Error while listening", slog.Any("err", err))
+		s.logger.Error("Error while listening", slog.Any("err", err))
 		os.Exit(-1)
 	}
 }
 
+func (s *Server) Shutdown(ctx context.Context) error {
+	return s.server.Shutdown(ctx)
+}
+
 func (s *Server) Close() {
 	if err := s.server.Close(); err != nil {
-		slog.Error("Error while closing server", slog.Any("err", err))
+		s.logger.Error("Error while closing server", slog.Any("err", err))
 	}
 }
 

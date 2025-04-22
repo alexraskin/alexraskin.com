@@ -3,13 +3,12 @@ package alexraskin
 import (
 	"encoding/json"
 	"io"
-	"net/http"
 )
 
 func (s *Server) fetchLastFMTrack() (*LastFMTrack, error) {
 	lastFMURL := "https://lastfm.alexraskin.com/twizycat"
 
-	resp, err := http.Get(lastFMURL)
+	resp, err := s.httpClient.Get(lastFMURL)
 	if err != nil {
 		return nil, err
 	}

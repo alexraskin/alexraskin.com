@@ -7,6 +7,7 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
+    command: ["--dev", "true"]
     develop:
       watch:
         - action: rebuild

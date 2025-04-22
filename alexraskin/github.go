@@ -1,7 +1,6 @@
 package alexraskin
 
 import (
-	"context"
 	"encoding/base64"
 	"fmt"
 	"sync"
@@ -20,7 +19,7 @@ var (
 	cacheMux sync.RWMutex
 )
 
-func (s *Server) fetchGitHubProfile(ctx context.Context) (string, error) {
+func (s *Server) fetchGitHubProfile() (string, error) {
 	cacheMux.RLock()
 	if cache != nil && time.Since(cache.timestamp) < 5*time.Minute {
 		content := cache.content
@@ -34,7 +33,7 @@ func (s *Server) fetchGitHubProfile(ctx context.Context) (string, error) {
 	username := "alexraskin"
 	repo := "alexraskin"
 
-	content, _, _, err := client.Repositories.GetContents(ctx, username, repo, "README.md", nil)
+	content, _, _, err := client.Repositories.GetContents(s.ctx, username, repo, "README.md", nil)
 	if err != nil {
 		cacheMux.RLock()
 		if cache != nil {
