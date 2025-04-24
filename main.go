@@ -103,17 +103,18 @@ func main() {
 
 	go server.Start()
 
-	ctx, cancel = context.WithCancel(context.Background())
-	defer cancel()
+	logger.Debug("started web server", slog.Any("listen_addr", *port))
 
+	si := make(chan os.Signal, 1)
+	signal.Notify(si, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	<-si
+
+	logger.Debug("shutting down web server")
+
+	ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
 		logger.Error("graceful shutdown failed", slog.Any("err", err))
 		server.Close()
 	}
-
-	logger.Debug("started web server", slog.Any("listen_addr", *port))
-	si := make(chan os.Signal, 1)
-	signal.Notify(si, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
-	<-si
-	logger.Debug("shutting down web server")
 }
