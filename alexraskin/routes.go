@@ -34,17 +34,15 @@ func (s *Server) Routes() http.Handler {
 	r.Use(httprate.Limit(
 		100,
 		time.Minute,
-		httprate.WithLimitHandler(
-			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				http.Error(w, "Too many requests", http.StatusTooManyRequests)
-			}),
-		),
+		httprate.WithKeyFuncs(httprate.KeyByRealIP),
+		httprate.WithLimitHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			http.Error(w, "Too many requests", http.StatusTooManyRequests)
+		})),
 	))
 
 	r.Mount("/assets", http.FileServer(s.assets))
-	r.Handle("/robots.txt", s.serveFile(s.assets, "robots.txt"))
-	r.Handle("/sitemap.xml", s.serveFile(s.assets, "sitemap.xml"))
-	r.Handle("/favicon.ico", s.serveFile(s.assets, "images/favicon.ico"))
+	r.Handle("/robots.txt", s.serveFile(s.assets, "assets/robots.txt"))
+	r.Handle("/favicon.ico", s.serveFile(s.assets, "assets/icons/images/favicon.ico"))
 	r.Get("/", s.index)
 	r.Head("/", s.index)
 	r.Get("/version", s.getVersion)
