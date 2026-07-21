@@ -1,4 +1,8 @@
-<h2>Currently listening to</h2>
+{{ if and .Track (not .Track.NowPlaying) }}
+    <h2>Last listened to</h2>
+{{ else }}
+    <h2>Currently listening to</h2>
+{{ end }}
 <div id="song">
     {{ if eq .Track nil }}
         <div class="no-song">nothing at the moment</div>

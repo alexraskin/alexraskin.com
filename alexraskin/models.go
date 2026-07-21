@@ -8,12 +8,13 @@ type PageData struct {
 }
 
 type LastFMTrack struct {
-	Name      string
-	Artist    string
-	Album     string
-	URL       string
-	ArtistURL string
-	Artwork   string
+	Name       string
+	Artist     string
+	Album      string
+	URL        string
+	ArtistURL  string
+	Artwork    string
+	NowPlaying bool
 }
 
 type LastFMResponse struct {

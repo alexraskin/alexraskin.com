@@ -36,7 +36,9 @@ func (s *Server) fetchLastFMTrack() (*LastFMTrack, error) {
 		return nil, fmt.Errorf("lastfm: decode response: %w", err)
 	}
 
-	if !lfmResponse.NowPlaying {
+	// The upstream returns the most recently scrobbled track when nothing is
+	// playing, so an empty name is the only "no track" case.
+	if lfmResponse.Track == "" {
 		return nil, nil
 	}
 
@@ -48,11 +50,12 @@ func (s *Server) fetchLastFMTrack() (*LastFMTrack, error) {
 	artist := lastFMPathSegment(lfmResponse.Artist)
 
 	return &LastFMTrack{
-		Name:      lfmResponse.Track,
-		Artist:    lfmResponse.Artist,
-		Album:     lfmResponse.Album,
-		URL:       "https://www.last.fm/music/" + artist + "/_/" + lastFMPathSegment(lfmResponse.Track),
-		ArtistURL: "https://www.last.fm/music/" + artist,
-		Artwork:   artwork,
+		Name:       lfmResponse.Track,
+		Artist:     lfmResponse.Artist,
+		Album:      lfmResponse.Album,
+		URL:        "https://www.last.fm/music/" + artist + "/_/" + lastFMPathSegment(lfmResponse.Track),
+		ArtistURL:  "https://www.last.fm/music/" + artist,
+		Artwork:    artwork,
+		NowPlaying: lfmResponse.NowPlaying,
 	}, nil
 }
