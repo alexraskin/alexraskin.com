@@ -3,18 +3,17 @@
 <div class="container">
 	{{ template "header.gohtml" . }}
 	<main>
-		<div class="error">
-			<h1 class="stats-title">Server Statistics</h1>
-			<div class="error-details">
-				<p>Go: {{ .Go }}</p>
-				<p>Uptime: {{ .Uptime }}</p>
-				<p>Memory used: {{ .MemoryUsed }} / {{ .TotalMemory }}</p>
-				<p>Garbage collected: {{ .GarbageCollected }}</p>
-				<p>Goroutines: {{ .Goroutines }}</p>
-			</div>
+		<h1>Server stats</h1>
+		<hr/>
+		<div class="detail-list">
+			<p><span class="label">go</span><span class="value">{{ .Go }}</span></p>
+			<p><span class="label">uptime</span><span class="value">{{ .Uptime }}</span></p>
+			<p><span class="label">memory used</span><span class="value">{{ .MemoryUsed }} / {{ .TotalMemory }}</span></p>
+			<p><span class="label">gc total</span><span class="value">{{ .GarbageCollected }}</span></p>
+			<p><span class="label">goroutines</span><span class="value">{{ .Goroutines }}</span></p>
 		</div>
 	</main>
-	{{ template "footer.gohtml" .}}
+	{{ template "footer.gohtml" . }}
 </div>
 </body>
 </html>

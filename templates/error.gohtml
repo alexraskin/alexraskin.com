@@ -3,23 +3,16 @@
 <div class="container">
 	{{ template "header.gohtml" . }}
 	<main>
-		<div class="error">
-			<h1>Oops!</h1>
-			<h2>Something went wrong:</h2>
-			<div class="error-details">
-				<p>Message: {{ .Error }}</p>
-				<p>Status: {{ .Status }}</p>
-				<p>Path: {{ .Path }}</p>
-				<p>Request ID: {{ .RequestID }}</p>
-			</div>
-			<h3>
-				Try again later.
-				<br/>
-				Or create an issue on <a href="https://github.com/alexraskin/alexraskin.com/issues/new">GitHub</a>
-			</h3>
+		<h1 class="error-title">{{ .Status }}</h1>
+		<p>{{ .Error }}</p>
+		<hr/>
+		<div class="detail-list">
+			<p><span class="label">path</span><span class="value">{{ .Path }}</span></p>
+			<p><span class="label">request id</span><span class="value">{{ .RequestID }}</span></p>
 		</div>
+		<p>Try again later, or <a href="https://github.com/alexraskin/alexraskin.com/issues/new">open an issue</a>.</p>
 	</main>
-	{{ template "footer.gohtml" .}}
+	{{ template "footer.gohtml" . }}
 </div>
 </body>
-</html> 
+</html>

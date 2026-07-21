@@ -1,16 +1,16 @@
-<h2>I'm currently listening to:</h2>
+<h2>Currently listening to</h2>
 <div id="song">
     {{ if eq .Track nil }}
         <div class="no-song">nothing at the moment</div>
     {{ else }}
-        <img src="{{ .Track.Artwork }}" alt="{{ .Track.Album }} Artwork"/>
+        <img src="{{ .Track.Artwork }}" alt="{{ .Track.Album }} artwork"/>
         <div id="info">
-            <span>Song</span>
-            <a href="{{ .Track.URL }}" target="_blank">{{ .Track.Name }}</a>
-            <span>Artist</span>
-            <a href="{{ .Track.ArtistURL }}" target="_blank">{{ .Track.Artist }}</a>
-            <span>Album</span>
-            <span>{{ .Track.Album}}</span>
+            <span>song</span>
+            <a href="{{ .Track.URL }}" target="_blank" rel="noopener">{{ .Track.Name }}</a>
+            <span>artist</span>
+            <a href="{{ .Track.ArtistURL }}" target="_blank" rel="noopener">{{ .Track.Artist }}</a>
+            <span>album</span>
+            <span>{{ .Track.Album }}</span>
         </div>
     {{ end }}
-</div> 
+</div>

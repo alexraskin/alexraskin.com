@@ -42,7 +42,7 @@ func (s *Server) Routes() http.Handler {
 
 	r.Mount("/assets", http.FileServer(s.assets))
 	r.Handle("/robots.txt", s.serveFile(s.assets, "assets/robots.txt"))
-	r.Handle("/favicon.ico", s.serveFile(s.assets, "assets/icons/images/favicon.ico"))
+	r.Handle("/favicon.ico", s.serveFile(s.assets, "assets/images/favicon.ico"))
 	r.Get("/", s.index)
 	r.Head("/", s.index)
 	r.Get("/version", s.getVersion)
@@ -134,6 +134,7 @@ func (s *Server) lastfm(w http.ResponseWriter, r *http.Request) {
 		Track: track,
 	}
 
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := s.tmplFunc(w, "lastfm.gohtml", data); err != nil {
 		s.logger.Error("failed to execute lastfm template", slog.Any("error", err))
 	}

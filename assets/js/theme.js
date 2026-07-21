@@ -1,43 +1,38 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const themeToggle = document.getElementById('theme-toggle');
-    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    function setCookie(name, value, days) {
+// Applied before first paint (script is not deferred) to avoid a flash of the
+// wrong theme. With no stored preference we leave data-theme unset so the CSS
+// prefers-color-scheme rules decide.
+(() => {
+    const COOKIE = 'theme';
+
+    const getCookie = (name) => {
+        const parts = `; ${document.cookie}`.split(`; ${name}=`);
+        return parts.length === 2 ? parts.pop().split(';').shift() : null;
+    };
+
+    const setCookie = (name, value, days) => {
         const date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/;samesite=lax`;
+    };
+
+    const systemTheme = () =>
+        window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+    const saved = getCookie(COOKIE);
+    if (saved === 'dark' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', saved);
     }
-    
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-        return null;
-    }
-    
-    const savedTheme = getCookie('theme');
-    if (savedTheme) {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-    } else {
-        const theme = prefersDarkScheme.matches ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', theme);
-        setCookie('theme', theme, 365); // Save for 1 year
-    }
-    
-    themeToggle.addEventListener('click', (e) => {
-        e.preventDefault();
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        
-        document.documentElement.setAttribute('data-theme', newTheme);
-        setCookie('theme', newTheme, 365); // Save for 1 year
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggle = document.getElementById('theme-toggle');
+        if (!toggle) return;
+
+        toggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            const current = document.documentElement.getAttribute('data-theme') || systemTheme();
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            setCookie(COOKIE, next, 365);
+        });
     });
-    
-    prefersDarkScheme.addEventListener('change', (e) => {
-        if (!getCookie('theme')) {
-            const theme = e.matches ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', theme);
-            setCookie('theme', theme, 365);
-        }
-    });
-}); 
+})();

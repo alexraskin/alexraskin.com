@@ -2,26 +2,38 @@ package alexraskin
 
 import (
 	"encoding/json"
-	"io"
+	"fmt"
+	"net/http"
+	"net/url"
+	"strings"
 )
 
-func (s *Server) fetchLastFMTrack() (*LastFMTrack, error) {
-	lastFMURL := "https://lastfm.alexraskin.com/twizycat"
+const lastFMURL = "https://lastfm.alexraskin.com/alexraskin"
 
-	resp, err := s.httpClient.Get(lastFMURL)
+// last.fm uses "+" rather than "%20" for spaces in its music URLs.
+func lastFMPathSegment(s string) string {
+	return strings.ReplaceAll(url.PathEscape(s), "%20", "+")
+}
+
+func (s *Server) fetchLastFMTrack() (*LastFMTrack, error) {
+	req, err := http.NewRequestWithContext(s.ctx, http.MethodGet, lastFMURL, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := s.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("lastfm: unexpected status %s", resp.Status)
 	}
 
 	var lfmResponse LastFMResponse
-	if err := json.Unmarshal(body, &lfmResponse); err != nil {
-		return nil, err
+	if err := json.NewDecoder(resp.Body).Decode(&lfmResponse); err != nil {
+		return nil, fmt.Errorf("lastfm: decode response: %w", err)
 	}
 
 	if !lfmResponse.NowPlaying {
@@ -33,12 +45,14 @@ func (s *Server) fetchLastFMTrack() (*LastFMTrack, error) {
 		artwork = lfmResponse.Image[len(lfmResponse.Image)-1]
 	}
 
+	artist := lastFMPathSegment(lfmResponse.Artist)
+
 	return &LastFMTrack{
 		Name:      lfmResponse.Track,
 		Artist:    lfmResponse.Artist,
 		Album:     lfmResponse.Album,
-		URL:       "https://www.last.fm/music/" + lfmResponse.Artist + "/_/" + lfmResponse.Track,
-		ArtistURL: "https://www.last.fm/music/" + lfmResponse.Artist,
+		URL:       "https://www.last.fm/music/" + artist + "/_/" + lastFMPathSegment(lfmResponse.Track),
+		ArtistURL: "https://www.last.fm/music/" + artist,
 		Artwork:   artwork,
 	}, nil
 }
