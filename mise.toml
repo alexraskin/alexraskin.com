@@ -1,0 +1,44 @@
+[tools]
+go = "1.25"
+
+[settings]
+lockfile = true
+lockfile_platforms = ["linux-x64", "macos-arm64"]
+
+[env]
+PORT = "8000"
+
+[tasks.dev]
+description = "Run the site with live template reloading"
+run = "go run . -dev -port $PORT"
+
+[tasks.run]
+description = "Run the site with embedded templates and assets"
+run = "go run . -port $PORT"
+
+[tasks.build]
+description = "Build the binary"
+run = "go build -o alexraskin.com ."
+
+[tasks.fmt]
+description = "Format Go sources"
+run = "gofmt -l -w ."
+
+[tasks.vet]
+description = "Run go vet"
+run = "go vet ./..."
+
+[tasks.tidy]
+description = "Tidy go.mod"
+run = "go mod tidy"
+
+[tasks.check]
+description = "Format, vet and build"
+depends = ["fmt", "vet", "build"]
+
+[tasks.docker-up]
+description = "Run the site in Docker with rebuild-on-change"
+run = "docker compose up --build --watch"
+
+[tasks.docker-down]
+run = "docker compose down"
