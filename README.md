@@ -1,9 +1,8 @@
 # alexraskin.com
 
-This is the source code for my personal website, alexraskin.com.
-
-## Running the application
+Source for my personal website.
 
 ```bash
-docker compose up -d
+mise run dev      # local, live template reload
+mise run docker-up # docker
 ```
