@@ -8,8 +8,11 @@
 	<div class="site-content">
 		{{ template "header.gohtml" . }}
 		<main class="site-main">
-			<h1>Server stats</h1>
+			<h1>Uptime</h1>
 			<div class="detail-list">
+				<p><span class="label">Version</span><span class="value">{{ .Version }}</span></p>
+				<p><span class="label">Commit</span><span class="value">{{ .Commit }}</span></p>
+				<p><span class="label">Built</span><span class="value">{{ .BuildTime }}</span></p>
 				<p><span class="label">Go</span><span class="value">{{ .Go }}</span></p>
 				<p><span class="label">Uptime</span><span class="value">{{ .Uptime }}</span></p>
 				<p><span class="label">Memory used</span><span class="value">{{ .MemoryUsed }} / {{ .TotalMemory }}</span></p>

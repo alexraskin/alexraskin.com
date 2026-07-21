@@ -1,4 +1,4 @@
-package alexraskin
+package server
 
 type PageData struct {
 	Error     string

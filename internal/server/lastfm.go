@@ -1,4 +1,4 @@
-package alexraskin
+package server
 
 import (
 	"encoding/json"

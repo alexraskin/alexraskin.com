@@ -18,7 +18,11 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=0 \
     GOOS=$TARGETOS \
     GOARCH=$TARGETARCH \
-    go build -ldflags="-X 'main.version=$VERSION' -X 'main.commit=$COMMIT' -X 'main.buildTime=$BUILD_TIME'" -o alexraskin.com github.com/alexraskin/alexraskin.com
+    go build -ldflags="\
+      -X 'github.com/alexraskin/alexraskin.com/internal/ver.buildVersion=$VERSION' \
+      -X 'github.com/alexraskin/alexraskin.com/internal/ver.buildCommit=$COMMIT' \
+      -X 'github.com/alexraskin/alexraskin.com/internal/ver.buildTime=$BUILD_TIME'" \
+    -o alexraskin.com github.com/alexraskin/alexraskin.com
 
 FROM alpine
 

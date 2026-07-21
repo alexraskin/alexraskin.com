@@ -13,13 +13,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/alexraskin/alexraskin.com/alexraskin"
-)
-
-var (
-	version   = "unknown"
-	commit    = "unknown"
-	buildTime = "unknown"
+	"github.com/alexraskin/alexraskin.com/internal/server"
+	"github.com/alexraskin/alexraskin.com/internal/ver"
 )
 
 var (
@@ -36,7 +31,7 @@ func main() {
 	flag.Parse()
 
 	var (
-		tmplFunc alexraskin.ExecuteTemplateFunc
+		tmplFunc server.ExecuteTemplateFunc
 		assets   http.FileSystem
 	)
 
@@ -47,7 +42,13 @@ func main() {
 		}))
 	}
 
-	logger.Debug("Starting alexraskin.com...", slog.Any("version", version), slog.Any("commit", commit), slog.Any("buildTime", buildTime))
+	version := ver.Load()
+
+	logger.Debug("Starting alexraskin.com...",
+		slog.String("version", version.Version),
+		slog.String("commit", version.Revision),
+		slog.String("buildTime", version.BuildTime),
+	)
 
 	if *devMode {
 		logger.Debug("running in dev mode")
@@ -76,8 +77,8 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	server := alexraskin.NewServer(
-		alexraskin.FormatBuildVersion(version, commit, buildTime),
+	srv := server.NewServer(
+		version,
 		ctx,
 		*port,
 		httpClient,
@@ -86,7 +87,7 @@ func main() {
 		logger,
 	)
 
-	go server.Start()
+	go srv.Start()
 
 	logger.Debug("started web server", slog.Any("listen_addr", *port))
 
@@ -98,8 +99,8 @@ func main() {
 
 	ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	if err := server.Shutdown(ctx); err != nil {
+	if err := srv.Shutdown(ctx); err != nil {
 		logger.Error("graceful shutdown failed", slog.Any("err", err))
-		server.Close()
+		srv.Close()
 	}
 }

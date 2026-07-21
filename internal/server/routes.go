@@ -1,4 +1,4 @@
-package alexraskin
+package server
 
 import (
 	"fmt"
@@ -44,7 +44,7 @@ func (s *Server) Routes() http.Handler {
 	r.Get("/", s.index)
 	r.Head("/", s.index)
 	r.Get("/version", s.getVersion)
-	r.Get("/stats", s.stats)
+	r.Get("/uptime", s.uptime)
 	r.Get("/contact", s.contact)
 
 	r.Group(func(r chi.Router) {
@@ -61,7 +61,7 @@ func (s *Server) Routes() http.Handler {
 }
 
 func (s *Server) getVersion(w http.ResponseWriter, _ *http.Request) {
-	_, _ = w.Write([]byte(s.version))
+	_, _ = w.Write([]byte(s.version.Format()))
 }
 
 func (s *Server) index(w http.ResponseWriter, r *http.Request) {
@@ -127,12 +127,25 @@ func (s *Server) lastfm(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) stats(w http.ResponseWriter, r *http.Request) {
+func (s *Server) uptime(w http.ResponseWriter, r *http.Request) {
 	stats := runtime.MemStats{}
 	runtime.ReadMemStats(&stats)
 
+	commit := s.version.Revision
+	if len(commit) > 7 {
+		commit = commit[:7]
+	}
+
+	buildTime := s.version.BuildTime
+	if t, err := time.Parse(time.RFC3339, buildTime); err == nil {
+		buildTime = t.Format("2006-01-02 15:04 MST")
+	}
+
 	page := struct {
 		Go               string
+		Version          string
+		Commit           string
+		BuildTime        string
 		Uptime           string
 		MemoryUsed       string
 		TotalMemory      string
@@ -140,6 +153,9 @@ func (s *Server) stats(w http.ResponseWriter, r *http.Request) {
 		Goroutines       int
 	}{
 		Go:               runtime.Version(),
+		Version:          s.version.Version,
+		Commit:           commit,
+		BuildTime:        buildTime,
 		Uptime:           s.getDurationString(time.Since(statsStartTime)),
 		MemoryUsed:       humanize.Bytes(stats.Alloc),
 		TotalMemory:      humanize.Bytes(stats.Sys),
@@ -147,9 +163,9 @@ func (s *Server) stats(w http.ResponseWriter, r *http.Request) {
 		Goroutines:       runtime.NumGoroutine(),
 	}
 
-	err := s.tmplFunc(w, "stats.gohtml", page)
+	err := s.tmplFunc(w, "uptime.gohtml", page)
 	if err != nil {
-		s.logger.Error("failed to execute stats template", slog.Any("error", err))
+		s.logger.Error("failed to execute uptime template", slog.Any("error", err))
 	}
 }
 
