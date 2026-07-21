@@ -1,9 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Load LastFM data on page load
     loadLastFM();
-    
-    // Refresh LastFM data every minute
-    setInterval(loadLastFM, 60000);
 });
 
 async function loadLastFM() {

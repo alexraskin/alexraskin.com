@@ -10,8 +10,6 @@ import (
 	"os"
 	"runtime"
 	"time"
-
-	"github.com/yuin/goldmark"
 )
 
 type ExecuteTemplateFunc func(wr io.Writer, name string, data any) error
@@ -24,11 +22,10 @@ type Server struct {
 	server     *http.Server
 	assets     http.FileSystem
 	tmplFunc   ExecuteTemplateFunc
-	md         goldmark.Markdown
 	logger     *slog.Logger
 }
 
-func NewServer(version string, ctx context.Context, port string, httpClient *http.Client, assets http.FileSystem, tmplFunc ExecuteTemplateFunc, md goldmark.Markdown, logger *slog.Logger) *Server {
+func NewServer(version string, ctx context.Context, port string, httpClient *http.Client, assets http.FileSystem, tmplFunc ExecuteTemplateFunc, logger *slog.Logger) *Server {
 
 	s := &Server{
 		version:    version,
@@ -37,7 +34,6 @@ func NewServer(version string, ctx context.Context, port string, httpClient *htt
 		httpClient: httpClient,
 		assets:     assets,
 		tmplFunc:   tmplFunc,
-		md:         md,
 		logger:     logger,
 	}
 

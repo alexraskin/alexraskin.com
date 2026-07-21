@@ -1,9 +1,7 @@
 package alexraskin
 
 import (
-	"bytes"
 	"fmt"
-	"html/template"
 	"io"
 	"log/slog"
 	"mime"
@@ -47,6 +45,7 @@ func (s *Server) Routes() http.Handler {
 	r.Head("/", s.index)
 	r.Get("/version", s.getVersion)
 	r.Get("/stats", s.stats)
+	r.Get("/contact", s.contact)
 
 	r.Group(func(r chi.Router) {
 		r.Route("/api", func(r chi.Router) {
@@ -66,27 +65,15 @@ func (s *Server) getVersion(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (s *Server) index(w http.ResponseWriter, r *http.Request) {
-	readme, err := s.fetchGitHubProfile()
+	err := s.tmplFunc(w, "index.gohtml", PageData{})
 	if err != nil {
-		s.logger.Error("failed to fetch profile", slog.Any("error", err))
-		s.renderError(w, r, "Failed to fetch profile", http.StatusInternalServerError)
-		return
+		s.logger.Error("template execution failed", slog.Any("error", err))
+		s.renderError(w, r, "Failed to render template", http.StatusInternalServerError)
 	}
+}
 
-	var buf bytes.Buffer
-	if err := s.md.Convert([]byte(readme), &buf); err != nil {
-		s.logger.Error("failed to convert markdown", slog.Any("error", err))
-		s.renderError(w, r, "Failed to convert markdown", http.StatusInternalServerError)
-		return
-	}
-
-	data := PageData{
-		Home: HomeData{
-			Content: template.HTML(buf.String()),
-		},
-	}
-
-	err = s.tmplFunc(w, "index.gohtml", data)
+func (s *Server) contact(w http.ResponseWriter, r *http.Request) {
+	err := s.tmplFunc(w, "contact.gohtml", PageData{})
 	if err != nil {
 		s.logger.Error("template execution failed", slog.Any("error", err))
 		s.renderError(w, r, "Failed to render template", http.StatusInternalServerError)

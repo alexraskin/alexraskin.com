@@ -14,10 +14,6 @@ import (
 	"time"
 
 	"github.com/alexraskin/alexraskin.com/alexraskin"
-	"github.com/yuin/goldmark"
-	"github.com/yuin/goldmark/extension"
-	"github.com/yuin/goldmark/parser"
-	"github.com/yuin/goldmark/renderer/html"
 )
 
 var (
@@ -73,16 +69,6 @@ func main() {
 		assets = http.FS(Assets)
 	}
 
-	md := goldmark.New(
-		goldmark.WithExtensions(extension.GFM),
-		goldmark.WithParserOptions(
-			parser.WithAutoHeadingID(),
-		),
-		goldmark.WithRendererOptions(
-			html.WithUnsafe(),
-		),
-	)
-
 	httpClient := &http.Client{
 		Timeout: 10 * time.Second,
 	}
@@ -97,7 +83,6 @@ func main() {
 		httpClient,
 		assets,
 		tmplFunc,
-		md,
 		logger,
 	)
 

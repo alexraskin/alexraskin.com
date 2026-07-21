@@ -1,0 +1,20 @@
+{{ template "head.gohtml" . }}
+<body>
+<div class="global-toolbar">
+	{{ template "toolbar.gohtml" . }}
+</div>
+<div class="site">
+	{{ template "sidebar.gohtml" . }}
+	<div class="site-content">
+		{{ template "header.gohtml" . }}
+		<main class="site-main">
+			<h1>Contact</h1>
+			<div class="detail-list">
+				<p><span class="label">GitHub</span><span class="value"><a href="https://github.com/alexraskin" target="_blank" rel="noopener">@alexraskin</a></span></p>
+				<p><span class="label">Email</span><span class="value">hi [at] alexraskin [dot] com</span></p>
+			</div>
+		</main>
+	</div>
+</div>
+</body>
+</html>

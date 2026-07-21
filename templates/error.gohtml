@@ -1,18 +1,23 @@
 {{ template "head.gohtml" . }}
 <body>
-<div class="container">
-	{{ template "header.gohtml" . }}
-	<main>
-		<h1 class="error-title">{{ .Status }}</h1>
-		<p>{{ .Error }}</p>
-		<hr/>
-		<div class="detail-list">
-			<p><span class="label">path</span><span class="value">{{ .Path }}</span></p>
-			<p><span class="label">request id</span><span class="value">{{ .RequestID }}</span></p>
-		</div>
-		<p>Try again later, or <a href="https://github.com/alexraskin/alexraskin.com/issues/new">open an issue</a>.</p>
-	</main>
-	{{ template "footer.gohtml" . }}
+<div class="global-toolbar">
+	{{ template "toolbar.gohtml" . }}
+</div>
+<div class="site">
+	{{ template "sidebar.gohtml" . }}
+	<div class="site-content">
+		{{ template "header.gohtml" . }}
+		<main class="site-main">
+			<p class="error-status">{{ .Status }}</p>
+			<h1>{{ .Error }}</h1>
+			<div class="detail-list">
+				<p><span class="label">Path</span><span class="value">{{ .Path }}</span></p>
+				<p><span class="label">Request ID</span><span class="value">{{ .RequestID }}</span></p>
+			</div>
+			<p>Try again later, or <a href="https://github.com/alexraskin/alexraskin.com/issues/new">open an issue</a>.</p>
+			<p><a class="button" href="/">Back home</a></p>
+		</main>
+	</div>
 </div>
 </body>
 </html>

@@ -1,11 +1,16 @@
 {{ template "head.gohtml" . }}
 <body>
-<div class="container">
-	{{ template "header.gohtml" . }}
-	<main>
-		{{ template "home.gohtml" . }}
-	</main>
-	{{ template "footer.gohtml" . }}
+<div class="global-toolbar">
+	{{ template "toolbar.gohtml" . }}
+</div>
+<div class="site">
+	{{ template "sidebar.gohtml" . }}
+	<div class="site-content">
+		{{ template "header.gohtml" . }}
+		<main class="site-main">
+			{{ template "home.gohtml" . }}
+		</main>
+	</div>
 </div>
 </body>
 </html>

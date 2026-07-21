@@ -1,17 +1,10 @@
 package alexraskin
 
-import "html/template"
-
 type PageData struct {
-	Home      HomeData
 	Error     string
 	Status    int
 	Path      string
 	RequestID string
-}
-
-type HomeData struct {
-	Content template.HTML
 }
 
 type LastFMTrack struct {

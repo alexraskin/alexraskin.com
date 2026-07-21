@@ -1,19 +1,23 @@
 {{ template "head.gohtml" . }}
 <body>
-<div class="container">
-	{{ template "header.gohtml" . }}
-	<main>
-		<h1>Server stats</h1>
-		<hr/>
-		<div class="detail-list">
-			<p><span class="label">go</span><span class="value">{{ .Go }}</span></p>
-			<p><span class="label">uptime</span><span class="value">{{ .Uptime }}</span></p>
-			<p><span class="label">memory used</span><span class="value">{{ .MemoryUsed }} / {{ .TotalMemory }}</span></p>
-			<p><span class="label">gc total</span><span class="value">{{ .GarbageCollected }}</span></p>
-			<p><span class="label">goroutines</span><span class="value">{{ .Goroutines }}</span></p>
-		</div>
-	</main>
-	{{ template "footer.gohtml" . }}
+<div class="global-toolbar">
+	{{ template "toolbar.gohtml" . }}
+</div>
+<div class="site">
+	{{ template "sidebar.gohtml" . }}
+	<div class="site-content">
+		{{ template "header.gohtml" . }}
+		<main class="site-main">
+			<h1>Server stats</h1>
+			<div class="detail-list">
+				<p><span class="label">Go</span><span class="value">{{ .Go }}</span></p>
+				<p><span class="label">Uptime</span><span class="value">{{ .Uptime }}</span></p>
+				<p><span class="label">Memory used</span><span class="value">{{ .MemoryUsed }} / {{ .TotalMemory }}</span></p>
+				<p><span class="label">GC total</span><span class="value">{{ .GarbageCollected }}</span></p>
+				<p><span class="label">Goroutines</span><span class="value">{{ .Goroutines }}</span></p>
+			</div>
+		</main>
+	</div>
 </div>
 </body>
 </html>

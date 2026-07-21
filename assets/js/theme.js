@@ -24,15 +24,15 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const toggle = document.getElementById('theme-toggle');
-        if (!toggle) return;
-
-        toggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            const current = document.documentElement.getAttribute('data-theme') || systemTheme();
-            const next = current === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', next);
-            setCookie(COOKIE, next, 365);
+        // Sidebar (desktop) and header (mobile) each render a toggle.
+        document.querySelectorAll('.js-theme-toggle').forEach((toggle) => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const current = document.documentElement.getAttribute('data-theme') || systemTheme();
+                const next = current === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                setCookie(COOKIE, next, 365);
+            });
         });
     });
 })();
