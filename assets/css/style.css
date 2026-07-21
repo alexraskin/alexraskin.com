@@ -461,9 +461,12 @@ pre code {
 /* --- Last.fm -------------------------------------------------------------- */
 
 #lastfm {
-    border-top: 1px solid var(--tertiary);
     margin-top: var(--space-70);
-    padding-top: var(--space-70);
+}
+
+/* Reserve the artwork's height so the hero doesn't jump when the fetch lands. */
+#lastfm:empty {
+    min-height: 72px;
 }
 
 #lastfm h2 {
