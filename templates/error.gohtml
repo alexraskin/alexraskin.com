@@ -1,23 +1,19 @@
-{{ template "head.gohtml" . }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/images/favicon.ico" sizes="32x32">
+  <title>{{ .Status }} — Alex Raskin</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
 <body>
-<div class="global-toolbar">
-	{{ template "toolbar.gohtml" . }}
-</div>
-<div class="site">
-	{{ template "sidebar.gohtml" . }}
-	<div class="site-content">
-		{{ template "header.gohtml" . }}
-		<main class="site-main">
-			<p class="error-status">{{ .Status }}</p>
-			<h1>{{ .Error }}</h1>
-			<div class="detail-list">
-				<p><span class="label">Path</span><span class="value">{{ .Path }}</span></p>
-				<p><span class="label">Request ID</span><span class="value">{{ .RequestID }}</span></p>
-			</div>
-			<p>Try again later, or <a href="https://github.com/alexraskin/alexraskin.com/issues/new">open an issue</a>.</p>
-			<p><a class="button" href="/">Back home</a></p>
-		</main>
-	</div>
-</div>
+  <div class="container">
+    <main>
+      <h2>{{ .Status }} — {{ .Error }}</h2>
+      <p>Nothing here. <a href="/">Go home</a>.</p>
+    </main>
+  </div>
 </body>
 </html>

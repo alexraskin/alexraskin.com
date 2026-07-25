@@ -1,16 +1,33 @@
-{{ template "head.gohtml" . }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/images/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+  <meta name="description" content="Alex Raskin">
+  <title>Alex Raskin</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
 <body>
-<div class="global-toolbar">
-	{{ template "toolbar.gohtml" . }}
-</div>
-<div class="site">
-	{{ template "sidebar.gohtml" . }}
-	<div class="site-content">
-		{{ template "header.gohtml" . }}
-		<main class="site-main">
-			{{ template "home.gohtml" . }}
-		</main>
-	</div>
-</div>
+  <div class="container">
+    <main>
+      <h2>Hello! I'm Alex 👋</h2>
+
+      <p>DevOps Engineer. Infrastructure, Cats and Franzbrötchen.</p>
+
+      <p><a href="https://github.com/alexraskin">GitHub</a> ·
+      <a href="https://twitter.com/notalexraskin">Twitter</a></p>
+
+      {{ with .Track }}
+        <p class="muted">
+          {{ if .NowPlaying }}Currently listening to{{ else }}Last listened to{{ end }}
+          <a href="{{ .URL }}">{{ .Name }}</a> by
+          <a href="{{ .ArtistURL }}">{{ .Artist }}</a>.
+        </p>
+      {{ end }}
+    </main>
+  </div>
 </body>
 </html>

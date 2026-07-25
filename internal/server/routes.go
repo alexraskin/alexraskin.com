@@ -1,23 +1,18 @@
 package server
 
 import (
-	"fmt"
 	"io"
 	"log/slog"
 	"mime"
 	"net/http"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"time"
 
-	"github.com/dustin/go-humanize"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httprate"
 )
-
-var statsStartTime = time.Now()
 
 func (s *Server) Routes() http.Handler {
 	r := chi.NewRouter()
@@ -44,16 +39,6 @@ func (s *Server) Routes() http.Handler {
 	r.Get("/", s.index)
 	r.Head("/", s.index)
 	r.Get("/version", s.getVersion)
-	r.Get("/uptime", s.uptime)
-	r.Get("/contact", s.contact)
-
-	r.Group(func(r chi.Router) {
-		r.Route("/api", func(r chi.Router) {
-			r.Route("/lastfm", func(r chi.Router) {
-				r.Get("/", s.lastfm)
-			})
-		})
-	})
 
 	r.NotFound(s.notFound)
 
@@ -65,36 +50,28 @@ func (s *Server) getVersion(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (s *Server) index(w http.ResponseWriter, r *http.Request) {
-	err := s.tmplFunc(w, "index.gohtml", PageData{})
+	// A missing track just drops the "listening to" line from the page.
+	track, err := s.fetchLastFMTrack()
+	if err != nil {
+		s.logger.Error("failed to fetch lastfm data", slog.Any("error", err))
+	}
+
+	err = s.tmplFunc(w, "index.gohtml", PageData{Track: track})
 	if err != nil {
 		s.logger.Error("template execution failed", slog.Any("error", err))
 		s.renderError(w, r, "Failed to render template", http.StatusInternalServerError)
 	}
 }
 
-func (s *Server) contact(w http.ResponseWriter, r *http.Request) {
-	err := s.tmplFunc(w, "contact.gohtml", PageData{})
-	if err != nil {
-		s.logger.Error("template execution failed", slog.Any("error", err))
-		s.renderError(w, r, "Failed to render template", http.StatusInternalServerError)
-	}
-}
-
+// One page only, so anything unknown goes home instead of 404ing.
 func (s *Server) notFound(w http.ResponseWriter, r *http.Request) {
-	s.renderError(w, r, "Page not found", http.StatusNotFound)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func (s *Server) renderError(w http.ResponseWriter, r *http.Request, message string, status int) {
-	requestID := middleware.GetReqID(r.Context())
-	if requestID == "" {
-		requestID = "unknown"
-	}
-
 	data := PageData{
-		Error:     message,
-		Status:    status,
-		Path:      r.URL.Path,
-		RequestID: requestID,
+		Error:  message,
+		Status: status,
 	}
 
 	w.WriteHeader(status)
@@ -105,67 +82,6 @@ func (s *Server) renderError(w http.ResponseWriter, r *http.Request, message str
 			slog.String("original_error", message),
 		)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
-}
-
-func (s *Server) lastfm(w http.ResponseWriter, r *http.Request) {
-	track, err := s.fetchLastFMTrack()
-	if err != nil {
-		s.logger.Error("failed to fetch lastfm data", slog.Any("error", err))
-		track = nil
-	}
-
-	data := struct {
-		Track *LastFMTrack
-	}{
-		Track: track,
-	}
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := s.tmplFunc(w, "lastfm.gohtml", data); err != nil {
-		s.logger.Error("failed to execute lastfm template", slog.Any("error", err))
-	}
-}
-
-func (s *Server) uptime(w http.ResponseWriter, r *http.Request) {
-	stats := runtime.MemStats{}
-	runtime.ReadMemStats(&stats)
-
-	commit := s.version.Revision
-	if len(commit) > 7 {
-		commit = commit[:7]
-	}
-
-	buildTime := s.version.BuildTime
-	if t, err := time.Parse(time.RFC3339, buildTime); err == nil {
-		buildTime = t.Format("2006-01-02 15:04 MST")
-	}
-
-	page := struct {
-		Go               string
-		Version          string
-		Commit           string
-		BuildTime        string
-		Uptime           string
-		MemoryUsed       string
-		TotalMemory      string
-		GarbageCollected string
-		Goroutines       int
-	}{
-		Go:               runtime.Version(),
-		Version:          s.version.Version,
-		Commit:           commit,
-		BuildTime:        buildTime,
-		Uptime:           s.getDurationString(time.Since(statsStartTime)),
-		MemoryUsed:       humanize.Bytes(stats.Alloc),
-		TotalMemory:      humanize.Bytes(stats.Sys),
-		GarbageCollected: humanize.Bytes(stats.TotalAlloc),
-		Goroutines:       runtime.NumGoroutine(),
-	}
-
-	err := s.tmplFunc(w, "uptime.gohtml", page)
-	if err != nil {
-		s.logger.Error("failed to execute uptime template", slog.Any("error", err))
 	}
 }
 
@@ -196,13 +112,4 @@ func (s *Server) cacheControl(next http.Handler) http.Handler {
 		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 		next.ServeHTTP(w, r)
 	})
-}
-
-func (s *Server) getDurationString(duration time.Duration) string {
-	return fmt.Sprintf(
-		"%0.2d:%02d:%02d",
-		int(duration.Hours()),
-		int(duration.Minutes())%60,
-		int(duration.Seconds())%60,
-	)
 }

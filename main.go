@@ -71,7 +71,8 @@ func main() {
 	}
 
 	httpClient := &http.Client{
-		Timeout: 10 * time.Second,
+		// Keeps a slow last.fm upstream from stalling the page render.
+		Timeout: 3 * time.Second,
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())

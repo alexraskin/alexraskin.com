@@ -1,10 +1,9 @@
 package server
 
 type PageData struct {
-	Error     string
-	Status    int
-	Path      string
-	RequestID string
+	Error  string
+	Status int
+	Track  *LastFMTrack
 }
 
 type LastFMTrack struct {
