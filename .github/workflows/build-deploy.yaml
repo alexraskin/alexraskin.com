@@ -42,21 +42,3 @@ jobs:
             ghcr.io/alexraskin/alexraskin.com:latest
             ghcr.io/alexraskin/alexraskin.com:${{ github.ref_name }}
             ghcr.io/alexraskin/alexraskin.com:${{ github.sha }}
-  deploy:
-    needs:
-      - build-and-push-image
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy
-        uses: fjogeleit/http-request-action@v1
-        with:
-          url: "https://swarmctl.alexraskin.com/v1/update/alexraskin_web?image=ghcr.io/alexraskin/alexraskin.com:${{ github.ref_name }}"
-          method: "POST"
-          timeout: 60000
-          customHeaders: '{"Authorization": "Bearer ${{ secrets.AUTH_TOKEN }}"}'
-      - name: Shoutrrr
-        uses: containrrr/shoutrrr-action@v1
-        with:
-          url: ${{ secrets.SHOUTRRR_URL }}
-          title: Deployed alexraskin.com:${{ github.sha }}
-          message: See changes at ${{ github.event.compare }}. 
