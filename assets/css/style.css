@@ -1,9 +1,39 @@
+/* B612 (SIL OFL 1.1), subset to Latin. See /assets/fonts/OFL.txt. */
+@font-face {
+    font-family: "B612";
+    src: url("/assets/fonts/B612-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "B612";
+    src: url("/assets/fonts/B612-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "B612";
+    src: url("/assets/fonts/B612-Italic.woff2") format("woff2");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
 :root {
     --background-color: #fff;
     --heading-text-color: #000;
     --primary-text-color: #222;
     --secondary-text-color: #79858e;
     --accent-color: #008ef5;
+    --k8s-color: #326ce5;
+    --go-color: #007d9c;
+    --terraform-color: #7b42bc;
+    --nix-color: #5277c3;
+    --bash-color: #3f7a12;
     --base-font-size: 1em;
     --base-text-vspace: 1.333em;
 }
@@ -15,6 +45,11 @@
         --primary-text-color: #ddd;
         --secondary-text-color: #7b8992;
         --accent-color: #4db5ff;
+        --k8s-color: #7aa5f5;
+        --go-color: #00add8;
+        --terraform-color: #b18ae0;
+        --nix-color: #7ebae4;
+        --bash-color: #89e051;
     }
 }
 
@@ -27,12 +62,12 @@ body {
 
 html {
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto,
-        Helvetica, Arial, sans-serif;
+    font-family: "B612", -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+        Roboto, Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 1.75;
+    line-height: 1.7;
     font-weight: 400;
-    letter-spacing: -0.005em;
+    letter-spacing: normal;
     color: var(--primary-text-color);
     -webkit-text-size-adjust: 100%;
 }
@@ -62,7 +97,7 @@ main h1,
 main h2,
 main h3 {
     color: var(--heading-text-color);
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: normal;
     text-wrap: balance;
     margin: calc(var(--base-text-vspace) * 1.333) 0 var(--base-text-vspace) 0;
@@ -80,7 +115,47 @@ main p {
 
 main b,
 main strong {
-    font-weight: 550;
+    font-weight: 700;
+}
+
+.k8s {
+    color: var(--k8s-color);
+}
+
+.go {
+    color: var(--go-color);
+}
+
+.terraform {
+    color: var(--terraform-color);
+}
+
+.nix {
+    color: var(--nix-color);
+}
+
+.bash {
+    color: var(--bash-color);
+}
+
+main ul {
+    font-size: var(--base-font-size);
+    margin: 0 0 var(--base-text-vspace) 0;
+    padding-left: 1.25em;
+    list-style: none;
+}
+
+main li {
+    margin-bottom: 0.5em;
+    text-wrap: pretty;
+}
+
+main li::before {
+    content: "\2014";
+    color: var(--secondary-text-color);
+    display: inline-block;
+    width: 1.25em;
+    margin-left: -1.25em;
 }
 
 a {

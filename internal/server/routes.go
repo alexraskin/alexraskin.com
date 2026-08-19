@@ -14,6 +14,12 @@ import (
 	"github.com/go-chi/httprate"
 )
 
+// Go's built-in table has no woff2, and the alpine image ships no
+// /etc/mime.types, so the font would otherwise be sniffed as octet-stream.
+func init() {
+	_ = mime.AddExtensionType(".woff2", "font/woff2")
+}
+
 func (s *Server) Routes() http.Handler {
 	r := chi.NewRouter()
 
