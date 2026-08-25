@@ -14,26 +14,28 @@ import (
 type ExecuteTemplateFunc func(wr io.Writer, name string, data any) error
 
 type Server struct {
-	version    ver.Version
-	ctx        context.Context
-	port       string
-	httpClient *http.Client
-	server     *http.Server
-	assets     http.FileSystem
-	tmplFunc   ExecuteTemplateFunc
-	logger     *slog.Logger
+	version     ver.Version
+	ctx         context.Context
+	port        string
+	httpClient  *http.Client
+	server      *http.Server
+	assets      http.FileSystem
+	assetHashes AssetHashes
+	tmplFunc    ExecuteTemplateFunc
+	logger      *slog.Logger
 }
 
-func NewServer(version ver.Version, ctx context.Context, port string, httpClient *http.Client, assets http.FileSystem, tmplFunc ExecuteTemplateFunc, logger *slog.Logger) *Server {
+func NewServer(version ver.Version, ctx context.Context, port string, httpClient *http.Client, assets http.FileSystem, assetHashes AssetHashes, tmplFunc ExecuteTemplateFunc, logger *slog.Logger) *Server {
 
 	s := &Server{
-		version:    version,
-		ctx:        ctx,
-		port:       port,
-		httpClient: httpClient,
-		assets:     assets,
-		tmplFunc:   tmplFunc,
-		logger:     logger,
+		version:     version,
+		ctx:         ctx,
+		port:        port,
+		httpClient:  httpClient,
+		assets:      assets,
+		assetHashes: assetHashes,
+		tmplFunc:    tmplFunc,
+		logger:      logger,
 	}
 
 	s.server = &http.Server{
