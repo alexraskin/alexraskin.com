@@ -170,3 +170,9 @@ a:hover {
 .muted {
     color: var(--secondary-text-color);
 }
+
+.email {
+    color: var(--heading-text-color);
+    -webkit-user-select: all;
+    user-select: all;
+}
