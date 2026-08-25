@@ -32,7 +32,7 @@
       <p><a href="https://github.com/alexraskin">GitHub</a> ·
       <a href="https://twitter.com/notalexraskin">Twitter</a></p>
 
-      <p>Email me at <span class="email">hi [at] alexraskin [dot] com</span></p>
+      <p>Email me at <span class="email" id="email"><noscript>hi [at] alexraskin [dot] com</noscript></span></p>
 
       {{ with .Track }}
         <p class="muted">
@@ -43,5 +43,6 @@
       {{ end }}
     </main>
   </div>
+  <script src="/assets/js/email.js" defer></script>
 </body>
 </html>
