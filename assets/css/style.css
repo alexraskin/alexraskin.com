@@ -1,10 +1,14 @@
 /* B612 (SIL OFL 1.1), subset to Latin. See /assets/fonts/OFL.txt. */
+/* Regular and Bold are preloaded in the document head, so `optional` gives them
+   a short block period and then sticks with whatever won: no fallback-to-B612
+   swap mid-paint on a cold load. Italic isn't preloaded (nothing renders it
+   above the fold) so it keeps `swap`. */
 @font-face {
     font-family: "B612";
     src: url("/assets/fonts/B612-Regular.woff2") format("woff2");
     font-weight: 400;
     font-style: normal;
-    font-display: swap;
+    font-display: optional;
 }
 
 @font-face {
@@ -12,7 +16,7 @@
     src: url("/assets/fonts/B612-Bold.woff2") format("woff2");
     font-weight: 700;
     font-style: normal;
-    font-display: swap;
+    font-display: optional;
 }
 
 @font-face {
