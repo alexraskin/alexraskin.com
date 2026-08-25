@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="/assets/images/favicon.ico" sizes="32x32">
-  <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+  <link rel="icon" href="{{ asset "/assets/images/favicon.svg" }}" type="image/svg+xml">
+  <link rel="icon" href="{{ asset "/assets/images/favicon.ico" }}" sizes="32x32">
+  <link rel="apple-touch-icon" href="{{ asset "/assets/images/apple-touch-icon.png" }}">
   <meta name="description" content="Alex Raskin — DevOps engineer. Infrastructure, Kubernetes, Go, Nix.">
   <title>Alex Raskin</title>
-  <link rel="preload" href="/assets/fonts/B612-Regular.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/assets/fonts/B612-Bold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="preload" href="{{ asset "/assets/fonts/B612-Regular.woff2" }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ asset "/assets/fonts/B612-Bold.woff2" }}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ asset "/assets/css/style.css" }}">
 </head>
 <body>
   <div class="container">
@@ -45,6 +45,6 @@
       {{ end }}
     </main>
   </div>
-  <script src="/assets/js/email.js" defer></script>
+  <script src="{{ asset "/assets/js/email.js" }}" defer></script>
 </body>
 </html>

@@ -31,8 +31,9 @@ func main() {
 	flag.Parse()
 
 	var (
-		tmplFunc server.ExecuteTemplateFunc
-		assets   http.FileSystem
+		tmplFunc    server.ExecuteTemplateFunc
+		assets      http.FileSystem
+		assetHashes server.AssetHashes
 	)
 
 	logger := slog.Default()
@@ -52,8 +53,12 @@ func main() {
 
 	if *devMode {
 		logger.Debug("running in dev mode")
+		// Assets come off disk here, so hashing the embedded copies would only
+		// pin URLs to bytes that are no longer being served. An empty map
+		// leaves asset paths unversioned.
+		assetHashes = server.AssetHashes{}
 		tmplFunc = func(wr io.Writer, name string, data any) error {
-			tmpl, err := template.New("").ParseGlob("templates/*.gohtml")
+			tmpl, err := template.New("").Funcs(assetFuncs(assetHashes)).ParseGlob("templates/*.gohtml")
 			if err != nil {
 				return err
 			}
@@ -61,7 +66,14 @@ func main() {
 		}
 		assets = http.Dir(".")
 	} else {
-		tmpl, err := template.New("").ParseFS(Templates, "templates/*.gohtml")
+		var err error
+		assetHashes, err = server.HashAssets(Assets)
+		if err != nil {
+			logger.Error("failed to hash assets", slog.Any("error", err))
+			os.Exit(-1)
+		}
+
+		tmpl, err := template.New("").Funcs(assetFuncs(assetHashes)).ParseFS(Templates, "templates/*.gohtml")
 		if err != nil {
 			logger.Error("failed to parse templates", slog.Any("error", err))
 			os.Exit(-1)
@@ -84,6 +96,7 @@ func main() {
 		*port,
 		httpClient,
 		assets,
+		assetHashes,
 		tmplFunc,
 		logger,
 	)
@@ -103,5 +116,12 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		logger.Error("graceful shutdown failed", slog.Any("err", err))
 		srv.Close()
+	}
+}
+
+// assetFuncs exposes the content-hashed asset URLs to templates.
+func assetFuncs(hashes server.AssetHashes) template.FuncMap {
+	return template.FuncMap{
+		"asset": hashes.URL,
 	}
 }
