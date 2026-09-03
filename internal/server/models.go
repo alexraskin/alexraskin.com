@@ -6,6 +6,10 @@ type PageData struct {
 	Track  *LastFMTrack
 }
 
+type ReviewsPageData struct {
+	Reviews []Review
+}
+
 type LastFMTrack struct {
 	Name       string
 	Artist     string

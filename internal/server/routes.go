@@ -51,6 +51,8 @@ func (s *Server) Routes() http.Handler {
 	r.Handle("/favicon.ico", s.serveFile(s.assets, "assets/images/favicon.ico"))
 	r.Get("/", s.index)
 	r.Head("/", s.index)
+	r.Get("/franzbroetchen", s.franzbroetchen)
+	r.Head("/franzbroetchen", s.franzbroetchen)
 	r.Get("/version", s.getVersion)
 
 	r.NotFound(s.notFound)
@@ -76,7 +78,22 @@ func (s *Server) index(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// One page only, so anything unknown goes home instead of 404ing.
+func (s *Server) franzbroetchen(w http.ResponseWriter, r *http.Request) {
+	reviews, err := s.reviewsFunc()
+	if err != nil {
+		s.logger.Error("failed to load reviews", slog.Any("error", err))
+		s.renderError(w, r, "Failed to load reviews", http.StatusInternalServerError)
+		return
+	}
+
+	err = s.tmplFunc(w, "franzbroetchen.gohtml", ReviewsPageData{Reviews: reviews})
+	if err != nil {
+		s.logger.Error("template execution failed", slog.Any("error", err))
+		s.renderError(w, r, "Failed to render template", http.StatusInternalServerError)
+	}
+}
+
+// Only a couple of pages, so anything unknown goes home instead of 404ing.
 func (s *Server) notFound(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }

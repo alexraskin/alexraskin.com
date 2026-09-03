@@ -23,6 +23,9 @@ var (
 
 	//go:embed assets
 	Assets embed.FS
+
+	//go:embed data
+	Data embed.FS
 )
 
 func main() {
@@ -32,6 +35,7 @@ func main() {
 
 	var (
 		tmplFunc    server.ExecuteTemplateFunc
+		reviewsFunc server.ReviewsFunc
 		assets      http.FileSystem
 		assetHashes server.AssetHashes
 	)
@@ -65,6 +69,11 @@ func main() {
 			return tmpl.ExecuteTemplate(wr, name, data)
 		}
 		assets = http.Dir(".")
+		// Reading the review file per request means a new Franzbrötchen shows
+		// up on refresh, the same way template edits do.
+		reviewsFunc = func() ([]server.Review, error) {
+			return server.LoadReviews(os.DirFS("."), os.DirFS("."))
+		}
 	} else {
 		var err error
 		assetHashes, err = server.HashAssets(Assets)
@@ -80,6 +89,14 @@ func main() {
 		}
 		tmplFunc = tmpl.ExecuteTemplate
 		assets = http.FS(Assets)
+
+		// A malformed review is a startup failure rather than a broken page.
+		reviews, err := server.LoadReviews(Data, Assets)
+		if err != nil {
+			logger.Error("failed to load reviews", slog.Any("error", err))
+			os.Exit(-1)
+		}
+		reviewsFunc = func() ([]server.Review, error) { return reviews, nil }
 	}
 
 	httpClient := &http.Client{
@@ -98,6 +115,7 @@ func main() {
 		assets,
 		assetHashes,
 		tmplFunc,
+		reviewsFunc,
 		logger,
 	)
 
