@@ -9,8 +9,10 @@ mise run docker-up # docker
 
 ## Adding a Franzbrötchen review
 
-1. Drop the photo in `assets/images/franzbroetchen/`.
-2. Append an object to `data/franzbroetchen.json`:
+1. `mise run add-review <photo.jpg> [stem]` — writes AVIF and JPEG copies at the
+   widths the page serves into `assets/images/franzbroetchen/`, and prints the
+   JSON entry. Only these copies are committed; keep the original elsewhere.
+2. Append the printed object to `data/franzbroetchen.json` and fill it in:
 
 ```json
 {
@@ -24,6 +26,8 @@ mise run docker-up # docker
 }
 ```
 
-`rating` is 1-5, `date` is `YYYY-MM-DD`, and entries render newest first.
-Image dimensions are read from the file, so nothing else needs updating. A
-malformed entry fails the build at startup rather than rendering a broken page.
+`rating` is 1-5, `date` is `YYYY-MM-DD`, and entries render newest first. The
+`photo` path is a logical name: the page picks up whatever `<stem>-<width>.avif`
+and `<stem>-<width>.jpg` files sit beside it, so encoding another size later
+needs no code change. Image dimensions are read from the file. A malformed entry
+fails the build at startup rather than rendering a broken page.

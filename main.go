@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -140,6 +142,19 @@ func main() {
 // assetFuncs exposes the content-hashed asset URLs to templates.
 func assetFuncs(hashes server.AssetHashes) template.FuncMap {
 	return template.FuncMap{
-		"asset": hashes.URL,
+		"asset":  hashes.URL,
+		"srcset": srcset(hashes),
+	}
+}
+
+// srcset renders sized photo variants as a srcset attribute, versioning each
+// URL the same way a lone asset would so the whole set caches immutably.
+func srcset(hashes server.AssetHashes) func([]server.Variant) string {
+	return func(variants []server.Variant) string {
+		candidates := make([]string, len(variants))
+		for i, variant := range variants {
+			candidates[i] = hashes.URL(variant.URL) + " " + strconv.Itoa(variant.Width) + "w"
+		}
+		return strings.Join(candidates, ", ")
 	}
 }
