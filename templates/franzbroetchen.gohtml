@@ -19,9 +19,10 @@
         <img class="emoji" src="{{ asset "/assets/images/franzbroetchen/franzbroetchen.png" }}"
              width="128" height="128" alt="" aria-hidden="true"></h2>
 
-      <p>Hamburg's finest pastry, rated out of five. One entry per Franzbrötchen,
-        no averages, no rankings — only what it was like on the day.</p>
+      <p>Franzbrötchen is my favorite pastry. Here are the ones I have tried,
+        rated out of five.</p>
 
+      {{ $sizes := "(max-width: 42rem) calc(100vw - 2.5rem), 608px" }}
       {{ range $i, $review := .Reviews }}
         <article class="review">
           <h3 class="review-place">
@@ -31,12 +32,17 @@
             <span class="rating" role="img" aria-label="{{ $review.Rating }} out of 5">{{ $review.Stars }}</span>
             <span class="muted">{{ $review.Location }} · {{ $review.Day }}</span>
           </p>
-          <img class="review-photo"
-               src="{{ asset $review.Photo }}"
-               width="{{ $review.Width }}"
-               height="{{ $review.Height }}"
-               alt="Franzbrötchen from {{ $review.Place }}"
-               {{ if $i }}loading="lazy" {{ end }}decoding="async">
+          <picture>
+            {{ with $review.AVIF }}<source type="image/avif" srcset="{{ srcset . }}" sizes="{{ $sizes }}">{{ end }}
+            <img class="review-photo"
+                 src="{{ asset $review.Fallback.URL }}"
+                 srcset="{{ srcset $review.JPEG }}"
+                 sizes="{{ $sizes }}"
+                 width="{{ $review.Width }}"
+                 height="{{ $review.Height }}"
+                 alt="Franzbrötchen from {{ $review.Place }}"
+                 {{ if $i }}loading="lazy" {{ end }}decoding="async">
+          </picture>
           {{ with $review.Note }}<p class="review-note">{{ . }}</p>{{ end }}
         </article>
       {{ else }}

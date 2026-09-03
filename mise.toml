@@ -16,6 +16,10 @@ run = "go run . -dev -port $PORT"
 description = "Run the site with embedded templates and assets"
 run = "go run . -port $PORT"
 
+[tasks.add-review]
+description = "Encode a Franzbrötchen photo into page variants and print its JSON entry"
+run = "scripts/add-review.sh"
+
 [tasks.build]
 description = "Build the binary"
 run = "go build -o alexraskin.com ."

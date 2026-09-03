@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"io"
 	"log/slog"
 	"mime"
@@ -86,11 +87,23 @@ func (s *Server) franzbroetchen(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.tmplFunc(w, "franzbroetchen.gohtml", ReviewsPageData{Reviews: reviews})
-	if err != nil {
+	// Rendering into a buffer keeps the error page reachable when a template
+	// fails, and gives the bytes an ETag: the page only changes when the review
+	// file or an asset URL does, so a repeat visit costs a 304 instead of a
+	// body. Cache-Control stays no-cache, which is revalidate-then-304.
+	var page bytes.Buffer
+	if err := s.tmplFunc(&page, "franzbroetchen.gohtml", ReviewsPageData{Reviews: reviews}); err != nil {
 		s.logger.Error("template execution failed", slog.Any("error", err))
 		s.renderError(w, r, "Failed to render template", http.StatusInternalServerError)
+		return
 	}
+
+	if serveNotModified(w, r, hashBytes(page.Bytes())) {
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_, _ = w.Write(page.Bytes())
 }
 
 // Only a couple of pages, so anything unknown goes home instead of 404ing.
