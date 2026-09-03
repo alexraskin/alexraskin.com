@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="{{ asset "/assets/images/favicon.svg" }}" type="image/svg+xml">
+  <link rel="icon" href="{{ asset "/assets/images/favicon.ico" }}" sizes="32x32">
+  <link rel="apple-touch-icon" href="{{ asset "/assets/images/apple-touch-icon.png" }}">
+  <meta name="description" content="Franzbrötchen reviews by Alex Raskin — rated out of five, one bakery at a time.">
+  <title>Franzbrötchen — Alex Raskin</title>
+  <link rel="preload" href="{{ asset "/assets/fonts/B612-Regular.woff2" }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ asset "/assets/fonts/B612-Bold.woff2" }}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ asset "/assets/css/style.css" }}">
+</head>
+<body>
+  <div class="container">
+    <main>
+      <h2>Franzbrötchen
+        <img class="emoji" src="{{ asset "/assets/images/franzbroetchen/franzbroetchen.png" }}"
+             width="128" height="128" alt="" aria-hidden="true"></h2>
+
+      <p>Hamburg's finest pastry, rated out of five. One entry per Franzbrötchen,
+        no averages, no rankings — only what it was like on the day.</p>
+
+      {{ range $i, $review := .Reviews }}
+        <article class="review">
+          <h3 class="review-place">
+            {{ with $review.URL }}<a href="{{ . }}">{{ $review.Place }}</a>{{ else }}{{ $review.Place }}{{ end }}
+          </h3>
+          <p class="review-meta">
+            <span class="rating" role="img" aria-label="{{ $review.Rating }} out of 5">{{ $review.Stars }}</span>
+            <span class="muted">{{ $review.Location }} · {{ $review.Day }}</span>
+          </p>
+          <img class="review-photo"
+               src="{{ asset $review.Photo }}"
+               width="{{ $review.Width }}"
+               height="{{ $review.Height }}"
+               alt="Franzbrötchen from {{ $review.Place }}"
+               {{ if $i }}loading="lazy" {{ end }}decoding="async">
+          {{ with $review.Note }}<p class="review-note">{{ . }}</p>{{ end }}
+        </article>
+      {{ else }}
+        <p class="muted">No Franzbrötchen yet. Unlikely, but possible.</p>
+      {{ end }}
+
+      <p><a href="/">← Back home</a></p>
+    </main>
+  </div>
+</body>
+</html>

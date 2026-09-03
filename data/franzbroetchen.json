@@ -1,0 +1,18 @@
+[
+  {
+    "place": "elbgold",
+    "location": "Hamburg, Germany",
+    "date": "2025-08-24",
+    "rating": 5,
+    "photo": "/assets/images/franzbroetchen/elbgold-hamburg.jpg",
+    "note": "Laminated properly, caramelised right through to the outer coil, and the cinnamon butter had pooled and gone crunchy at the edges. The bar everything else gets measured against."
+  },
+  {
+    "place": "Junge Die Bäckerei",
+    "location": "Hamburg, Germany",
+    "date": "2025-08-19",
+    "rating": 3,
+    "photo": "/assets/images/franzbroetchen/junge-hamburg.jpg",
+    "note": "Solid chain Franzbrötchen. Good colour and flake, but dry towards the middle and light on cinnamon. Fine if it is the one in front of you."
+  }
+]

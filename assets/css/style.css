@@ -38,6 +38,8 @@
     --terraform-color: #7b42bc;
     --nix-color: #5277c3;
     --bash-color: #3f7a12;
+    --star-color: #c2740c;
+    --rule-color: #e6e8eb;
     --base-font-size: 1em;
     --base-text-vspace: 1.333em;
 }
@@ -54,6 +56,8 @@
         --terraform-color: #b18ae0;
         --nix-color: #7ebae4;
         --bash-color: #89e051;
+        --star-color: #e6a33c;
+        --rule-color: #333b47;
     }
 }
 
@@ -179,4 +183,50 @@ a:hover {
     color: var(--heading-text-color);
     -webkit-user-select: all;
     user-select: all;
+}
+
+/* Franzbrötchen reviews. Each entry is a photo with its rating; the photos
+   carry width/height so the page doesn't reflow as they arrive. */
+.review {
+    border-top: 1px solid var(--rule-color);
+    padding-top: var(--base-text-vspace);
+    margin-bottom: calc(var(--base-text-vspace) * 1.5);
+}
+
+main .review-place {
+    margin: 0 0 0.25em 0;
+}
+
+.review-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.6em;
+    margin-bottom: 0.75em;
+}
+
+.rating {
+    color: var(--star-color);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+}
+
+.review-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    background-color: var(--rule-color);
+}
+
+.review-note {
+    margin-top: 0.75em;
+    text-wrap: pretty;
+}
+
+/* Hand-drawn Franzbrötchen in place of an emoji: no font to miss it, and it
+   looks the same everywhere. Sized in em so it tracks the heading. */
+.emoji {
+    width: 1.15em;
+    height: 1.15em;
+    vertical-align: -0.2em;
 }
