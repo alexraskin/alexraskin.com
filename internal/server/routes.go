@@ -21,8 +21,6 @@ const (
 	assetVersionParam = "v"
 )
 
-// Go's built-in table has no woff2, and the alpine image ships no
-// /etc/mime.types, so the font would otherwise be sniffed as octet-stream.
 func init() {
 	_ = mime.AddExtensionType(".woff2", "font/woff2")
 }
@@ -87,10 +85,6 @@ func (s *Server) franzbroetchen(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Rendering into a buffer keeps the error page reachable when a template
-	// fails, and gives the bytes an ETag: the page only changes when the review
-	// file or an asset URL does, so a repeat visit costs a 304 instead of a
-	// body. Cache-Control stays no-cache, which is revalidate-then-304.
 	var page bytes.Buffer
 	if err := s.tmplFunc(&page, "franzbroetchen.gohtml", ReviewsPageData{Reviews: reviews}); err != nil {
 		s.logger.Error("template execution failed", slog.Any("error", err))
@@ -106,7 +100,6 @@ func (s *Server) franzbroetchen(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(page.Bytes())
 }
 
-// Only a couple of pages, so anything unknown goes home instead of 404ing.
 func (s *Server) notFound(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
@@ -142,8 +135,6 @@ func (s *Server) serveFile(fs http.FileSystem, path string) http.HandlerFunc {
 			w.Header().Set("Content-Type", contentType)
 		}
 
-		// These are mounted at the root, so the asset middleware never sees
-		// them under their embedded path.
 		if asset, ok := s.assetHashes["/"+path]; ok && serveNotModified(w, r, asset.Hash) {
 			return
 		}
@@ -156,30 +147,20 @@ func (s *Server) cacheControl(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case strings.HasPrefix(r.URL.Path, assetPrefix):
-			// A versioned URL names its own content, so a change ships a new
-			// URL rather than waiting out a TTL. Unversioned requests are
-			// either stale markup or hand-typed, so they stay short-lived.
 			if r.URL.Query().Get(assetVersionParam) != "" {
 				w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 			} else {
 				w.Header().Set("Cache-Control", "public, max-age=3600")
 			}
 		case r.URL.Path == "/favicon.ico", r.URL.Path == "/robots.txt":
-			// Fixed paths that can't carry a version, but revalidate cheaply
-			// against their ETag.
 			w.Header().Set("Cache-Control", "public, max-age=86400")
 		default:
-			// The page carries live last.fm data, so it always revalidates.
-			// no-store would also cost the back/forward cache.
 			w.Header().Set("Cache-Control", "no-cache")
 		}
 		next.ServeHTTP(w, r)
 	})
 }
 
-// Assets are served from an embed.FS, whose files report a zero ModTime, so
-// net/http emits no Last-Modified and never generates an ETag itself. Without
-// this a revalidation has nothing to compare and refetches the whole body.
 func (s *Server) assetETag(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		asset, ok := s.assetHashes[r.URL.Path]
@@ -194,8 +175,6 @@ func (s *Server) assetETag(next http.Handler) http.Handler {
 	})
 }
 
-// serveNotModified sets the ETag and reports whether the request was answered
-// with a 304.
 func serveNotModified(w http.ResponseWriter, r *http.Request, hash string) bool {
 	etag := `"` + hash + `"`
 	w.Header().Set("ETag", etag)
@@ -218,8 +197,6 @@ func etagMatches(header, etag string) bool {
 	return false
 }
 
-// serveAssets answers from the in-memory asset set, falling back to the file
-// server that dev mode reads off disk.
 func (s *Server) serveAssets(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if s.assetHashes.serve(w, r) {

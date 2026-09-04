@@ -21,8 +21,6 @@ const (
 	reviewDateFmt = "2006-01-02"
 )
 
-// Review is one Franzbrötchen, as written by hand in data/franzbroetchen.json.
-// Adding one means appending an object there; nothing else has to change.
 type Review struct {
 	Place    string  `json:"place"`
 	Location string  `json:"location"`
@@ -35,26 +33,14 @@ type Review struct {
 	when time.Time
 }
 
-// Photo is one shot of a Franzbrötchen. In JSON it is a bare path string; the
-// sized copies beside it are found on disk, so an entry names a photo once and
-// gets whatever encodings exist.
 type Photo struct {
-	// Name is the logical path, e.g. "/assets/images/franzbroetchen/x.jpg". It
-	// need not exist: mise run add-review writes "<stem>-<width>.avif" and
-	// "<stem>-<width>.jpg" beside it.
 	Name string
-
-	// The sized copies found next to Name, smallest first.
 	AVIF []Variant
 	JPEG []Variant
-
-	// Read from the largest JPEG so the markup can reserve the right box and
-	// the page doesn't reflow as photos load.
 	Width  int
 	Height int
 }
 
-// UnmarshalJSON reads the photo from its path, which is all an entry writes.
 func (p *Photo) UnmarshalJSON(body []byte) error {
 	var name string
 	if err := json.Unmarshal(body, &name); err != nil {
@@ -64,44 +50,31 @@ func (p *Photo) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// Variant is one encoding of a photo at one width.
 type Variant struct {
 	URL   string
 	Width int
 }
 
-// ReviewsFunc returns the reviews to render. Dev mode re-reads the file per
-// request so a new entry shows up on refresh; the embedded build parses once.
 type ReviewsFunc func() ([]Review, error)
 
-// Stars renders the rating as filled and empty stars. The numeric rating is
-// what screen readers get, from the label in the template.
 func (r Review) Stars() string {
 	return strings.Repeat("★", r.Rating) + strings.Repeat("☆", maxRating-r.Rating)
 }
 
-// Day is the date as prose, e.g. "24 August 2025".
 func (r Review) Day() string {
 	return r.when.Format("2 January 2006")
 }
 
-// Fallback is the largest JPEG, for the <img> inside <picture>: what a browser
-// without AVIF downloads, and what an old one that ignores srcset gets.
 func (p Photo) Fallback() Variant {
 	return p.JPEG[len(p.JPEG)-1]
 }
 
-// LoadReviews reads the review file and measures each photo. Anything wrong
-// with an entry is an error rather than a half-rendered page: in the embedded
-// build that fails the process at startup, where it's obvious.
 func LoadReviews(dataFS, assetsFS fs.FS) ([]Review, error) {
 	body, err := fs.ReadFile(dataFS, reviewsPath)
 	if err != nil {
 		return nil, fmt.Errorf("reviews: read %s: %w", reviewsPath, err)
 	}
 
-	// The file is written by hand, so a key that no field claims is a typo
-	// worth reporting by name rather than silently dropping.
 	decoder := json.NewDecoder(bytes.NewReader(body))
 	decoder.DisallowUnknownFields()
 
@@ -116,7 +89,6 @@ func LoadReviews(dataFS, assetsFS fs.FS) ([]Review, error) {
 		}
 	}
 
-	// Newest first.
 	sort.SliceStable(reviews, func(i, j int) bool {
 		return reviews[i].when.After(reviews[j].when)
 	})
@@ -165,8 +137,6 @@ func (p *Photo) load(assetsFS fs.FS) error {
 		return err
 	}
 
-	// AVIF is an optimisation; the JPEG is what every browser can read, so a
-	// photo without one has nothing to show.
 	if len(p.JPEG) == 0 {
 		return fmt.Errorf("%q: no %s-<width>.jpg alongside it, run: mise run add-review <photo> %s",
 			p.Name, path.Base(stem), path.Base(stem))
@@ -187,9 +157,6 @@ func (p *Photo) load(assetsFS fs.FS) error {
 	return nil
 }
 
-// findVariants collects "<stem>-<width><ext>" files, smallest first. Widths
-// come from the filenames rather than a list in code, so adding a size is a
-// matter of encoding one more file.
 func findVariants(assetsFS fs.FS, stem, ext string) ([]Variant, error) {
 	prefix := strings.TrimPrefix(stem, "/")
 
@@ -203,8 +170,6 @@ func findVariants(assetsFS fs.FS, stem, ext string) ([]Variant, error) {
 		cut := strings.LastIndex(match, "-")
 		suffix := strings.TrimSuffix(match[cut+1:], ext)
 
-		// "x-1-672.jpg" is a variant of "x-1", not of "x": without this a photo
-		// would collect the sized copies of its neighbours.
 		if match[:cut] != prefix {
 			continue
 		}
