@@ -21,6 +21,10 @@ usage() {
 		  stem   basename for the generated files; defaults to a slug of the photo
 
 		example: mise run add-review ~/Downloads/IMG_5044.jpg elbgold-eppendorf
+
+		A review can show more than one photo: run this once per photo with
+		stems that differ, e.g. elbgold-eppendorf-1 and elbgold-eppendorf-2,
+		and list both paths under "photos".
 	EOF
 	exit 64
 }
@@ -133,7 +137,7 @@ main() {
 		    "location": "",
 		    "date": "$(date +%F)",
 		    "rating": 0,
-		    "photo": "/$OUT_DIR/$stem.jpg",
+		    "photos": ["/$OUT_DIR/$stem.jpg"],
 		    "note": ""
 		  }
 	EOF

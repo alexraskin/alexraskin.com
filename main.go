@@ -59,9 +59,6 @@ func main() {
 
 	if *devMode {
 		logger.Debug("running in dev mode")
-		// Assets come off disk here, so hashing the embedded copies would only
-		// pin URLs to bytes that are no longer being served. An empty map
-		// leaves asset paths unversioned.
 		assetHashes = server.AssetHashes{}
 		tmplFunc = func(wr io.Writer, name string, data any) error {
 			tmpl, err := template.New("").Funcs(assetFuncs(assetHashes)).ParseGlob("templates/*.gohtml")
@@ -71,8 +68,6 @@ func main() {
 			return tmpl.ExecuteTemplate(wr, name, data)
 		}
 		assets = http.Dir(".")
-		// Reading the review file per request means a new Franzbrötchen shows
-		// up on refresh, the same way template edits do.
 		reviewsFunc = func() ([]server.Review, error) {
 			return server.LoadReviews(os.DirFS("."), os.DirFS("."))
 		}
@@ -92,7 +87,6 @@ func main() {
 		tmplFunc = tmpl.ExecuteTemplate
 		assets = http.FS(Assets)
 
-		// A malformed review is a startup failure rather than a broken page.
 		reviews, err := server.LoadReviews(Data, Assets)
 		if err != nil {
 			logger.Error("failed to load reviews", slog.Any("error", err))
@@ -102,7 +96,6 @@ func main() {
 	}
 
 	httpClient := &http.Client{
-		// Keeps a slow last.fm upstream from stalling the page render.
 		Timeout: 3 * time.Second,
 	}
 
@@ -139,7 +132,6 @@ func main() {
 	}
 }
 
-// assetFuncs exposes the content-hashed asset URLs to templates.
 func assetFuncs(hashes server.AssetHashes) template.FuncMap {
 	return template.FuncMap{
 		"asset":  hashes.URL,
@@ -147,8 +139,6 @@ func assetFuncs(hashes server.AssetHashes) template.FuncMap {
 	}
 }
 
-// srcset renders sized photo variants as a srcset attribute, versioning each
-// URL the same way a lone asset would so the whole set caches immutably.
 func srcset(hashes server.AssetHashes) func([]server.Variant) string {
 	return func(variants []server.Variant) string {
 		candidates := make([]string, len(variants))

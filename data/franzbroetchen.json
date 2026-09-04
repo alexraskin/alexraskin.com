@@ -3,24 +3,34 @@
     "place": "Mutterland",
     "location": "Hamburg, Germany",
     "date": "2026-09-04",
-    "rating": 3,
-    "photo": "/assets/images/franzbroetchen/mutterland-hamburg.jpg",
-    "note": "Tight, even coil and a good glossy caramelisation on the outer turns, but the sugar never made it to the middle and the crumb there was more bread than pastry. Pretty to look at, quiet to eat."
+    "rating": 2,
+    "photos": [
+      "/assets/images/franzbroetchen/mutterland-hamburg-1.jpg",
+      "/assets/images/franzbroetchen/mutterland-hamburg-2.jpg"
+    ],
+    "note": "Pretty to look at, quiet to eat.",
+    "url": "https://mutterland.de/standorte.html#mutterland-city"
   },
   {
     "place": "elbgold",
     "location": "Hamburg, Germany",
     "date": "2026-08-24",
     "rating": 5,
-    "photo": "/assets/images/franzbroetchen/elbgold-hamburg.jpg",
-    "note": "Laminated properly, caramelised right through to the outer coil, and the cinnamon butter had pooled and gone crunchy at the edges. The bar everything else gets measured against."
+    "photos": [
+      "/assets/images/franzbroetchen/elbgold-hamburg.jpg"
+    ],
+    "note": "Caramelized, and the cinnamon butter had pooled and gone crunchy at the edges. The bar everything else gets measured against.",
+    "url": "https://elbgold.com/"
   },
   {
     "place": "Junge Die Bäckerei",
     "location": "Hamburg, Germany",
     "date": "2026-08-19",
     "rating": 3,
-    "photo": "/assets/images/franzbroetchen/junge-hamburg.jpg",
-    "note": "Solid chain Franzbrötchen. Good colour and flake, but dry towards the middle and light on cinnamon. Fine if it is the one in front of you."
+    "photos": [
+      "/assets/images/franzbroetchen/junge-hamburg.jpg"
+    ],
+    "note": "Solid chain Franzbrötchen. Fine if it is the one in front of you.",
+    "url": "https://www.jb.de/"
   }
 ]
