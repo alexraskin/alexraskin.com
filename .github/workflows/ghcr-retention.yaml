@@ -1,0 +1,49 @@
+name: ghcr-retention
+on:
+  schedule:
+    - cron: "17 4 * * 0"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "List what would be deleted, delete nothing"
+        type: boolean
+        default: true
+
+permissions:
+  packages: write
+
+jobs:
+  prune-staging-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete all but the newest 10 staging images
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          PACKAGE: alexraskin.com
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+
+          # Only versions whose every tag is a staging tag: a version that also
+          # carries a release tag is one production runs, whatever its age.
+          # One page is enough — pruning weekly, the backlog never reaches 100.
+          ids=$(gh api "/users/$OWNER/packages/container/$PACKAGE/versions?per_page=100" \
+            --jq '[ .[]
+                    | select((.metadata.container.tags | length) > 0)
+                    | select(.metadata.container.tags | all(startswith("main-"))) ]
+                  | sort_by(.created_at) | reverse | .[10:] | .[].id')
+
+          if [ -z "$ids" ]; then
+            echo "nothing to prune"
+            exit 0
+          fi
+
+          for id in $ids; do
+            if [ "${DRY_RUN:-false}" = "true" ]; then
+              echo "would delete version $id"
+              continue
+            fi
+            gh api -X DELETE "/users/$OWNER/packages/container/$PACKAGE/versions/$id"
+            echo "deleted version $id"
+          done
