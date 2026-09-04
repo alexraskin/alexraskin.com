@@ -42,6 +42,32 @@ im_identify() {
 	fi
 }
 
+# Phone photos carry EXIF the page has no use for and the internet has no
+# business with: the camera, the timestamp, and on iPhones a GPS fix accurate to
+# a few metres. -auto-orient bakes the rotation into the pixels first, so
+# dropping the metadata cannot leave the photo on its side; -strip removes EXIF,
+# IPTC and the embedded thumbnail, and +profile '*' takes the colour and XMP
+# profiles with it.
+#
+# assert_clean is the belt to that braces: an ImageMagick build that quietly
+# kept something, or a future edit that drops a flag, should fail the run rather
+# than publish a home address.
+assert_clean() {
+	local file="$1"
+
+	if im_identify -verbose "$file" | grep -q '^ *exif:'; then
+		echo "add-review: $file still has EXIF, refusing to publish it" >&2
+		exit 65
+	fi
+
+	# identify only reports what it can parse, so also look at the bytes for the
+	# markers a stripped file has no reason to contain.
+	if LC_ALL=C grep -qaE 'GPSLatitude|DateTimeOriginal|Exif' "$file"; then
+		echo "add-review: $file still has metadata markers, refusing to publish it" >&2
+		exit 65
+	fi
+}
+
 slugify() {
 	basename "$1" |
 		sed -e 's/\.[^.]*$//' |
@@ -84,10 +110,13 @@ main() {
 	mkdir -p "$OUT_DIR"
 
 	for width in "${widths[@]}"; do
-		im "${photo}[0]" -auto-orient -resize "${width}x" -strip \
+		im "${photo}[0]" -auto-orient -resize "${width}x" -strip +profile '*' \
 			-quality "$AVIF_QUALITY" "$OUT_DIR/$stem-$width.avif"
-		im "${photo}[0]" -auto-orient -resize "${width}x" -strip \
+		im "${photo}[0]" -auto-orient -resize "${width}x" -strip +profile '*' \
 			-interlace Plane -quality "$JPEG_QUALITY" "$OUT_DIR/$stem-$width.jpg"
+
+		assert_clean "$OUT_DIR/$stem-$width.avif"
+		assert_clean "$OUT_DIR/$stem-$width.jpg"
 
 		printf '  %-52s %6s\n' \
 			"$OUT_DIR/$stem-$width.avif" "$(du -h "$OUT_DIR/$stem-$width.avif" | cut -f1)"
