@@ -4,7 +4,9 @@
     "location": "Hamburg, Germany",
     "date": "2026-09-04",
     "rating": 3,
-    "photo": "/assets/images/franzbroetchen/mutterland-hamburg.jpg",
+    "photos": [
+      "/assets/images/franzbroetchen/mutterland-hamburg.jpg"
+    ],
     "note": "Tight, even coil and a good glossy caramelisation on the outer turns, but the sugar never made it to the middle and the crumb there was more bread than pastry. Pretty to look at, quiet to eat."
   },
   {
@@ -12,7 +14,9 @@
     "location": "Hamburg, Germany",
     "date": "2026-08-24",
     "rating": 5,
-    "photo": "/assets/images/franzbroetchen/elbgold-hamburg.jpg",
+    "photos": [
+      "/assets/images/franzbroetchen/elbgold-hamburg.jpg"
+    ],
     "note": "Laminated properly, caramelised right through to the outer coil, and the cinnamon butter had pooled and gone crunchy at the edges. The bar everything else gets measured against."
   },
   {
@@ -20,7 +24,9 @@
     "location": "Hamburg, Germany",
     "date": "2026-08-19",
     "rating": 3,
-    "photo": "/assets/images/franzbroetchen/junge-hamburg.jpg",
+    "photos": [
+      "/assets/images/franzbroetchen/junge-hamburg.jpg"
+    ],
     "note": "Solid chain Franzbrötchen. Good colour and flake, but dry towards the middle and light on cinnamon. Fine if it is the one in front of you."
   }
 ]

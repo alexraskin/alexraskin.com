@@ -22,7 +22,8 @@
       <p>Franzbrötchen is my favorite pastry. Here are the ones I have tried,
         rated out of five.</p>
 
-      {{ $sizes := "(max-width: 42rem) calc(100vw - 2.5rem), 608px" }}
+      {{ $wide := "(max-width: 42rem) calc(100vw - 2.5rem), 608px" }}
+      {{ $paired := "(max-width: 30rem) calc(100vw - 2.5rem), (max-width: 42rem) calc((100vw - 3rem) / 2), 300px" }}
       {{ range $i, $review := .Reviews }}
         <article class="review">
           <h3 class="review-place">
@@ -32,17 +33,23 @@
             <span class="rating" role="img" aria-label="{{ $review.Rating }} out of 5">{{ $review.Stars }}</span>
             <span class="muted">{{ $review.Location }} · {{ $review.Day }}</span>
           </p>
-          <picture>
-            {{ with $review.AVIF }}<source type="image/avif" srcset="{{ srcset . }}" sizes="{{ $sizes }}">{{ end }}
-            <img class="review-photo"
-                 src="{{ asset $review.Fallback.URL }}"
-                 srcset="{{ srcset $review.JPEG }}"
-                 sizes="{{ $sizes }}"
-                 width="{{ $review.Width }}"
-                 height="{{ $review.Height }}"
-                 alt="Franzbrötchen from {{ $review.Place }}"
-                 {{ if $i }}loading="lazy" {{ end }}decoding="async">
-          </picture>
+          {{ $sizes := $wide }}
+          {{ if gt (len $review.Photos) 1 }}{{ $sizes = $paired }}{{ end }}
+          <div class="review-photos">
+            {{ range $j, $photo := $review.Photos }}
+              <picture>
+                {{ with $photo.AVIF }}<source type="image/avif" srcset="{{ srcset . }}" sizes="{{ $sizes }}">{{ end }}
+                <img class="review-photo"
+                     src="{{ asset $photo.Fallback.URL }}"
+                     srcset="{{ srcset $photo.JPEG }}"
+                     sizes="{{ $sizes }}"
+                     width="{{ $photo.Width }}"
+                     height="{{ $photo.Height }}"
+                     {{ if $j }}alt=""{{ else }}alt="Franzbrötchen from {{ $review.Place }}"{{ end }}
+                     {{ if or $i $j }}loading="lazy" {{ end }}decoding="async">
+              </picture>
+            {{ end }}
+          </div>
           {{ with $review.Note }}<p class="review-note">{{ . }}</p>{{ end }}
         </article>
       {{ else }}

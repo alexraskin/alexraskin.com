@@ -28,14 +28,28 @@ staging can never promote itself.
   "location": "Hamburg, Germany",
   "date": "2025-09-01",
   "rating": 4,
-  "photo": "/assets/images/franzbroetchen/photo.jpg",
+  "photos": ["/assets/images/franzbroetchen/photo.jpg"],
   "note": "Optional.",
   "url": "https://optional-bakery-link"
 }
 ```
 
-`rating` is 1-5, `date` is `YYYY-MM-DD`, and entries render newest first. The
-`photo` path is a logical name: the page picks up whatever `<stem>-<width>.avif`
-and `<stem>-<width>.jpg` files sit beside it, so encoding another size later
-needs no code change. Image dimensions are read from the file. A malformed entry
-fails the build at startup rather than rendering a broken page.
+`rating` is 1-5, `date` is `YYYY-MM-DD`, and entries render newest first. Each
+path in `photos` is a logical name: the page picks up whatever
+`<stem>-<width>.avif` and `<stem>-<width>.jpg` files sit beside it, so encoding
+another size later needs no code change. Image dimensions are read from the
+file. A malformed entry fails the build at startup rather than rendering a
+broken page.
+
+An entry can list more than one photo. Run the script once per photo with stems
+that differ, then list both:
+
+```sh
+mise run add-review ~/Downloads/IMG_5056.JPG mutterland-hamburg-1
+mise run add-review ~/Downloads/IMG_5057.JPG mutterland-hamburg-2
+```
+
+A lone photo renders at the full column width; two or more sit side by side,
+cropped to a shared ratio, and stack on a narrow screen. Photos in a pair are
+displayed at half the width, so the browser downloads a correspondingly smaller
+variant.

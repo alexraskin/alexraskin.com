@@ -210,12 +210,28 @@ main .review-place {
     white-space: nowrap;
 }
 
+/* One photo fills the column; two sit side by side and stack again once the
+   column is too narrow for both, which auto-fit handles without a media query
+   or a count on the wrapper. */
+.review-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: 0.5rem;
+}
+
 .review-photo {
     display: block;
     width: 100%;
     height: auto;
     border-radius: 6px;
     background-color: var(--rule-color);
+}
+
+/* A portrait next to a landscape shot leaves one of them short, so a pair is
+   cropped to a shared ratio. A lone photo keeps its own. */
+.review-photos:has(:nth-child(2)) .review-photo {
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
 }
 
 .review-note {
