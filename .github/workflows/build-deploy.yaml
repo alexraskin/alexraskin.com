@@ -1,6 +1,8 @@
 name: pipeline
 on:
  push:
+   branches:
+     - main
    tags:
      - "v*"
 
@@ -29,6 +31,18 @@ jobs:
           echo "COMMIT=${{ github.sha }}" >> $GITHUB_ENV
           echo "BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
 
+      - name: Prepare Image Tags
+        run: |
+          image=ghcr.io/alexraskin/alexraskin.com
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "TAGS=$image:latest,$image:${{ github.ref_name }},$image:${{ github.sha }}" >> $GITHUB_ENV
+          else
+            # Staging. The epoch orders these for Flux, which gets no usable
+            # creation time out of GHCR, and the prefix keeps them clear of the
+            # semver tags production tracks.
+            echo "TAGS=$image:main-$(date -u +%s)-$(git rev-parse --short=7 HEAD)" >> $GITHUB_ENV
+          fi
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -38,7 +52,4 @@ jobs:
             VERSION=${{ env.VERSION }}
             COMMIT=${{ env.COMMIT }}
             BUILD_TIME=${{ env.BUILD_TIME }}
-          tags: |
-            ghcr.io/alexraskin/alexraskin.com:latest
-            ghcr.io/alexraskin/alexraskin.com:${{ github.ref_name }}
-            ghcr.io/alexraskin/alexraskin.com:${{ github.sha }}
+          tags: ${{ env.TAGS }}
