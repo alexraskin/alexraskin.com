@@ -7,6 +7,14 @@ mise run dev      # local, live template reload
 mise run docker-up # docker
 ```
 
+## Deploying
+
+Every push to `main` builds `ghcr.io/alexraskin/alexraskin.com:main-<epoch>-<sha>`,
+which Flux rolls out to staging — reachable on the tailnet only, at
+`alexraskin-staging`. Tagging `vX.Y.Z` builds `latest`, the tag and the commit
+SHA, and that is what production tracks. The two tag shapes never overlap, so
+staging can never promote itself.
+
 ## Adding a Franzbrötchen review
 
 1. `mise run add-review <photo.jpg> [stem]` — writes AVIF and JPEG copies at the
