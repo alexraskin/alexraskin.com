@@ -1,5 +1,27 @@
 [
   {
+    "place": "Schanzenbäckerei",
+    "location": "Hamburg, Germany",
+    "date": "2026-09-05",
+    "rating": 3,
+    "photos": [
+      "/assets/images/franzbroetchen/schanzenbaeckerei-hamburg.jpg"
+    ],
+    "note": "Baked dark enough to crackle, but the butter had all run out into the bag. Good crust, hollow middle.",
+    "url": "https://www.schanzenbaeckerei.de/"
+  },
+  {
+    "place": "Kalle Bäcker",
+    "location": "Marne, Germany",
+    "date": "2026-09-05",
+    "rating": 1,
+    "photos": [
+      "/assets/images/franzbroetchen/kalle-baecker-marne.jpg"
+    ],
+    "note": "Pale, dry, and the cinnamon sat in a stripe instead of soaking through. A Franzbrötchen in shape only.",
+    "url": "https://kallebaecker.de/"
+  },
+  {
     "place": "Mutterland",
     "location": "Hamburg, Germany",
     "date": "2026-09-04",

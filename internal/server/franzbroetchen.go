@@ -34,9 +34,9 @@ type Review struct {
 }
 
 type Photo struct {
-	Name string
-	AVIF []Variant
-	JPEG []Variant
+	Name   string
+	AVIF   []Variant
+	JPEG   []Variant
 	Width  int
 	Height int
 }
