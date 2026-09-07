@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/alexraskin/alexraskin.com/internal/ver"
 )
@@ -21,12 +22,13 @@ type Server struct {
 	server      *http.Server
 	assets      http.FileSystem
 	assetHashes AssetHashes
+	cdnBase     string
 	tmplFunc    ExecuteTemplateFunc
 	reviewsFunc ReviewsFunc
 	logger      *slog.Logger
 }
 
-func NewServer(version ver.Version, ctx context.Context, port string, httpClient *http.Client, assets http.FileSystem, assetHashes AssetHashes, tmplFunc ExecuteTemplateFunc, reviewsFunc ReviewsFunc, logger *slog.Logger) *Server {
+func NewServer(version ver.Version, ctx context.Context, port string, httpClient *http.Client, assets http.FileSystem, assetHashes AssetHashes, cdnBase string, tmplFunc ExecuteTemplateFunc, reviewsFunc ReviewsFunc, logger *slog.Logger) *Server {
 
 	s := &Server{
 		version:     version,
@@ -35,6 +37,7 @@ func NewServer(version ver.Version, ctx context.Context, port string, httpClient
 		httpClient:  httpClient,
 		assets:      assets,
 		assetHashes: assetHashes,
+		cdnBase:     strings.TrimSuffix(cdnBase, "/"),
 		tmplFunc:    tmplFunc,
 		reviewsFunc: reviewsFunc,
 		logger:      logger,

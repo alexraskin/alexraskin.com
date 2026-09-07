@@ -8,6 +8,9 @@ type PageData struct {
 
 type ReviewsPageData struct {
 	Reviews []Review
+	// CDNBase is the origin the photos load from, so the page can preconnect
+	// to it rather than paying DNS and TLS when the first image is requested.
+	CDNBase string
 }
 
 type LastFMTrack struct {

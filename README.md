@@ -17,10 +17,23 @@ staging can never promote itself.
 
 ## Adding a Franzbrötchen review
 
-1. `mise run add-review <photo.jpg> [stem]` — writes AVIF and JPEG copies at the
-   widths the page serves into `assets/images/franzbroetchen/`, and prints the
-   JSON entry. Only these copies are committed; keep the original elsewhere.
-2. Append the printed object to `data/franzbroetchen.json` and fill it in:
+Review photos are not in this repository. `add-review` strips the metadata,
+uploads one object per photo to the `cdn-alexraskin` R2 bucket, and prints the
+JSON entry. Nothing is written into the working tree, and there are no size
+variants to generate — Cloudflare resizes on request.
+
+```sh
+export R2_ACCOUNT_ID=<cloudflare account id>
+export AWS_PROFILE=r2          # or AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY
+
+mise run add-review ~/Downloads/IMG_5056.JPG mutterland-hamburg-1
+mise run add-review ~/Downloads/IMG_5057.JPG mutterland-hamburg-2
+```
+
+Pass `--dry-run` to strip and print the entry without uploading.
+
+Then append the printed object to `data/franzbroetchen.json` and fill in the
+empty fields:
 
 ```json
 {
@@ -28,28 +41,53 @@ staging can never promote itself.
   "location": "Hamburg, Germany",
   "date": "2025-09-01",
   "rating": 4,
-  "photos": ["/assets/images/franzbroetchen/photo.jpg"],
+  "photos": [
+    { "key": "franzbroetchen/photo.<hash>.jpg", "width": 2640, "height": 1980 }
+  ],
   "note": "Optional.",
   "url": "https://optional-bakery-link"
 }
 ```
 
-`rating` is 1-5, `date` is `YYYY-MM-DD`, and entries render newest first. Each
-path in `photos` is a logical name: the page picks up whatever
-`<stem>-<width>.avif` and `<stem>-<width>.jpg` files sit beside it, so encoding
-another size later needs no code change. Image dimensions are read from the
-file. A malformed entry fails the build at startup rather than rendering a
-broken page.
+`width` and `height` are the stored object's own size. The page derives the
+rendered box from them so the layout does not shift while the photo loads, and
+never asks for a width the object cannot fill.
 
-An entry can list more than one photo. Run the script once per photo with stems
-that differ, then list both:
+### Photo metadata
 
-```sh
-mise run add-review ~/Downloads/IMG_5056.JPG mutterland-hamburg-1
-mise run add-review ~/Downloads/IMG_5057.JPG mutterland-hamburg-2
+Phone photos carry a GPS fix accurate to a few metres. `add-review` strips EXIF,
+IPTC and the embedded thumbnail, then re-checks the result and **refuses to
+upload** if any marker survived.
+
+Cloudflare would drop most of it on delivery anyway — the `metadata` parameter
+defaults to `copyright`, which discards GPS. That is a delivery-time setting on
+someone else's product though, one toggle away from `metadata=keep`. Stripping
+before upload means the bucket never holds the coordinates, so no delivery
+setting can leak them.
+
+## Serving
+
+Photos are stored once in `cdn-alexraskin` and resized at request time by
+[Cloudflare Image Transformations](https://developers.cloudflare.com/images/transform-images/),
+off the `/cdn-cgi/image/` prefix on `cdn.alexraskin.com`:
+
+```
+https://cdn.alexraskin.com/cdn-cgi/image/width=672,format=auto,quality=82/franzbroetchen/photo.<hash>.jpg
 ```
 
-A lone photo renders at the full column width; two or more sit side by side,
-cropped to a shared ratio, and stack on a narrow screen. Photos in a pair are
-displayed at half the width, so the browser downloads a correspondingly smaller
-variant.
+`format=auto` negotiates AVIF or WebP per request, so the page ships a plain
+`<img>` with a srcset rather than a `<picture>` with hand-encoded sources.
+
+Requirements: Image Transformations enabled for the `alexraskin.com` zone, and
+`cdn.alexraskin.com` attached to the bucket as an R2 custom domain (the source
+image must sit on the same zone that serves the transformation).
+
+Billing is per unique transformation. Two widths per photo, and `format=auto`
+counts once no matter how many formats are served — so the whole page is two
+transformations per photo against the Images Free plan's 5,000 a month.
+
+Override the base with `-cdn <base>` or `CDN_BASE_URL`. Keys carry a content
+hash, so objects are immutable and served with a year-long `max-age`.
+
+Favicons, fonts, CSS and the Open Graph card stay embedded in the binary — the
+site still renders without the bucket, only the review photos need it.

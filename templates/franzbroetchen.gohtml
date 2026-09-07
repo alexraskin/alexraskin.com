@@ -8,6 +8,7 @@
   <link rel="apple-touch-icon" href="{{ asset "/assets/images/apple-touch-icon.png" }}">
   <meta name="description" content="Franzbrötchen reviews by Alex Raskin — rated out of five, one bakery at a time.">
   <title>Franzbrötchen — Alex Raskin</title>
+  {{ with .CDNBase }}<link rel="preconnect" href="{{ . }}" crossorigin>{{ end }}
   <link rel="preload" href="{{ asset "/assets/fonts/B612-Regular.woff2" }}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ asset "/assets/fonts/B612-Bold.woff2" }}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{{ asset "/assets/css/style.css" }}">
@@ -37,17 +38,14 @@
           {{ if gt (len $review.Photos) 1 }}{{ $sizes = $paired }}{{ end }}
           <div class="review-photos">
             {{ range $j, $photo := $review.Photos }}
-              <picture>
-                {{ with $photo.AVIF }}<source type="image/avif" srcset="{{ srcset . }}" sizes="{{ $sizes }}">{{ end }}
-                <img class="review-photo"
-                     src="{{ asset $photo.Fallback.URL }}"
-                     srcset="{{ srcset $photo.JPEG }}"
-                     sizes="{{ $sizes }}"
-                     width="{{ $photo.Width }}"
-                     height="{{ $photo.Height }}"
-                     {{ if $j }}alt=""{{ else }}alt="Franzbrötchen from {{ $review.Place }}"{{ end }}
-                     {{ if or $i $j }}loading="lazy" {{ end }}decoding="async">
-              </picture>
+              <img class="review-photo"
+                   src="{{ $photo.Src }}"
+                   srcset="{{ $photo.Srcset }}"
+                   sizes="{{ $sizes }}"
+                   width="{{ $photo.DisplayWidth }}"
+                   height="{{ $photo.DisplayHeight }}"
+                   {{ if $j }}alt=""{{ else }}alt="Franzbrötchen from {{ $review.Place }}"{{ end }}
+                   {{ if or $i $j }}loading="lazy" {{ end }}decoding="async">
             {{ end }}
           </div>
           {{ with $review.Note }}<p class="review-note">{{ . }}</p>{{ end }}

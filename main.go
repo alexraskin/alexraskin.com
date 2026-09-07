@@ -10,8 +10,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
-	"strings"
 	"syscall"
 	"time"
 
@@ -33,6 +31,7 @@ var (
 func main() {
 	port := flag.String("port", "8000", "port to listen on")
 	devMode := flag.Bool("dev", false, "run in dev mode")
+	cdnBase := flag.String("cdn", cdnBaseURL(), "base URL the review photos are served from")
 	flag.Parse()
 
 	var (
@@ -69,7 +68,7 @@ func main() {
 		}
 		assets = http.Dir(".")
 		reviewsFunc = func() ([]server.Review, error) {
-			return server.LoadReviews(os.DirFS("."), os.DirFS("."))
+			return server.LoadReviews(os.DirFS("."), *cdnBase)
 		}
 	} else {
 		var err error
@@ -87,7 +86,7 @@ func main() {
 		tmplFunc = tmpl.ExecuteTemplate
 		assets = http.FS(Assets)
 
-		reviews, err := server.LoadReviews(Data, Assets)
+		reviews, err := server.LoadReviews(Data, *cdnBase)
 		if err != nil {
 			logger.Error("failed to load reviews", slog.Any("error", err))
 			os.Exit(-1)
@@ -109,6 +108,7 @@ func main() {
 		httpClient,
 		assets,
 		assetHashes,
+		*cdnBase,
 		tmplFunc,
 		reviewsFunc,
 		logger,
@@ -132,19 +132,19 @@ func main() {
 	}
 }
 
-func assetFuncs(hashes server.AssetHashes) template.FuncMap {
-	return template.FuncMap{
-		"asset":  hashes.URL,
-		"srcset": srcset(hashes),
+// defaultCDNBase is where scripts/add-review.sh uploads to. Review photos are
+// not embedded in the binary, so this is the only way the page can find them.
+const defaultCDNBase = "https://cdn.alexraskin.com"
+
+func cdnBaseURL() string {
+	if base := os.Getenv("CDN_BASE_URL"); base != "" {
+		return base
 	}
+	return defaultCDNBase
 }
 
-func srcset(hashes server.AssetHashes) func([]server.Variant) string {
-	return func(variants []server.Variant) string {
-		candidates := make([]string, len(variants))
-		for i, variant := range variants {
-			candidates[i] = hashes.URL(variant.URL) + " " + strconv.Itoa(variant.Width) + "w"
-		}
-		return strings.Join(candidates, ", ")
+func assetFuncs(hashes server.AssetHashes) template.FuncMap {
+	return template.FuncMap{
+		"asset": hashes.URL,
 	}
 }

@@ -1,30 +1,52 @@
 #!/usr/bin/env bash
-# Turn one photo into the AVIF/JPEG variants the Franzbrötchen page serves, and
-# print the JSON entry to paste into data/franzbroetchen.json.
+# Strip a photo's metadata, upload it to R2, and print the JSON entry to paste
+# into data/franzbroetchen.json.
 #
-# Only the derivatives are committed; keep the original wherever your photos
-# already live. Nothing reads the widths from a config: the page discovers
-# whatever variants exist on disk, so adding a size later is just another run.
+# One object per photo. Cloudflare Image Transformations does the resizing and
+# the format negotiation at request time, off the /cdn-cgi/image/ prefix on the
+# same domain, so there are no variants to generate, commit, or keep in sync.
+#
+# The key carries the content hash, so the object is immutable and can be served
+# with a year-long max-age. Re-uploading the same photo yields the same key;
+# a different photo yields a new one rather than overwriting a live URL.
 
 set -euo pipefail
 
-readonly OUT_DIR="assets/images/franzbroetchen"
-readonly WIDTHS=(1320 672)
-readonly AVIF_QUALITY=55
-readonly JPEG_QUALITY=80
+readonly BUCKET="${R2_BUCKET:-cdn-alexraskin}"
+readonly PREFIX="franzbroetchen"
+# The page never renders wider than 1320 CSS pixels; this leaves room for a 2x
+# display without storing a 12-megapixel phone photo.
+readonly MAX_WIDTH=2640
+readonly QUALITY=90
+
+DRY_RUN=0
+# Set by main, removed on exit. Global because the EXIT trap outlives main's
+# locals, and under `set -u` an unset name there aborts the script.
+work=""
 
 usage() {
 	cat >&2 <<-EOF
-		usage: mise run add-review <photo> [stem]
+		usage: mise run add-review [--dry-run] <photo> [stem]
 
-		  photo  the source image, at any size
-		  stem   basename for the generated files; defaults to a slug of the photo
+		  photo      the source image, at any size
+		  stem       basename for the uploaded key; defaults to a slug of the photo
+		  --dry-run  strip and hash, print the entry, upload nothing
 
 		example: mise run add-review ~/Downloads/IMG_5044.jpg elbgold-eppendorf
 
 		A review can show more than one photo: run this once per photo with
 		stems that differ, e.g. elbgold-eppendorf-1 and elbgold-eppendorf-2,
-		and list both paths under "photos".
+		and list both objects under "photos".
+
+		Uploads go to s3://$BUCKET/$PREFIX/ and are served from
+		\$CDN_BASE_URL (default https://cdn.alexraskin.com).
+
+		Credentials are read the way the AWS CLI normally reads them. R2 needs:
+
+		  R2_ACCOUNT_ID          your Cloudflare account id
+		  AWS_PROFILE            a profile holding the R2 access key pair, or
+		  AWS_ACCESS_KEY_ID      the R2 token's access key id, and
+		  AWS_SECRET_ACCESS_KEY  its secret
 	EOF
 	exit 64
 }
@@ -53,9 +75,12 @@ im_identify() {
 # IPTC and the embedded thumbnail, and +profile '*' takes the colour and XMP
 # profiles with it.
 #
-# assert_clean is the belt to that braces: an ImageMagick build that quietly
-# kept something, or a future edit that drops a flag, should fail the run rather
-# than publish a home address.
+# Cloudflare would also drop most of this on delivery — its metadata parameter
+# defaults to "copyright", which discards GPS. That default is a delivery-time
+# setting on someone else's product, though, and it is one dashboard toggle
+# (metadata=keep, or flexible variants letting a caller ask for it) away from
+# serving the location back. Stripping before the upload means the bucket never
+# holds the coordinates in the first place, so no delivery setting can leak them.
 assert_clean() {
 	local file="$1"
 
@@ -80,6 +105,21 @@ slugify() {
 }
 
 main() {
+	local -a args=()
+	local arg
+	for arg in "$@"; do
+		case "$arg" in
+		--dry-run) DRY_RUN=1 ;;
+		-h | --help) usage ;;
+		-*)
+			echo "add-review: unknown flag: $arg" >&2
+			usage
+			;;
+		*) args+=("$arg") ;;
+		esac
+	done
+	set -- "${args[@]+"${args[@]}"}"
+
 	[[ $# -ge 1 && $# -le 2 ]] || usage
 
 	local photo="$1"
@@ -99,48 +139,72 @@ main() {
 		exit 64
 	}
 
-	local source_width
-	source_width=$(im_identify -format '%w' "${photo}[0]")
+	if ((!DRY_RUN)); then
+		command -v aws >/dev/null 2>&1 || {
+			echo "add-review: needs the AWS CLI to reach R2 (brew install awscli / apt install awscli)" >&2
+			echo "            or re-run with --dry-run to strip without uploading" >&2
+			exit 69
+		}
+		[[ -n ${R2_ACCOUNT_ID:-} ]] || {
+			echo "add-review: R2_ACCOUNT_ID is not set, see --help" >&2
+			exit 78
+		}
+	fi
 
-	# Upscaling only inflates the download, so a width past the source is
-	# skipped; a photo smaller than every width still gets encoded once.
-	local -a widths=()
-	local width
-	for width in "${WIDTHS[@]}"; do
-		((width <= source_width)) && widths+=("$width")
-	done
-	((${#widths[@]})) || widths=("$source_width")
+	work=$(mktemp -d)
+	local clean="$work/$stem.jpg"
 
-	mkdir -p "$OUT_DIR"
+	# ">" only shrinks: a photo already narrower than MAX_WIDTH is left alone
+	# rather than upscaled.
+	im "${photo}[0]" -auto-orient -resize "${MAX_WIDTH}x>" -strip +profile '*' \
+		-quality "$QUALITY" "$clean"
 
-	for width in "${widths[@]}"; do
-		im "${photo}[0]" -auto-orient -resize "${width}x" -strip +profile '*' \
-			-quality "$AVIF_QUALITY" "$OUT_DIR/$stem-$width.avif"
-		im "${photo}[0]" -auto-orient -resize "${width}x" -strip +profile '*' \
-			-interlace Plane -quality "$JPEG_QUALITY" "$OUT_DIR/$stem-$width.jpg"
+	assert_clean "$clean"
 
-		assert_clean "$OUT_DIR/$stem-$width.avif"
-		assert_clean "$OUT_DIR/$stem-$width.jpg"
+	local size
+	size=$(im_identify -format '%wx%h' "$clean")
 
-		printf '  %-52s %6s\n' \
-			"$OUT_DIR/$stem-$width.avif" "$(du -h "$OUT_DIR/$stem-$width.avif" | cut -f1)"
-		printf '  %-52s %6s\n' \
-			"$OUT_DIR/$stem-$width.jpg" "$(du -h "$OUT_DIR/$stem-$width.jpg" | cut -f1)"
-	done
+	local key="$PREFIX/$stem.$(sha256sum "$clean" | cut -c1-12).jpg"
 
-	cat <<-EOF
+	printf '  %s  %s  %s\n' "$size" "$(du -h "$clean" | cut -f1)" "$key"
 
-		add to data/franzbroetchen.json:
+	if ((DRY_RUN)); then
+		printf '  would upload  %s\n' "s3://$BUCKET/$key"
+	else
+		aws --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" \
+			s3api put-object \
+			--bucket "$BUCKET" \
+			--key "$key" \
+			--body "$clean" \
+			--content-type image/jpeg \
+			--cache-control 'public, max-age=31536000, immutable' \
+			>/dev/null
+		printf '  uploaded      %s\n' "s3://$BUCKET/$key"
+	fi
 
-		  {
-		    "place": "",
-		    "location": "",
-		    "date": "$(date +%F)",
-		    "rating": 0,
-		    "photos": ["/$OUT_DIR/$stem.jpg"],
-		    "note": ""
-		  }
-	EOF
+	local entry
+	entry=$(jq -n \
+		--arg key "$key" \
+		--argjson width "${size%x*}" \
+		--argjson height "${size#*x}" \
+		--arg date "$(date +%F)" \
+		'{
+			place: "",
+			location: "",
+			date: $date,
+			rating: 0,
+			photos: [{key: $key, width: $width, height: $height}],
+			note: ""
+		}')
+
+	printf '\nadd to data/franzbroetchen.json:\n\n%s\n' "$entry" | sed -e '3,$s/^/  /'
+
+	if ((DRY_RUN)); then
+		echo
+		echo "add-review: dry run, nothing was uploaded" >&2
+	fi
 }
+
+trap '[[ -n $work ]] && rm -rf "$work"' EXIT
 
 main "$@"

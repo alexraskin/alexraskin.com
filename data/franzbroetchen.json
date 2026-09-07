@@ -5,18 +5,26 @@
     "date": "2026-09-05",
     "rating": 3,
     "photos": [
-      "/assets/images/franzbroetchen/schanzenbaeckerei-hamburg.jpg"
+      {
+        "key": "franzbroetchen/schanzenbaeckerei-hamburg.7ff583daaafd.jpg",
+        "width": 2640,
+        "height": 3520
+      }
     ],
     "note": "Baked dark enough to crackle, but the butter had all run out into the bag. Good crust, hollow middle.",
     "url": "https://www.schanzenbaeckerei.de/"
   },
   {
     "place": "Kalle Bäcker",
-    "location": "Marne, Germany",
+    "location": "Hamburg, Germany",
     "date": "2026-09-05",
     "rating": 1,
     "photos": [
-      "/assets/images/franzbroetchen/kalle-baecker-marne.jpg"
+      {
+        "key": "franzbroetchen/kalle-baecker-hamburg.6dedead4f918.jpg",
+        "width": 2640,
+        "height": 3520
+      }
     ],
     "note": "Pale, dry, and the cinnamon sat in a stripe instead of soaking through. A Franzbrötchen in shape only.",
     "url": "https://kallebaecker.de/"
@@ -27,8 +35,16 @@
     "date": "2026-09-04",
     "rating": 2,
     "photos": [
-      "/assets/images/franzbroetchen/mutterland-hamburg-1.jpg",
-      "/assets/images/franzbroetchen/mutterland-hamburg-2.jpg"
+      {
+        "key": "franzbroetchen/mutterland-hamburg.8fd116faa893.jpg",
+        "width": 2640,
+        "height": 2640
+      },
+      {
+        "key": "franzbroetchen/mutterland-hamburg-2.9a964cd4fcc3.jpg",
+        "width": 2640,
+        "height": 3520
+      }
     ],
     "note": "Pretty to look at, quiet to eat.",
     "url": "https://mutterland.de/standorte.html#mutterland-city"
@@ -39,7 +55,11 @@
     "date": "2026-08-24",
     "rating": 5,
     "photos": [
-      "/assets/images/franzbroetchen/elbgold-hamburg.jpg"
+      {
+        "key": "franzbroetchen/elbgold-hamburg.f865f093dc73.jpg",
+        "width": 1320,
+        "height": 1753
+      }
     ],
     "note": "Caramelized, and the cinnamon butter had pooled and gone crunchy at the edges. The bar everything else gets measured against.",
     "url": "https://elbgold.com/"
@@ -50,7 +70,11 @@
     "date": "2026-08-19",
     "rating": 3,
     "photos": [
-      "/assets/images/franzbroetchen/junge-hamburg.jpg"
+      {
+        "key": "franzbroetchen/junge-hamburg.bfab1cdd88e7.jpg",
+        "width": 2640,
+        "height": 1980
+      }
     ],
     "note": "Solid chain Franzbrötchen. Fine if it is the one in front of you.",
     "url": "https://www.jb.de/"

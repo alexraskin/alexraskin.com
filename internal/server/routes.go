@@ -87,7 +87,7 @@ func (s *Server) franzbroetchen(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var page bytes.Buffer
-	if err := s.tmplFunc(&page, "franzbroetchen.gohtml", ReviewsPageData{Reviews: reviews}); err != nil {
+	if err := s.tmplFunc(&page, "franzbroetchen.gohtml", ReviewsPageData{Reviews: reviews, CDNBase: s.cdnBase}); err != nil {
 		s.logger.Error("template execution failed", slog.Any("error", err))
 		s.renderError(w, r, "Failed to render template", http.StatusInternalServerError)
 		return
