@@ -47,6 +47,7 @@ func (s *Server) Routes() http.Handler {
 
 	r.Mount("/assets", s.serveAssets(http.FileServer(s.assets)))
 	r.Handle("/robots.txt", s.serveFile(s.assets, "assets/robots.txt"))
+	r.Handle("/sitemap.xml", s.serveFile(s.assets, "assets/sitemap.xml"))
 	r.Handle("/favicon.ico", s.serveFile(s.assets, "assets/images/favicon.ico"))
 	r.Get("/", s.index)
 	r.Head("/", s.index)
@@ -152,7 +153,7 @@ func (s *Server) cacheControl(next http.Handler) http.Handler {
 			} else {
 				w.Header().Set("Cache-Control", "public, max-age=3600")
 			}
-		case r.URL.Path == "/favicon.ico", r.URL.Path == "/robots.txt":
+		case r.URL.Path == "/favicon.ico", r.URL.Path == "/robots.txt", r.URL.Path == "/sitemap.xml":
 			w.Header().Set("Cache-Control", "public, max-age=86400")
 		default:
 			w.Header().Set("Cache-Control", "no-cache")

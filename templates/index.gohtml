@@ -6,8 +6,21 @@
   <link rel="icon" href="{{ asset "/assets/images/favicon.svg" }}" type="image/svg+xml">
   <link rel="icon" href="{{ asset "/assets/images/favicon.ico" }}" sizes="32x32">
   <link rel="apple-touch-icon" href="{{ asset "/assets/images/apple-touch-icon.png" }}">
-  <meta name="description" content="Alex Raskin — DevOps engineer. Infrastructure, Kubernetes, Go, Nix.">
-  <title>Alex Raskin</title>
+  <meta name="description" content="Alex Raskin self taught DevOps Engineer. Infrastructure, Kubernetes, Go, Terraform and Nix.">
+  <title>Alex Raskin — DevOps Engineer</title>
+  <link rel="canonical" href="https://alexraskin.com/">
+  <meta property="og:type" content="profile">
+  <meta property="og:site_name" content="Alex Raskin">
+  <meta property="og:url" content="https://alexraskin.com/">
+  <meta property="og:title" content="Alex Raskin — DevOps Engineer">
+  <meta property="og:description" content="Alex Raskin self taught DevOps Engineer. Infrastructure, Kubernetes, Go, Terraform and Nix.">
+  <meta property="og:image" content="https://alexraskin.com{{ asset "/assets/images/og-default.png" }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Alex Raskin — DevOps Engineer">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@notalexraskin">
+  <meta name="twitter:creator" content="@notalexraskin">
   <link rel="preload" href="{{ asset "/assets/fonts/B612-Regular.woff2" }}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ asset "/assets/fonts/B612-Bold.woff2" }}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{{ asset "/assets/css/style.css" }}">
@@ -15,7 +28,7 @@
 <body>
   <div class="container">
     <main>
-      <h2>Hello! I'm Alex 👋</h2>
+      <h1>Hello! I'm Alex 👋</h1>
 
       <p>Self taught DevOps Engineer. Infrastructure, Cats and
         <a href="/franzbroetchen">Franzbrötchen</a>.</p>
@@ -32,8 +45,8 @@
           <span class="bash">Bash</span>.</li>
       </ul>
 
-      <p><a href="https://github.com/alexraskin">GitHub</a> ·
-      <a href="https://twitter.com/notalexraskin">Twitter</a></p>
+      <p><a rel="me" href="https://github.com/alexraskin">GitHub</a> ·
+      <a rel="me" href="https://twitter.com/notalexraskin">Twitter</a></p>
 
       <p>Email me at <span class="email" id="email"><noscript>hi [at] alexraskin [dot] com</noscript></span></p>
 
@@ -46,6 +59,23 @@
       {{ end }}
     </main>
   </div>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": "https://alexraskin.com/#alex",
+    "name": "Alex Raskin",
+    "url": "https://alexraskin.com/",
+    "image": "https://alexraskin.com{{ asset "/assets/images/og-default.png" }}",
+    "jobTitle": "DevOps Engineer",
+    "description": "Self taught DevOps Engineer. Infrastructure, Kubernetes, Go, Terraform and Nix.",
+    "knowsAbout": ["DevOps", "Kubernetes", "Go", "Terraform", "Nix", "Linux", "Self-hosting"],
+    "sameAs": [
+      "https://github.com/alexraskin",
+      "https://twitter.com/notalexraskin"
+    ]
+  }
+  </script>
   <script src="{{ asset "/assets/js/email.js" }}" defer></script>
 </body>
 </html>

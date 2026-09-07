@@ -111,6 +111,7 @@ main h3 {
     margin: calc(var(--base-text-vspace) * 1.333) 0 var(--base-text-vspace) 0;
 }
 
+main h1,
 main h2 {
     font-size: 1.25rem;
     margin-top: 0;
