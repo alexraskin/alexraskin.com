@@ -21,4 +21,11 @@ vendor/
 .idea/
 .vscode/
 *.swp
-*.swo 
+*.swo'
+
+scripts/*
+mise.toml
+mise.lock
+README.md
+# Dev container
+.devcontainer

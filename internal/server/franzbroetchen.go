@@ -17,34 +17,7 @@ const (
 	reviewDateFmt = "2006-01-02"
 )
 
-// displayWidths are the widths the page offers in a srcset. Cloudflare bills a
-// unique transformation per width, and serves every format under one of them,
-// so two widths cover a phone and a desktop for two transformations a photo.
 var displayWidths = []int{672, 1320}
-
-type Review struct {
-	Place    string  `json:"place"`
-	Location string  `json:"location"`
-	Date     string  `json:"date"`
-	Rating   int     `json:"rating"`
-	Photos   []Photo `json:"photos"`
-	Note     string  `json:"note,omitempty"`
-	URL      string  `json:"url,omitempty"`
-
-	when time.Time
-}
-
-// Photo is one object in the bucket. Width and Height are the stored image's
-// own dimensions, recorded at upload time: the file is not in the repository,
-// so nothing can measure it at boot. Every rendered size is derived from this
-// single object by Cloudflare Image Transformations.
-type Photo struct {
-	Key    string `json:"key"`
-	Width  int    `json:"width"`
-	Height int    `json:"height"`
-
-	base string
-}
 
 type ReviewsFunc func() ([]Review, error)
 
@@ -56,9 +29,6 @@ func (r Review) Day() string {
 	return r.when.Format("2 January 2006")
 }
 
-// transform builds a Cloudflare Image Transformations URL. format=auto lets the
-// edge negotiate AVIF or WebP per request, which is why the page needs no
-// <source> elements of its own.
 func (p Photo) transform(width int) string {
 	return fmt.Sprintf("%s/cdn-cgi/image/width=%d,format=auto,quality=82/%s", p.base, width, p.Key)
 }
@@ -160,8 +130,6 @@ func (r *Review) load(base string) error {
 }
 
 func (p *Photo) load(base string) error {
-	// A leading slash would resolve against the origin rather than the CDN, and
-	// a scheme means someone hand-edited a full URL into a key field.
 	if p.Key == "" || strings.HasPrefix(p.Key, "/") || strings.Contains(p.Key, "://") {
 		return fmt.Errorf("key %q must be a bucket key, not a path or URL", p.Key)
 	}

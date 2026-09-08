@@ -31,7 +31,7 @@ var (
 func main() {
 	port := flag.String("port", "8000", "port to listen on")
 	devMode := flag.Bool("dev", false, "run in dev mode")
-	cdnBase := flag.String("cdn", cdnBaseURL(), "base URL the review photos are served from")
+	cdnBase := flag.String("cdn", "https://cdn.alexraskin.com", "base URL the review photos are served from")
 	flag.Parse()
 
 	var (
@@ -130,17 +130,6 @@ func main() {
 		logger.Error("graceful shutdown failed", slog.Any("err", err))
 		srv.Close()
 	}
-}
-
-// defaultCDNBase is where scripts/add-review.sh uploads to. Review photos are
-// not embedded in the binary, so this is the only way the page can find them.
-const defaultCDNBase = "https://cdn.alexraskin.com"
-
-func cdnBaseURL() string {
-	if base := os.Getenv("CDN_BASE_URL"); base != "" {
-		return base
-	}
-	return defaultCDNBase
 }
 
 func assetFuncs(hashes server.AssetHashes) template.FuncMap {

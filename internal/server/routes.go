@@ -65,7 +65,6 @@ func (s *Server) getVersion(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (s *Server) index(w http.ResponseWriter, r *http.Request) {
-	// A missing track just drops the "listening to" line from the page.
 	track, err := s.fetchLastFMTrack()
 	if err != nil {
 		s.logger.Error("failed to fetch lastfm data", slog.Any("error", err))
@@ -105,7 +104,7 @@ func (s *Server) notFound(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func (s *Server) renderError(w http.ResponseWriter, r *http.Request, message string, status int) {
+func (s *Server) renderError(w http.ResponseWriter, _ *http.Request, message string, status int) {
 	data := PageData{
 		Error:  message,
 		Status: status,

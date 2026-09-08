@@ -28,7 +28,18 @@ type Server struct {
 	logger      *slog.Logger
 }
 
-func NewServer(version ver.Version, ctx context.Context, port string, httpClient *http.Client, assets http.FileSystem, assetHashes AssetHashes, cdnBase string, tmplFunc ExecuteTemplateFunc, reviewsFunc ReviewsFunc, logger *slog.Logger) *Server {
+func NewServer(
+	version ver.Version,
+	ctx context.Context,
+	port string,
+	httpClient *http.Client,
+	assets http.FileSystem,
+	assetHashes AssetHashes,
+	cdnBase string,
+	tmplFunc ExecuteTemplateFunc,
+	reviewsFunc ReviewsFunc,
+	logger *slog.Logger,
+) *Server {
 
 	s := &Server{
 		version:     version,

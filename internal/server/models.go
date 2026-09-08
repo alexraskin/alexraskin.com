@@ -1,5 +1,7 @@
 package server
 
+import "time"
+
 type PageData struct {
 	Error  string
 	Status int
@@ -8,9 +10,27 @@ type PageData struct {
 
 type ReviewsPageData struct {
 	Reviews []Review
-	// CDNBase is the origin the photos load from, so the page can preconnect
-	// to it rather than paying DNS and TLS when the first image is requested.
 	CDNBase string
+}
+
+type Review struct {
+	Place    string  `json:"place"`
+	Location string  `json:"location"`
+	Date     string  `json:"date"`
+	Rating   int     `json:"rating"`
+	Photos   []Photo `json:"photos"`
+	Note     string  `json:"note,omitempty"`
+	URL      string  `json:"url,omitempty"`
+
+	when time.Time
+}
+
+type Photo struct {
+	Key    string `json:"key"`
+	Width  int    `json:"width"`
+	Height int    `json:"height"`
+
+	base string
 }
 
 type LastFMTrack struct {
