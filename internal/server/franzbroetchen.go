@@ -17,7 +17,10 @@ const (
 	reviewDateFmt = "2006-01-02"
 )
 
-var displayWidths = []int{672, 1320}
+// 672 covers a 1x column, 1320 a 2x one. 900 sits between them for the 2x
+// phones that need more than 672 and would otherwise jump the whole way to
+// 1320 for a photo they render about 740 pixels wide.
+var displayWidths = []int{672, 900, 1320}
 
 type ReviewsFunc func() ([]Review, error)
 

@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="{{ asset "/assets/images/apple-touch-icon.png" }}">
   <meta name="description" content="Franzbrötchen reviews by Alex Raskin — rated out of five, one bakery at a time.">
   <title>Franzbrötchen — Alex Raskin</title>
-  {{ with .CDNBase }}<link rel="preconnect" href="{{ . }}" crossorigin>{{ end }}
+  {{ with .CDNBase }}<link rel="preconnect" href="{{ . }}">{{ end }}
   <link rel="preload" href="{{ asset "/assets/fonts/B612-Regular.woff2" }}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ asset "/assets/fonts/B612-Bold.woff2" }}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{{ asset "/assets/css/style.css" }}">
@@ -45,7 +45,7 @@
                    width="{{ $photo.DisplayWidth }}"
                    height="{{ $photo.DisplayHeight }}"
                    {{ if $j }}alt=""{{ else }}alt="Franzbrötchen from {{ $review.Place }}"{{ end }}
-                   {{ if or $i $j }}loading="lazy" {{ end }}decoding="async">
+                   {{ if or $i $j }}loading="lazy" {{ else }}fetchpriority="high" {{ end }}decoding="async">
             {{ end }}
           </div>
           {{ with $review.Note }}<p class="review-note">{{ . }}</p>{{ end }}
