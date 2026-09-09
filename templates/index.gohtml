@@ -21,6 +21,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@notalexraskin">
   <meta name="twitter:creator" content="@notalexraskin">
+  <link rel="preload" href="{{ asset "/assets/images/avatar.png" }}" as="image">
   <link rel="preload" href="{{ asset "/assets/fonts/B612-Regular.woff2" }}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ asset "/assets/fonts/B612-Bold.woff2" }}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{{ asset "/assets/css/style.css" }}">
@@ -28,7 +29,12 @@
 <body>
   <div class="container">
     <main>
-      <h1>Hello! I'm Alex 👋</h1>
+      <div class="intro">
+        <img class="avatar" src="{{ asset "/assets/images/avatar.png" }}"
+             width="96" height="96" alt="Illustrated portrait of Alex Raskin"
+             fetchpriority="high" decoding="async">
+        <h1>Hello! I'm Alex 👋</h1>
+      </div>
 
       <p>Self taught DevOps Engineer. Infrastructure, Cats and
         <a href="/franzbroetchen">Franzbrötchen</a>.</p>
@@ -67,7 +73,7 @@
     "@id": "https://alexraskin.com/#alex",
     "name": "Alex Raskin",
     "url": "https://alexraskin.com/",
-    "image": "https://alexraskin.com{{ asset "/assets/images/og-default.png" }}",
+    "image": "https://alexraskin.com{{ asset "/assets/images/avatar.png" }}",
     "jobTitle": "DevOps Engineer",
     "description": "Self taught DevOps Engineer. Infrastructure, Kubernetes, Go, Terraform and Nix.",
     "knowsAbout": ["DevOps", "Kubernetes", "Go", "Terraform", "Nix", "Linux", "Self-hosting"],

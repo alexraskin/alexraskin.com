@@ -127,6 +127,27 @@ main strong {
     font-weight: 700;
 }
 
+/* Avatar sits beside the greeting; the heading wraps rather than the two
+   stacking, which holds down to phone widths. The PNG is already
+   circle-cropped, so the radius here only matters if it fails to load. */
+.intro {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: var(--base-text-vspace);
+}
+
+.intro h1 {
+    margin: 0;
+}
+
+.avatar {
+    flex: none;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+}
+
 .k8s {
     color: var(--k8s-color);
 }
