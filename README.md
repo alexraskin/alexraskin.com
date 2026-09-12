@@ -9,6 +9,8 @@ mise run docker-up # docker
 
 ## Deploying
 
+Deployment manifests live in the [infrastructure repository](https://github.com/alexraskin/infrastructure/tree/main/apps/base/alexraskin-com).
+
 Every push to `main` builds `ghcr.io/alexraskin/alexraskin.com:main-<epoch>-<sha>`,
 which Flux rolls out to staging — reachable on the tailnet only, at
 `alexraskin-staging`. Tagging `vX.Y.Z` builds `latest`, the tag and the commit
