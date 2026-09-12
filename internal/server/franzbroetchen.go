@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/fs"
 	"sort"
 	"strconv"
@@ -17,9 +18,6 @@ const (
 	reviewDateFmt = "2006-01-02"
 )
 
-// 672 covers a 1x column, 1320 a 2x one. 900 sits between them for the 2x
-// phones that need more than 672 and would otherwise jump the whole way to
-// 1320 for a photo they render about 740 pixels wide.
 var displayWidths = []int{672, 900, 1320}
 
 type ReviewsFunc func() ([]Review, error)
@@ -36,13 +34,10 @@ func (p Photo) transform(width int) string {
 	return fmt.Sprintf("%s/cdn-cgi/image/width=%d,format=auto,quality=82/%s", p.base, width, p.Key)
 }
 
-// Src is the widest rendered size: the URL for browsers that ignore srcset.
 func (p Photo) Src() string {
 	return p.transform(p.widths()[len(p.widths())-1])
 }
 
-// Srcset offers each width the stored photo can actually fill. Asking for more
-// pixels than the object holds would bill a transformation to upscale it.
 func (p Photo) Srcset() string {
 	widths := p.widths()
 	candidates := make([]string, len(widths))
@@ -65,8 +60,6 @@ func (p Photo) widths() []int {
 	return widths
 }
 
-// DisplayHeight is the height the widest rendered width implies, so the page can
-// reserve the right box before the photo arrives and not shift the layout.
 func (p Photo) DisplayHeight() int {
 	widths := p.widths()
 	return p.Height * widths[len(widths)-1] / p.Width
@@ -91,7 +84,13 @@ func LoadReviews(dataFS fs.FS, cdnBase string) ([]Review, error) {
 		return nil, fmt.Errorf("reviews: parse %s: %w", reviewsPath, err)
 	}
 
-	base := strings.TrimSuffix(cdnBase, "/")
+	if err := decoder.Decode(new(any)); err != io.EOF {
+		if err == nil {
+			err = fmt.Errorf("unexpected trailing JSON value")
+		}
+		return nil, fmt.Errorf("reviews: trailing content in %s: %w", reviewsPath, err)
+	}
+	base := strings.TrimRight(cdnBase, "/")
 
 	for i := range reviews {
 		if err := reviews[i].load(base); err != nil {

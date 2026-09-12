@@ -1,13 +1,12 @@
 package server
 
 import (
-	"context"
-	"errors"
 	"io"
 	"log/slog"
 	"net/http"
-	"os"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/alexraskin/alexraskin.com/internal/ver"
 )
@@ -15,66 +14,37 @@ import (
 type ExecuteTemplateFunc func(wr io.Writer, name string, data any) error
 
 type Server struct {
-	version     ver.Version
-	ctx         context.Context
-	port        string
-	httpClient  *http.Client
-	server      *http.Server
-	assets      http.FileSystem
-	assetHashes AssetHashes
-	cdnBase     string
-	tmplFunc    ExecuteTemplateFunc
-	reviewsFunc ReviewsFunc
-	logger      *slog.Logger
+	version         ver.Version
+	httpClient      *http.Client
+	assets          http.FileSystem
+	cdnBase         string
+	tmplFunc        ExecuteTemplateFunc
+	reviewsFunc     ReviewsFunc
+	logger          *slog.Logger
+	trackMu         sync.Mutex
+	track           *LastFMTrack
+	trackExpires    time.Time
+	trackRefreshing bool
 }
 
-func NewServer(
-	version ver.Version,
-	ctx context.Context,
-	port string,
-	httpClient *http.Client,
-	assets http.FileSystem,
-	assetHashes AssetHashes,
-	cdnBase string,
-	tmplFunc ExecuteTemplateFunc,
-	reviewsFunc ReviewsFunc,
-	logger *slog.Logger,
-) *Server {
-
-	s := &Server{
-		version:     version,
-		ctx:         ctx,
-		port:        port,
-		httpClient:  httpClient,
-		assets:      assets,
-		assetHashes: assetHashes,
-		cdnBase:     strings.TrimSuffix(cdnBase, "/"),
-		tmplFunc:    tmplFunc,
-		reviewsFunc: reviewsFunc,
-		logger:      logger,
-	}
-
-	s.server = &http.Server{
-		Addr:    ":" + port,
-		Handler: s.Routes(),
-	}
-
-	return s
+type Config struct {
+	Version         ver.Version
+	HTTPClient      *http.Client
+	Assets          http.FileSystem
+	CDNBase         string
+	ExecuteTemplate ExecuteTemplateFunc
+	Reviews         ReviewsFunc
+	Logger          *slog.Logger
 }
 
-func (s *Server) Start() {
-	if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		s.logger.Error("Error while listening", slog.Any("err", err))
-		os.Exit(-1)
-	}
-}
-
-func (s *Server) Shutdown(ctx context.Context) error {
-	return s.server.Shutdown(ctx)
-}
-
-func (s *Server) Close() {
-	if err := s.server.Close(); err != nil {
-		s.logger.Error("Error while closing server", slog.Any("err", err))
+func NewServer(cfg Config) *Server {
+	return &Server{
+		version:     cfg.Version,
+		httpClient:  cfg.HTTPClient,
+		assets:      cfg.Assets,
+		cdnBase:     strings.TrimRight(cfg.CDNBase, "/"),
+		tmplFunc:    cfg.ExecuteTemplate,
+		reviewsFunc: cfg.Reviews,
+		logger:      cfg.Logger,
 	}
 }

@@ -4,77 +4,70 @@ import (
 	"bytes"
 	"io"
 	"log/slog"
-	"mime"
 	"net/http"
-	"path/filepath"
-	"strings"
 	"time"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/httprate"
 )
-
-const (
-	assetsDir         = "assets"
-	assetPrefix       = "/" + assetsDir + "/"
-	assetVersionParam = "v"
-)
-
-func init() {
-	_ = mime.AddExtensionType(".woff2", "font/woff2")
-}
 
 func (s *Server) Routes() http.Handler {
-	r := chi.NewRouter()
+	r := http.NewServeMux()
+	files := http.FileServer(s.assets)
+	r.Handle("GET /assets/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "public, max-age=604800")
+		files.ServeHTTP(w, r)
+	}))
+	for route, path := range map[string]string{
+		"/robots.txt":  "/assets/robots.txt",
+		"/sitemap.xml": "/assets/sitemap.xml",
+		"/favicon.ico": "/assets/images/favicon.ico",
+	} {
+		r.HandleFunc("GET "+route, func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Cache-Control", "public, max-age=604800")
+			clone := r.Clone(r.Context())
+			clone.URL.Path = path
+			files.ServeHTTP(w, clone)
+		})
+	}
+	r.HandleFunc("GET /{$}", s.index)
+	r.HandleFunc("GET /franzbroetchen", s.franzbroetchen)
+	r.HandleFunc("GET /version", s.getVersion)
+	r.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodHead {
+			_, _ = io.WriteString(w, ".")
+		}
+	})
+	r.HandleFunc("GET /", s.notFound)
 
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.Heartbeat("/ping"))
-	r.Use(s.cacheControl)
-	r.Use(s.assetETag)
-
-	r.Use(httprate.Limit(
-		100,
-		time.Minute,
-		httprate.WithKeyFuncs(httprate.KeyByRealIP),
-		httprate.WithLimitHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			http.Error(w, "Too many requests", http.StatusTooManyRequests)
-		})),
-	))
-
-	r.Mount("/assets", s.serveAssets(http.FileServer(s.assets)))
-	r.Handle("/robots.txt", s.serveFile(s.assets, "assets/robots.txt"))
-	r.Handle("/sitemap.xml", s.serveFile(s.assets, "assets/sitemap.xml"))
-	r.Handle("/favicon.ico", s.serveFile(s.assets, "assets/images/favicon.ico"))
-	r.Get("/", s.index)
-	r.Head("/", s.index)
-	r.Get("/franzbroetchen", s.franzbroetchen)
-	r.Head("/franzbroetchen", s.franzbroetchen)
-	r.Get("/version", s.getVersion)
-
-	r.NotFound(s.notFound)
-
-	return r
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		start := time.Now()
+		defer func() {
+			if err := recover(); err != nil {
+				if err == http.ErrAbortHandler {
+					panic(err)
+				}
+				s.logger.Error("request panic", "error", err)
+				w.Header().Set("Cache-Control", "no-store")
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			}
+			s.logger.Info("request", "method", req.Method, "path", req.URL.Path, "peer", req.RemoteAddr, "duration", time.Since(start))
+		}()
+		w.Header().Set("Cache-Control", "no-cache")
+		r.ServeHTTP(w, req)
+	})
 }
 
-func (s *Server) getVersion(w http.ResponseWriter, _ *http.Request) {
-	_, _ = w.Write([]byte(s.version.Format()))
+func (s *Server) getVersion(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodHead {
+		_, _ = w.Write([]byte(s.version.Format()))
+	}
 }
 
 func (s *Server) index(w http.ResponseWriter, r *http.Request) {
-	track, err := s.fetchLastFMTrack()
+	track, err := s.lastFMTrack(r.Context())
 	if err != nil {
 		s.logger.Error("failed to fetch lastfm data", slog.Any("error", err))
 	}
 
-	err = s.tmplFunc(w, "index.gohtml", PageData{Track: track})
-	if err != nil {
-		s.logger.Error("template execution failed", slog.Any("error", err))
-		s.renderError(w, r, "Failed to render template", http.StatusInternalServerError)
-	}
+	s.renderPage(w, r, "index.gohtml", PageData{Track: track})
 }
 
 func (s *Server) franzbroetchen(w http.ResponseWriter, r *http.Request) {
@@ -85,123 +78,50 @@ func (s *Server) franzbroetchen(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	s.renderPage(w, r, "franzbroetchen.gohtml", ReviewsPageData{Reviews: reviews, CDNBase: s.cdnBase})
+}
+
+func (s *Server) renderPage(w http.ResponseWriter, r *http.Request, name string, data any) {
 	var page bytes.Buffer
-	if err := s.tmplFunc(&page, "franzbroetchen.gohtml", ReviewsPageData{Reviews: reviews, CDNBase: s.cdnBase}); err != nil {
+	if err := s.tmplFunc(&page, name, data); err != nil {
 		s.logger.Error("template execution failed", slog.Any("error", err))
 		s.renderError(w, r, "Failed to render template", http.StatusInternalServerError)
 		return
 	}
-
-	if serveNotModified(w, r, hashBytes(page.Bytes())) {
-		return
-	}
-
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_, _ = w.Write(page.Bytes())
+	if r.Method != http.MethodHead {
+		_, _ = w.Write(page.Bytes())
+	}
 }
 
 func (s *Server) notFound(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func (s *Server) renderError(w http.ResponseWriter, _ *http.Request, message string, status int) {
+func (s *Server) renderError(w http.ResponseWriter, r *http.Request, message string, status int) {
 	data := PageData{
 		Error:  message,
 		Status: status,
 	}
 
-	w.WriteHeader(status)
-	err := s.tmplFunc(w, "error.gohtml", data)
+	w.Header().Set("Cache-Control", "no-store")
+	var page bytes.Buffer
+	err := s.tmplFunc(&page, "error.gohtml", data)
 	if err != nil {
 		s.logger.Error("error template execution failed",
 			slog.Any("error", err),
 			slog.String("original_error", message),
 		)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.WriteHeader(http.StatusInternalServerError)
+		if r.Method != http.MethodHead {
+			_, _ = io.WriteString(w, "Internal Server Error\n")
+		}
+		return
 	}
-}
-
-func (s *Server) serveFile(fs http.FileSystem, path string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		file, err := fs.Open(path)
-		if err != nil {
-			s.logger.Error("file not found", slog.String("path", path), slog.Any("error", err))
-			http.Error(w, "File not found", http.StatusNotFound)
-			return
-		}
-		defer file.Close()
-		contentType := mime.TypeByExtension(filepath.Ext(path))
-		if contentType != "" {
-			w.Header().Set("Content-Type", contentType)
-		}
-
-		if asset, ok := s.assetHashes["/"+path]; ok && serveNotModified(w, r, asset.Hash) {
-			return
-		}
-
-		_, _ = io.Copy(w, file)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(status)
+	if r.Method != http.MethodHead {
+		_, _ = w.Write(page.Bytes())
 	}
-}
-
-func (s *Server) cacheControl(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch {
-		case strings.HasPrefix(r.URL.Path, assetPrefix):
-			if r.URL.Query().Get(assetVersionParam) != "" {
-				w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
-			} else {
-				w.Header().Set("Cache-Control", "public, max-age=3600")
-			}
-		case r.URL.Path == "/favicon.ico", r.URL.Path == "/robots.txt", r.URL.Path == "/sitemap.xml":
-			w.Header().Set("Cache-Control", "public, max-age=86400")
-		default:
-			w.Header().Set("Cache-Control", "no-cache")
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-
-func (s *Server) assetETag(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		asset, ok := s.assetHashes[r.URL.Path]
-		if !ok {
-			next.ServeHTTP(w, r)
-			return
-		}
-		if serveNotModified(w, r, asset.Hash) {
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-
-func serveNotModified(w http.ResponseWriter, r *http.Request, hash string) bool {
-	etag := `"` + hash + `"`
-	w.Header().Set("ETag", etag)
-
-	if !etagMatches(r.Header.Get("If-None-Match"), etag) {
-		return false
-	}
-
-	w.WriteHeader(http.StatusNotModified)
-	return true
-}
-
-func etagMatches(header, etag string) bool {
-	for _, candidate := range strings.Split(header, ",") {
-		candidate = strings.TrimSpace(candidate)
-		if candidate == "*" || strings.TrimPrefix(candidate, "W/") == etag {
-			return true
-		}
-	}
-	return false
-}
-
-func (s *Server) serveAssets(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if s.assetHashes.serve(w, r) {
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
 }

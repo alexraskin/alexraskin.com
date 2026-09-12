@@ -1,27 +1,13 @@
 #!/usr/bin/env bash
-# Strip a photo's metadata, upload it to R2, and print the JSON entry to paste
-# into data/franzbroetchen.json.
-#
-# One object per photo. Cloudflare Image Transformations does the resizing and
-# the format negotiation at request time, off the /cdn-cgi/image/ prefix on the
-# same domain, so there are no variants to generate, commit, or keep in sync.
-#
-# The key carries the content hash, so the object is immutable and can be served
-# with a year-long max-age. Re-uploading the same photo yields the same key;
-# a different photo yields a new one rather than overwriting a live URL.
 
 set -euo pipefail
 
 readonly BUCKET="${R2_BUCKET:-cdn-alexraskin}"
 readonly PREFIX="franzbroetchen"
-# The page never renders wider than 1320 CSS pixels; this leaves room for a 2x
-# display without storing a 12-megapixel phone photo.
 readonly MAX_WIDTH=2640
 readonly QUALITY=90
 
 DRY_RUN=0
-# Set by main, removed on exit. Global because the EXIT trap outlives main's
-# locals, and under `set -u` an unset name there aborts the script.
 work=""
 
 usage() {
@@ -68,19 +54,6 @@ im_identify() {
 	fi
 }
 
-# Phone photos carry EXIF the page has no use for and the internet has no
-# business with: the camera, the timestamp, and on iPhones a GPS fix accurate to
-# a few metres. -auto-orient bakes the rotation into the pixels first, so
-# dropping the metadata cannot leave the photo on its side; -strip removes EXIF,
-# IPTC and the embedded thumbnail, and +profile '*' takes the colour and XMP
-# profiles with it.
-#
-# Cloudflare would also drop most of this on delivery — its metadata parameter
-# defaults to "copyright", which discards GPS. That default is a delivery-time
-# setting on someone else's product, though, and it is one dashboard toggle
-# (metadata=keep, or flexible variants letting a caller ask for it) away from
-# serving the location back. Stripping before the upload means the bucket never
-# holds the coordinates in the first place, so no delivery setting can leak them.
 assert_clean() {
 	local file="$1"
 
@@ -89,8 +62,6 @@ assert_clean() {
 		exit 65
 	fi
 
-	# identify only reports what it can parse, so also look at the bytes for the
-	# markers a stripped file has no reason to contain.
 	if LC_ALL=C grep -qaE 'GPSLatitude|DateTimeOriginal|Exif' "$file"; then
 		echo "add-review: $file still has metadata markers, refusing to publish it" >&2
 		exit 65
@@ -154,8 +125,6 @@ main() {
 	work=$(mktemp -d)
 	local clean="$work/$stem.jpg"
 
-	# ">" only shrinks: a photo already narrower than MAX_WIDTH is left alone
-	# rather than upscaled.
 	im "${photo}[0]" -auto-orient -resize "${MAX_WIDTH}x>" -strip +profile '*' \
 		-quality "$QUALITY" "$clean"
 

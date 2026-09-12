@@ -1,11 +1,13 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 const lastFMURL = "https://lastfm.alexraskin.com/alexraskin"
@@ -15,8 +17,8 @@ func lastFMPathSegment(s string) string {
 	return strings.ReplaceAll(url.PathEscape(s), "%20", "+")
 }
 
-func (s *Server) fetchLastFMTrack() (*LastFMTrack, error) {
-	req, err := http.NewRequestWithContext(s.ctx, http.MethodGet, lastFMURL, nil)
+func (s *Server) fetchLastFMTrack(ctx context.Context) (*LastFMTrack, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, lastFMURL, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -58,4 +60,28 @@ func (s *Server) fetchLastFMTrack() (*LastFMTrack, error) {
 		Artwork:    artwork,
 		NowPlaying: lfmResponse.NowPlaying,
 	}, nil
+}
+
+// Cache successes and briefly back off after upstream errors. Concurrent requests
+// use the last result while one caller refreshes it, avoiding a request stampede.
+func (s *Server) lastFMTrack(ctx context.Context) (*LastFMTrack, error) {
+	s.trackMu.Lock()
+	if time.Now().Before(s.trackExpires) || s.trackRefreshing {
+		track := s.track
+		s.trackMu.Unlock()
+		return track, nil
+	}
+	s.trackRefreshing = true
+	s.trackMu.Unlock()
+	track, err := s.fetchLastFMTrack(ctx)
+	s.trackMu.Lock()
+	defer s.trackMu.Unlock()
+	s.trackRefreshing = false
+	if err == nil {
+		s.track = track
+	}
+	if ctx.Err() == nil {
+		s.trackExpires = time.Now().Add(30 * time.Second)
+	}
+	return s.track, err
 }

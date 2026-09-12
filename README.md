@@ -86,8 +86,23 @@ Billing is per unique transformation. Two widths per photo, and `format=auto`
 counts once no matter how many formats are served — so the whole page is two
 transformations per photo against the Images Free plan's 5,000 a month.
 
-Override the base with `-cdn <base>` or `CDN_BASE_URL`. Keys carry a content
-hash, so objects are immutable and served with a year-long `max-age`.
+The photo CDN base is configured in `main.go`. Photo keys carry a content hash.
 
 Favicons, fonts, CSS and the Open Graph card stay embedded in the binary — the
 site still renders without the bucket, only the review photos need it.
+
+## Request handling
+
+The server uses Go's standard HTTP router and file server. Assets are cached for
+one week; HTML uses `Cache-Control: no-cache`. Rate limiting and visitor-IP
+handling belong at the edge or ingress. Startup needs no external API calls.
+
+`-dev` reloads templates and reviews from disk. Production embeds them in the binary.
+
+Last.fm results are cached for 30 seconds. One request refreshes an expired
+result while concurrent requests use the previous track. Upstream errors retain
+the last successful result and back off for 30 seconds; a cold cache or the
+request performing the refresh can still wait up to the three-second client
+timeout. Disconnecting that request cancels its upstream fetch.
+
+Run `go test -race ./...` and `go vet ./...` to check the Go code.
