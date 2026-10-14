@@ -1,5 +1,19 @@
 [
   {
+    "place": "Die kleine Konditorei",
+    "location": "Hamburg, Germany",
+    "date": "2026-10-14",
+    "rating": 4,
+    "photos": [
+      {
+        "key": "franzbroetchen/die-kleine-konditorei.7718cada86d1.jpg",
+        "width": 1512,
+        "height": 2016
+      }
+    ],
+    "note": "Soft, buttery layers with cinnamon all the way through and a sticky glaze on top. A classic done well."
+  },
+  {
     "place": "Schanzenbäckerei",
     "location": "Hamburg, Germany",
     "date": "2026-09-05",
