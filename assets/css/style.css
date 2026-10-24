@@ -209,23 +209,41 @@ a:hover {
     user-select: all;
 }
 
-/* Franzbrötchen reviews. Each entry is a photo with its rating; the photos
-   carry width/height so the page doesn't reflow as they arrive. */
+/* Franzbrötchen reviews. Each entry is a thumbnail beside its rating and
+   note, so the whole list reads without scrolling past full-size photos; a
+   thumbnail links to the full image. */
 .review {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+        "photos place"
+        "photos meta"
+        "photos note";
+    column-gap: 1.25rem;
     border-top: 1px solid var(--rule-color);
     padding-top: var(--base-text-vspace);
-    margin-bottom: calc(var(--base-text-vspace) * 1.5);
+    margin-bottom: var(--base-text-vspace);
+}
+
+@media (max-width: 30rem) {
+    .review {
+        grid-template-columns: 7rem 1fr;
+        column-gap: 1rem;
+    }
 }
 
 main .review-place {
+    grid-area: place;
     margin: 0 0 0.25em 0;
 }
 
 .review-meta {
+    grid-area: meta;
     display: flex;
     flex-wrap: wrap;
     gap: 0 0.6em;
-    margin-bottom: 0.75em;
+    margin-bottom: 0.5em;
 }
 
 .rating {
@@ -234,12 +252,12 @@ main .review-place {
     white-space: nowrap;
 }
 
-/* One photo fills the column; two sit side by side and stack again once the
-   column is too narrow for both, which auto-fit handles without a media query
-   or a count on the wrapper. */
+/* Extra photos stack beneath the first at the same size, so every
+   thumbnail on the page matches. */
 .review-photos {
+    grid-area: photos;
+    align-self: start;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
     gap: 0.5rem;
 }
 
@@ -247,19 +265,15 @@ main .review-place {
     display: block;
     width: 100%;
     height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
     border-radius: 6px;
     background-color: var(--rule-color);
 }
 
-/* A portrait next to a landscape shot leaves one of them short, so a pair is
-   cropped to a shared ratio. A lone photo keeps its own. */
-.review-photos:has(:nth-child(2)) .review-photo {
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-}
-
-.review-note {
-    margin-top: 0.75em;
+main .review-note {
+    grid-area: note;
+    margin-bottom: 0;
     text-wrap: pretty;
 }
 

@@ -18,7 +18,7 @@ const (
 	reviewDateFmt = "2006-01-02"
 )
 
-var displayWidths = []int{672, 900, 1320}
+var displayWidths = []int{320, 480, 672, 900, 1320}
 
 type ReviewsFunc func() ([]Review, error)
 
