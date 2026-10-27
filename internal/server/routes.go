@@ -10,21 +10,16 @@ import (
 
 func (s *Server) Routes() http.Handler {
 	r := http.NewServeMux()
-	files := http.FileServer(s.assets)
-	r.Handle("GET /assets/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Cache-Control", "public, max-age=604800")
-		files.ServeHTTP(w, r)
-	}))
+	r.HandleFunc("GET /assets/", func(w http.ResponseWriter, r *http.Request) {
+		s.serveAsset(w, r, r.URL.Path)
+	})
 	for route, path := range map[string]string{
 		"/robots.txt":  "/assets/robots.txt",
 		"/sitemap.xml": "/assets/sitemap.xml",
 		"/favicon.ico": "/assets/images/favicon.ico",
 	} {
 		r.HandleFunc("GET "+route, func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Cache-Control", "public, max-age=604800")
-			clone := r.Clone(r.Context())
-			clone.URL.Path = path
-			files.ServeHTTP(w, clone)
+			s.serveAsset(w, r, path)
 		})
 	}
 	r.HandleFunc("GET /{$}", s.index)
@@ -89,9 +84,7 @@ func (s *Server) renderPage(w http.ResponseWriter, r *http.Request, name string,
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if r.Method != http.MethodHead {
-		_, _ = w.Write(page.Bytes())
-	}
+	serveContent(w, r, "", page.Bytes(), hashBytes(page.Bytes()))
 }
 
 func (s *Server) notFound(w http.ResponseWriter, r *http.Request) {

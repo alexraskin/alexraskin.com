@@ -21,8 +21,12 @@ func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { retu
 func testServer(t *testing.T) *Server {
 	t.Helper()
 	files := fstest.MapFS{"assets/test.css": {Data: []byte("body {}")}, "assets/robots.txt": {Data: []byte("User-agent: *")}}
+	assets, err := LoadAssets(files)
+	if err != nil {
+		t.Fatal(err)
+	}
 	return NewServer(Config{
-		Assets: http.FS(files),
+		Assets: func() (*Assets, error) { return assets, nil },
 		Logger: slog.New(slog.NewTextHandler(io.Discard, nil)),
 		HTTPClient: &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
 			return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{"track":"Song"}`))}, nil
@@ -65,8 +69,8 @@ func TestReadRoutes(t *testing.T) {
 			if w.Code != 200 || (method == "HEAD" && w.Body.Len() != 0) {
 				t.Fatalf("%s %s: status=%d body=%s", method, path, w.Code, w.Body.String())
 			}
-			if w.Header().Get("ETag") != "" {
-				t.Fatal("unexpected ETag")
+			if hasETag := w.Header().Get("ETag") != ""; hasETag != (path != "/ping" && path != "/version") {
+				t.Fatalf("%s %s: ETag=%q", method, path, w.Header().Get("ETag"))
 			}
 		}
 	}
@@ -80,6 +84,7 @@ func TestRoutingFallbacks(t *testing.T) {
 	}{
 		{"GET", "/missing", 302},
 		{"GET", "/assets/missing.css", 404},
+		{"GET", "/assets/", 404},
 		{"POST", "/", 405},
 		{"POST", "/assets/test.css", 405},
 		{"POST", "/robots.txt", 405},
@@ -175,5 +180,69 @@ func TestLastFMEmptyResultReplacesStaleTrack(t *testing.T) {
 	track, err := s.lastFMTrack(context.Background())
 	if err != nil || track != nil {
 		t.Fatalf("track=%v err=%v", track, err)
+	}
+}
+
+func TestAssetFingerprintsAndRevalidation(t *testing.T) {
+	assets, err := LoadAssets(fstest.MapFS{
+		"assets/css/style.css":      {Data: []byte(`@font-face { src: url("/assets/fonts/a.woff2"); }`)},
+		"assets/fonts/a.woff2":      {Data: []byte("wOF2font")},
+		"assets/images/favicon.ico": {Data: []byte("icon")},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := testServer(t)
+	s.assetsFunc = func() (*Assets, error) { return assets, nil }
+	h := s.Routes()
+
+	font, _ := assets.Path("/assets/fonts/a.woff2")
+	css, _ := assets.Path("/assets/css/style.css")
+	get := func(path, etag string) *httptest.ResponseRecorder {
+		req := httptest.NewRequest("GET", path, nil)
+		if etag != "" {
+			req.Header.Set("If-None-Match", etag)
+		}
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, req)
+		return w
+	}
+
+	w := get(css, "")
+	if !strings.Contains(w.Body.String(), `url("`+font+`")`) {
+		t.Fatalf("font URL not fingerprinted in CSS: %s", w.Body.String())
+	}
+	if cc := w.Header().Get("Cache-Control"); cc != "public, max-age=31536000, immutable" {
+		t.Fatalf("fingerprinted Cache-Control=%q", cc)
+	}
+	for _, path := range []string{"/assets/css/style.css", "/assets/css/style.css?h=stale", "/favicon.ico"} {
+		if cc := get(path, "").Header().Get("Cache-Control"); cc != "public, max-age=86400" {
+			t.Errorf("%s: Cache-Control=%q", path, cc)
+		}
+	}
+	if w := get(css, w.Header().Get("ETag")); w.Code != 304 || w.Body.Len() != 0 {
+		t.Fatalf("revalidation: status=%d body=%q", w.Code, w.Body.String())
+	}
+
+	if _, err := LoadAssets(fstest.MapFS{"assets/style.css": {Data: []byte(`url("/assets/missing.woff2")`)}}); err == nil {
+		t.Fatal("missing CSS reference not reported")
+	}
+}
+
+func TestPageRevalidation(t *testing.T) {
+	h := testServer(t).Routes()
+	for _, path := range []string{"/", "/franzbroetchen"} {
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, httptest.NewRequest("GET", path, nil))
+		if w.Header().Get("Content-Type") != "text/html; charset=utf-8" || w.Header().Get("Cache-Control") != "no-cache" {
+			t.Fatalf("%s: headers=%v", path, w.Header())
+		}
+		req := httptest.NewRequest("GET", path, nil)
+		req.Header.Set("If-None-Match", w.Header().Get("ETag"))
+		w = httptest.NewRecorder()
+		h.ServeHTTP(w, req)
+		if w.Code != 304 || w.Body.Len() != 0 {
+			t.Fatalf("%s: status=%d body=%q", path, w.Code, w.Body.String())
+		}
 	}
 }

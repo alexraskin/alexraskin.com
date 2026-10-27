@@ -7,6 +7,7 @@ import (
 	"flag"
 	"html/template"
 	"io"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
@@ -39,7 +40,7 @@ func main() {
 	var (
 		tmplFunc    server.ExecuteTemplateFunc
 		reviewsFunc server.ReviewsFunc
-		assets      http.FileSystem
+		assetsFunc  server.AssetsFunc
 	)
 
 	logger := slog.Default()
@@ -59,25 +60,37 @@ func main() {
 
 	if *devMode {
 		logger.Debug("running in dev mode")
+		assetsFunc = func() (*server.Assets, error) {
+			return server.LoadAssets(os.DirFS("."))
+		}
 		tmplFunc = func(wr io.Writer, name string, data any) error {
-			tmpl, err := template.New("").ParseGlob("templates/*.gohtml")
+			assets, err := assetsFunc()
+			if err != nil {
+				return err
+			}
+			tmpl, err := parseTemplates(os.DirFS("."), assets)
 			if err != nil {
 				return err
 			}
 			return tmpl.ExecuteTemplate(wr, name, data)
 		}
-		assets = http.Dir(".")
 		reviewsFunc = func() ([]server.Review, error) {
 			return server.LoadReviews(os.DirFS("."), cdnBase)
 		}
 	} else {
-		tmpl, err := template.New("").ParseFS(Templates, "templates/*.gohtml")
+		assets, err := server.LoadAssets(Assets)
+		if err != nil {
+			logger.Error("failed to load assets", slog.Any("error", err))
+			os.Exit(-1)
+		}
+		assetsFunc = func() (*server.Assets, error) { return assets, nil }
+
+		tmpl, err := parseTemplates(Templates, assets)
 		if err != nil {
 			logger.Error("failed to parse templates", slog.Any("error", err))
 			os.Exit(-1)
 		}
 		tmplFunc = tmpl.ExecuteTemplate
-		assets = http.FS(Assets)
 
 		reviews, err := server.LoadReviews(Data, cdnBase)
 		if err != nil {
@@ -96,7 +109,7 @@ func main() {
 	app := server.NewServer(server.Config{
 		Version:         version,
 		HTTPClient:      httpClient,
-		Assets:          assets,
+		Assets:          assetsFunc,
 		CDNBase:         cdnBase,
 		ExecuteTemplate: tmplFunc,
 		Reviews:         reviewsFunc,
@@ -130,4 +143,10 @@ func main() {
 		logger.Error("graceful shutdown failed", slog.Any("err", err))
 		_ = srv.Close()
 	}
+}
+
+func parseTemplates(fsys fs.FS, assets *server.Assets) (*template.Template, error) {
+	return template.New("").
+		Funcs(template.FuncMap{"asset": assets.Path}).
+		ParseFS(fsys, "templates/*.gohtml")
 }

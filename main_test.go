@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"html/template"
 	"strings"
 	"testing"
 
@@ -10,7 +9,11 @@ import (
 )
 
 func TestEmbeddedPages(t *testing.T) {
-	tmpl, err := template.New("").ParseFS(Templates, "templates/*.gohtml")
+	assets, err := server.LoadAssets(Assets)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tmpl, err := parseTemplates(Templates, assets)
 	if err != nil {
 		t.Fatal(err)
 	}

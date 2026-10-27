@@ -16,7 +16,7 @@ type ExecuteTemplateFunc func(wr io.Writer, name string, data any) error
 type Server struct {
 	version         ver.Version
 	httpClient      *http.Client
-	assets          http.FileSystem
+	assetsFunc      AssetsFunc
 	cdnBase         string
 	tmplFunc        ExecuteTemplateFunc
 	reviewsFunc     ReviewsFunc
@@ -30,7 +30,7 @@ type Server struct {
 type Config struct {
 	Version         ver.Version
 	HTTPClient      *http.Client
-	Assets          http.FileSystem
+	Assets          AssetsFunc
 	CDNBase         string
 	ExecuteTemplate ExecuteTemplateFunc
 	Reviews         ReviewsFunc
@@ -41,7 +41,7 @@ func NewServer(cfg Config) *Server {
 	return &Server{
 		version:     cfg.Version,
 		httpClient:  cfg.HTTPClient,
-		assets:      cfg.Assets,
+		assetsFunc:  cfg.Assets,
 		cdnBase:     strings.TrimRight(cfg.CDNBase, "/"),
 		tmplFunc:    cfg.ExecuteTemplate,
 		reviewsFunc: cfg.Reviews,
