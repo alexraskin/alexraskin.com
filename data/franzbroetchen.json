@@ -1,4 +1,19 @@
 [
+    
+  {
+    "place": "Backgeschwister",
+    "location": "Eimsbüttel",
+    "date": "2026-10-27",
+    "rating": 5,
+    "photos": [
+      {
+        "key": "franzbroetchen/backgeschwister.2ee463e54859.jpg",
+        "width": 2640,
+        "height": 3520
+      }
+    ],
+    "note": "This is a Franzbruder, basically the brother of a Franzbrötchen! And honestly, it's one of my favorites."
+  },
   {
     "place": "Die kleine Konditorei",
     "location": "Hamburg, Germany",
