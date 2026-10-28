@@ -29,16 +29,6 @@
     font-display: swap;
 }
 
-/* Display face for the name in the greeting only. Preloaded on the index
-   page, so it uses `block` like the B612 weights above. */
-@font-face {
-    font-family: "Nasty";
-    src: url("/assets/fonts/nasty.woff2") format("woff2");
-    font-weight: 400;
-    font-style: normal;
-    font-display: block;
-}
-
 :root {
     --background-color: #fff;
     --heading-text-color: #000;
@@ -129,11 +119,6 @@ main h2 {
     margin-top: 0;
 }
 
-.name {
-    font-family: "Nasty", "B612", sans-serif;
-    font-weight: 400;
-}
-
 main p {
     font-size: var(--base-font-size);
     margin-bottom: var(--base-text-vspace);
@@ -145,8 +130,8 @@ main strong {
 }
 
 /* Avatar sits beside the greeting; the heading wraps rather than the two
-   stacking, which holds down to phone widths. The PNG is already
-   circle-cropped, so the radius here only matters if it fails to load. */
+   stacking, which holds down to phone widths. The SVG is square, so
+   the radius crops it to a circle. */
 .intro {
     display: flex;
     align-items: center;
