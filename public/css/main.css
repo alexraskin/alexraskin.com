@@ -1,0 +1,53 @@
+body {
+    background: url(/img/bg.jpg) no-repeat center center fixed;
+    background-size: cover;
+    height: 100%;
+    overflow: hidden;
+}
+
+.text {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    font-family: 'Raleway', sans-serif;
+    color: white;
+}
+
+.header {
+    font-size: 80px;
+    margin: 0;
+}
+
+.paragraph {
+    font-size: 40px;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+li {
+    float: right;
+}
+
+li a {
+    display: block;
+    color: white;
+    padding: 14px 16px;
+}
+
+li svg {
+    height: 30px;
+    fill: currentColor;
+}
+
+li a:hover {
+    opacity: 0.8;
+}
+
+.text a {
+    color: inherit;
+}
