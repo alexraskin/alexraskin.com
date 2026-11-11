@@ -1,0 +1,8 @@
+[tools]
+node = "22"
+
+[tasks.dev]
+run = "npx wrangler@4 dev"
+
+[tasks.deploy]
+run = "npx wrangler@4 deploy"

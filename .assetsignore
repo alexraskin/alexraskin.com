@@ -1,0 +1,9 @@
+wrangler.jsonc
+mise.toml
+.assetsignore
+docker-compose.yaml
+production.conf
+npm-debug.log
+README.md
+typed.js/*
+!typed.js/lib/

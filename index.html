@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Alex Raskin.</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="stylesheet" href="css/all.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="typed.js/lib/typed.js" type="text/javascript"></script>
+    <script src="main.js"></script>
+</head>
+
+<body>
+    <div id="off1">
+        <div id="id01" class="modal">
+            <form class="modal-content animate" name="theForm">
+                <div class="imgcontainer">
+                        <h4><b>For Admin Only</b></h4>
+                        <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+                        <img src="favicon.ico" alt="Avatar" class="avatar">
+                </div>
+
+                <div class="container modal2">
+                    <!-- <label for="uname"><b>Username</b></label> -->
+                    <input placeholder="someOne@example.com" type="text" name="uname" required style="display:none;"> <br>
+                
+                    <label for="sId"><b>Password</b></label>
+                    <input placeholder="**********" type="text" id="studentId" name="sId" value="" required><br>
+                    <a class="sizes"
+                        onclick= "displayPwd()"><i class="fas fa-key"></i> forgot password?
+                    </a>
+                    <button type="submit" onclick="check(x)">Login</button>
+                </div>
+            </form>    
+        </div>
+        <!-- login foe -->
+        
+        
+        <div id="id02" class="modal">
+            <form class="modal-content animate" name="theForm">
+                <div class="imgcontainer">
+                        <h4><b>For Admin Only</b></h4>
+                        <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+                        <img src="favicon.ico" alt="Avatar" class="avatar">
+                </div>
+
+                <div class="container modal2">
+                    <label for="pswOld"><b>Old Password</b></label>
+                    <input placeholder="**********" type="text" name="uname" required> <br>
+                
+                    <label for="sId"><b>New Password</b></label>
+                    <input placeholder="**********" type="text" name="sId" value="" required><br>
+                    <button type="submit" onclick="pwdChange(event)">Change</button>
+                </div>
+            </form>    
+        </div>
+    </div>
+
+    <ul>
+        <li><a href="https://twitter.com/raskin_alex" ><i class="fab fa-twitter col"></i></a></li>
+        <li><a href="https://github.com/alexraskin" ><i class="fab fa-github col"></i></a></li>
+    </ul>
+            
+    <div class="text">
+        <h1 class="header"><strong>Hi there,</strong></h1>
+        <div id="typed-strings">
+            <p id="no1">I am <b>Alex</b></p>
+            <p>I like to build things</p>
+            <p>I have a few discord bots</p>
+            <p>I also like to create things in photoshop</p>
+            <p>I ^1000 <strong>am Alex</strong></p>
+        </div>
+        <span id="typed" class="paragraph"></span>
+    </div>
+    
+    
+    
+</body>
+
+<script>
+    var typed = new Typed('#typed', {
+    //   strings: [type[0],type[1],type[2],type[3],type[4]],
+        stringsElement: '#typed-strings',
+        typeSpeed: 100,
+        backSpeed: 40,
+        smartBackspace: true,
+        backDelay: 700,
+        loop: true,
+        loopCount: Infinity,
+        showCursor: true,
+        cursorChar: '_',
+        autoInsertCss: true
+    });
+
+    var modal = document.getElementById('id01');
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    function check(x){
+        var student = document.getElementById("studentId").value;
+        var pupilName = document.forms["theForm"]["uname"].value;
+        
+        location.replace(studentId[0][student])
+    }
+
+    function displayPwd(){
+        document.getElementById('id01').style.display= 'none'; 
+        document.getElementById('id02').style.display= 'block';
+        document.getElementById('id03').style.display= 'none'; 
+    }
+
+    function pwdChange(event){
+        var newPassword = document.getElementById("newPwd").value
+        studentId[0] = {
+            newPassword: window.open("typewriterChange.html")
+        }
+    } 
+
+    var modal = document.getElementById('id01');
+// When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    function pwdUnlock() {
+        document.getElementById('off1').style.display= 'none';
+        document.getElementById('id03').style.display= 'block';
+        document.getElementById('id03').classList.add('modal2')
+        document.getElementById('dis2').classList.add('modal-content2')
+    }
+
+var type = [
+    'I am <b>Alex</b>',
+    'I like to build things',
+    'I have a few discord bots',
+    'I also like to create things in photoshop',
+    "I ^1000\n <strong>am Alex</strong>"
+]
+
+
+function twChange(x) {
+    var text1 = document.forms["theForm3"]["type1"].value;
+    var text2 = document.forms["theForm3"]["type2"].value;
+    var text3 = document.forms["theForm3"]["type3"].value;
+    var text4 = document.forms["theForm3"]["type4"].value;
+    var text5 = document.forms["theForm3"]["type5"].value;
+    document.getElementById('no1').innerHTML = text1;
+    type[0] = text1;
+    type[1] = text2;
+    type[2] = text3;
+    type[3] = text4;
+    type[4] = text5;
+    console.log(type[0]);
+    console.log(text2);
+    console.log(text3);
+    console.log(text4);
+    console.log(text5);
+}
+
+</script>
+
+</html>
+
+<!-- 
+    //         if(pupilName == ''){
+    //         alert("Name must be filled out");
+    //         }
+    //         if(student != ''){
+    //             //this changes the location of the site to the new url
+    //             (function(){
+    //                 let john = student.toString();
+    //                 console.log(studentId[0][student])
+    //                 location.replace(studentId[0][student])
+                    
+                    
+    //             })();
+    //         } -->
+        
+
+    <!-- // var studentId, x;
+    //     //here is the object carrying the students data
+    // studentId = [{
+    //     // password: document.getElementById('id01').style.display='none'
+    //     password: 'typewriterChange.html'
+    // }]
+
+     -->
