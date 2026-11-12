@@ -14,7 +14,7 @@
 
 body {
     background:
-        linear-gradient(rgba(10, 18, 26, 0.55), rgba(10, 18, 26, 0.65)) fixed,
+        linear-gradient(rgba(10, 18, 26, 0.85), rgba(10, 18, 26, 0.92)) fixed,
         url("/img/bg.webp") center / cover fixed #2a3e4a; /* image's avg color, shows until it loads */
     height: 100%;
     overflow: hidden;
@@ -74,19 +74,6 @@ li a:hover {
 
 #typed-strings {
     display: none;
-}
-
-.credit {
-    position: fixed;
-    bottom: 8px;
-    right: 16px;
-    font: 18px 'Nose Transport', sans-serif;
-    color: white;
-    opacity: 0.75;
-}
-
-.credit:hover {
-    opacity: 1;
 }
 
 /* Phones: text is taller than the screen, so let it flow and scroll */
