@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Alex Raskin.</title>
-    <meta name="description" content="Alex Raskin self taught DevOps Engineer. Infrastructure, Kubernetes, Go, Terraform and Nix.">
+    <title>Alex.</title>
+    <meta name="description" content="Alex Raskin DevOps Engineer">
     <link rel="canonical" href="https://alexraskin.com/">
     <meta property="og:type" content="profile">
     <meta property="og:site_name" content="Alex Raskin">
     <meta property="og:url" content="https://alexraskin.com/">
-    <meta property="og:title" content="Alex Raskin — DevOps Engineer">
-    <meta property="og:description" content="Alex Raskin self taught DevOps Engineer. Infrastructure, Kubernetes, Go, Terraform and Nix.">
+    <meta property="og:title" content="Alex Raskin DevOps Engineer">
+    <meta property="og:description" content="Alex Raskin - DevOps Engineer">
     <meta property="og:image" content="https://alexraskin.com/android-chrome-512x512.png">
     <meta property="og:image:width" content="512">
     <meta property="og:image:height" content="512">
@@ -38,7 +38,8 @@
         <h1 class="header"><strong>Hi there,</strong></h1>
         <div id="typed-strings">
             <p>I'm <b>Alex</b>, a self-taught DevOps engineer who enjoys building things and figuring out how they work.<br><br>^1000
-            Most of what I build involves <b>Go, Terraform, or both</b>.^1000 At home, I run a highly available Kubernetes cluster on <a href="https://www.talos.dev/">Talos Linux</a>, managed through my <a href="https://github.com/alexraskin/infrastructure">homelab infrastructure</a>.<br><br>^1000
+            Most of what I build involves <b>Go, TypeScript, and Terraform</b>.^1000 At home, I run a highly available Kubernetes cluster on <a href="https://www.talos.dev/">Talos Linux</a>, managed through my <a href="https://github.com/alexraskin/infrastructure">homelab infrastructure</a>.<br><br>^1000
+            I'm currently working on <a href="https://github.com/alexraskin/baleh">baleh</a>.<br><br>^1000
             My daily driver is a MacBook Air, configured with <a href="https://github.com/LnL7/nix-darwin">nix-darwin</a>.<br><br>^1000
             Away from the terminal, there's usually a cat named <a href="/img/cosmo.jpg">Cosmo</a>, an interest in infrastructure, and an appreciation for a good Franzbrötchen.</p>
         </div>
@@ -53,8 +54,9 @@
         async function listening() {
             try {
                 const r = await fetch('https://lastfm.alexraskin.com/alexraskin', { signal: AbortSignal.timeout(2000) });
+                if (!r.ok) return '';
                 const t = await r.json();
-                if (!t.track) return '';
+                if (!t?.track?.trim() || !t?.artist?.trim()) return ''; // empty/partial data: skip the line
                 return `<br><br>^1000${t.nowPlaying ? 'Currently listening to' : 'Last listened to'} <b>${esc(t.track)}</b> by ${esc(t.artist)}.`;
             } catch { return ''; } // API slow or down: skip the line
         }
