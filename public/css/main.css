@@ -37,6 +37,7 @@ body {
 .paragraph {
     display: block;
     max-width: 60ch;
+    margin: 0;
     font-size: clamp(16px, 2vw, 24px);
     line-height: 1.5;
 }

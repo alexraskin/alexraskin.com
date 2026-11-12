@@ -37,12 +37,12 @@
     <div class="text">
         <h1 class="header"><strong>Hi there,</strong></h1>
         <div id="typed-strings">
-            <p>I'm <b>Alex</b>, a self-taught DevOps engineer who enjoys building things and figuring out how they work.^1000<br><br>
-            Most of what I build involves <b>Go, Terraform, or both</b>.^1000 At home, I run a highly available Kubernetes cluster on <a href="https://www.talos.dev/">Talos Linux</a>, managed through my <a href="https://github.com/alexraskin/infrastructure">homelab infrastructure</a>.^1000<br><br>
-            My daily driver is a MacBook Air, configured with <a href="https://github.com/LnL7/nix-darwin">nix-darwin</a>.^1000<br><br>
-            Away from the terminal, there's usually a cat named <a href="/img/cosmo.jpg">Cosmo</a>, an interest in infrastructure, and an appreciation for a good Franzbrötchen.^1000</p>
+            <p>I'm <b>Alex</b>, a self-taught DevOps engineer who enjoys building things and figuring out how they work.<br><br>^1000
+            Most of what I build involves <b>Go, Terraform, or both</b>.^1000 At home, I run a highly available Kubernetes cluster on <a href="https://www.talos.dev/">Talos Linux</a>, managed through my <a href="https://github.com/alexraskin/infrastructure">homelab infrastructure</a>.<br><br>^1000
+            My daily driver is a MacBook Air, configured with <a href="https://github.com/LnL7/nix-darwin">nix-darwin</a>.<br><br>^1000
+            Away from the terminal, there's usually a cat named <a href="/img/cosmo.jpg">Cosmo</a>, an interest in infrastructure, and an appreciation for a good Franzbrötchen.</p>
         </div>
-        <span id="typed" class="paragraph"></span>
+        <p class="paragraph"><span id="typed"></span></p>
     </div>
 
     <a class="credit" href="https://www.reddit.com/r/hamburg/comments/1xtl9fz/zug_ins_nichts/">Photo: “Zug ins Nichts” via r/hamburg</a>
@@ -55,7 +55,7 @@
                 const r = await fetch('https://lastfm.alexraskin.com/alexraskin', { signal: AbortSignal.timeout(2000) });
                 const t = await r.json();
                 if (!t.track) return '';
-                return `<br><br>${t.nowPlaying ? 'Currently listening to' : 'Last listened to'} <b>${esc(t.track)}</b> by ${esc(t.artist)}.`;
+                return `<br><br>^1000${t.nowPlaying ? 'Currently listening to' : 'Last listened to'} <b>${esc(t.track)}</b> by ${esc(t.artist)}.`;
             } catch { return ''; } // API slow or down: skip the line
         }
 
