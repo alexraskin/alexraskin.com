@@ -14,7 +14,7 @@
 
 body {
     background:
-        linear-gradient(rgba(10, 18, 26, 0.55), rgba(10, 18, 26, 0.65)),
+        linear-gradient(rgba(10, 18, 26, 0.55), rgba(10, 18, 26, 0.65)) fixed,
         url("/img/bg.webp") center / cover fixed #2a3e4a; /* image's avg color, shows until it loads */
     height: 100%;
     overflow: hidden;
