@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-  <rect width="128" height="128" fill="#000000"/>
-  <circle cx="64" cy="64" r="43" fill="#FFFFFF"/>
-  <path d="M34 85 45 43H56L67 85H56L54 75H46L44 85H34ZM48 67H52L50 56 48 67Z" fill="#000000" fill-rule="evenodd"/>
-  <path d="M63 43H77C87 43 92 49 92 57C92 65 87 69 77 69H63Z" fill="#000000"/>
-  <path d="M63 43H73V85H63Z" fill="#000000"/>
-  <path d="M73 52H77C80 52 82 53 82 56C82 59 80 60 77 60H73Z" fill="#FFFFFF"/>
-  <path d="M69 64 81 85H94L80 66Z" fill="#000000"/>
-</svg>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>404 — Not found</title>
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/typed.min.js" defer></script>
+</head>
+<body>
+    <div class="text">
+        <h1 class="header"><strong>404,</strong></h1>
+        <div id="typed-strings">
+            <p>this page doesn't exist</p>
+            <p>Nothing here. <a href="/">Go home</a></p>
+        </div>
+        <span id="typed" class="paragraph"><noscript>Nothing here. <a href="/">Go home</a></noscript></span>
+    </div>
+
+    <script>
+        addEventListener('DOMContentLoaded', () => new Typed('#typed', {
+            stringsElement: '#typed-strings',
+            typeSpeed: 70,
+            backSpeed: 30,
+            backDelay: 700,
+            cursorChar: '_'
+        }));
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+@font-face {
+    font-family: 'Nose Transport';
+    src: url(/fonts/NoseTransport16-RegularSquare.woff2) format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Nose Transport';
+    src: url(/fonts/NoseTransport16-BoldSquare.woff2) format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+body {
+    background:
+        linear-gradient(rgba(10, 18, 26, 0.55), rgba(10, 18, 26, 0.65)),
+        url("/img/bg.webp") center / cover fixed #2a3e4a; /* image's avg color, shows until it loads */
+    height: 100%;
+    overflow: hidden;
+}
+
+.text {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 5%;
+    font-family: 'Nose Transport', sans-serif;
+    color: white;
+}
+
+.header {
+    font-size: clamp(40px, 6vw, 72px);
+    margin: 0;
+}
+
+.paragraph {
+    display: block;
+    max-width: 60ch;
+    font-size: clamp(16px, 2vw, 24px);
+    line-height: 1.5;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+li {
+    float: right;
+}
+
+li a {
+    display: block;
+    color: white;
+    padding: 14px 16px;
+}
+
+li svg {
+    height: 30px;
+    fill: currentColor;
+}
+
+li a:hover {
+    opacity: 0.8;
+}
+
+.text a {
+    color: inherit;
+}
+
+#typed-strings {
+    display: none;
+}
+
+.credit {
+    position: fixed;
+    bottom: 8px;
+    right: 16px;
+    font: 18px 'Nose Transport', sans-serif;
+    color: white;
+    opacity: 0.75;
+}
+
+.credit:hover {
+    opacity: 1;
+}
+
+/* Phones: text is taller than the screen, so let it flow and scroll */
+@media (max-width: 600px) {
+    body {
+        height: auto;
+        overflow: auto;
+    }
+
+    .text {
+        position: static;
+        transform: none;
+        padding: 24px 5% 48px;
+    }
+
+    .paragraph {
+        font-size: 18px;
+    }
+}
