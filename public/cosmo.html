@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cosmo</title>
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/typed.min.js" defer></script>
+</head>
+<body>
+    <div class="text">
+        <img src="/img/cosmo.jpg" alt="Cosmo the cat" style="max-height:60vh; max-width:90vw; display:block; margin-bottom:16px">
+        <div id="typed-strings">
+            <p>this is Cosmo</p>
+            <p>Say hi. <a href="/">Go back</a></p>
+        </div>
+        <p class="paragraph"><span id="typed"><noscript>Say hi. <a href="/">Go back</a></noscript></span></p>
+    </div>
+    <script>
+        addEventListener('DOMContentLoaded', () => new Typed('#typed', {
+            stringsElement: '#typed-strings',
+            typeSpeed: 0,
+            backSpeed: 10,
+            backDelay: 700,
+            cursorChar: '_'
+        }));
+    </script>
+</body>
+</html>
