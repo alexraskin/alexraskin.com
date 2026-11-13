@@ -1,6 +1,3 @@
-# GitHub Actions -> AWS via OIDC (no long-lived keys).
-# CI role has read-only IAM, so changes to this file must be applied locally.
-
 variable "repo" {
   type        = string
   description = "owner/name; only its main branch may assume the role."

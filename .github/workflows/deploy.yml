@@ -13,18 +13,6 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    env:
-      MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2
-      - run: mise run deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
   aws:
     runs-on: ubuntu-latest
     permissions:

@@ -1,12 +1,9 @@
 [tools]
-node = "22"
+python = "3.13"
 terraform = "1.16"
 
 [tasks.dev]
-run = "npx wrangler@4 dev"
-
-[tasks.deploy]
-run = "npx wrangler@4 deploy"
+run = "python -m http.server -d public 8000"
 
 [tasks."tf:plan"]
 dir = "terraform"

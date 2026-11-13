@@ -1,4 +1,6 @@
-provider "cloudflare" {} # reads (Zone:DNS:Edit + Zone:Read)
+provider "cloudflare" {
+  api_token = var.cloudflare_token # Zone:DNS:Edit + Zone:Read
+}
 
 module "dns" {
   source = "./modules/cloudflare-dns"

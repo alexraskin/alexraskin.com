@@ -8,8 +8,13 @@ variable "domain" {
   default = "alexraskin.com"
 }
 
-# false = test on *.cloudfront.net only; flip to true to add ACM cert + Cloudflare DNS.
 variable "attach_domain" {
   type    = bool
-  default = false
+  default = true
+}
+
+variable "cloudflare_token" {
+  type      = string
+  default   = null # null = provider falls back to CLOUDFLARE_API_TOKEN env (CI)
+  sensitive = true
 }
