@@ -31,4 +31,3 @@ jobs:
         working-directory: terraform
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          TF_VAR_budget_email: ${{ secrets.BUDGET_EMAIL }}
