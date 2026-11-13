@@ -1,8 +1,17 @@
 [tools]
 node = "22"
+terraform = "1.16"
 
 [tasks.dev]
 run = "npx wrangler@4 dev"
 
 [tasks.deploy]
 run = "npx wrangler@4 deploy"
+
+[tasks."tf:plan"]
+dir = "terraform"
+run = "terraform init -input=false && terraform plan"
+
+[tasks."tf:apply"]
+dir = "terraform"
+run = "terraform init -input=false && terraform apply"
