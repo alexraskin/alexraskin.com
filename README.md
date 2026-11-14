@@ -7,16 +7,16 @@ mise trust        # first time only
 mise run dev      # local dev server
 ```
 
-## Terraform (AWS mirror)
+## Terraform
 
-`terraform/` mirrors `public/` to S3 + CloudFront, plus a $5/mo account-wide AWS budget alert. State lives in S3 (`alexraskin-tfstate`, key `website/terraform.tfstate`, native lockfile).
+`infrastructure/terraform/` mirrors `public/` to S3 + CloudFront
 
 ```sh
 mise run tf:plan
 mise run tf:apply
 ```
 
-Needs AWS creds, `CLOUDFLARE_API_TOKEN` (Zone:DNS:Edit + Zone:Read), and `budget_email` via `terraform/terraform.tfvars` or `TF_VAR_budget_email` (gitignored; repo is public).
+Needs AWS creds, `CLOUDFLARE_API_TOKEN` (Zone:DNS:Edit + Zone:Read), and `budget_email` via `infrastructure/terraform/terraform.tfvars` or `TF_VAR_budget_email` (gitignored; repo is public).
 
 - `attach_domain` (default `false`): site only on `*.cloudfront.net`. Set `true` to add ACM cert + Cloudflare DNS for the apex and `www`.
 - CI (`.github/workflows/deploy.yml`) runs `terraform apply` on push to `main` via GitHub OIDC (role `github-deploy-website`, main branch only).
