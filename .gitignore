@@ -1,1 +1,8 @@
 node_modules/
+.terraform/
+*.tfplan
+*.tfstate
+*.tfstate.*
+# Local secrets (cloudflare_token); committed env tfvars go under envs/.
+terraform/terraform.tfvars
+terraform/*.auto.tfvars

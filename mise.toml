@@ -1,14 +1,33 @@
+[settings]
+lockfile = true
+
 [tools]
 python = "3.13"
-terraform = "1.16"
+terraform = "1.17"
 
 [tasks.dev]
 run = "python -m http.server -d public 8000"
 
-[tasks."tf:plan"]
+[tasks.lint]
+description = "terraform fmt check"
+run = "terraform fmt -check -recursive terraform"
+
+[tasks."tf:init"]
+description = "terraform init"
 dir = "terraform"
-run = "terraform init -input=false && terraform plan"
+run = "terraform init -input=false"
+
+[tasks."tf:plan"]
+description = "terraform plan, saved to plan.tfplan"
+dir = "terraform"
+run = "terraform plan -input=false -out=plan.tfplan"
 
 [tasks."tf:apply"]
+description = "terraform apply the saved plan"
 dir = "terraform"
-run = "terraform init -input=false && terraform apply"
+run = "terraform apply plan.tfplan"
+
+[tasks."tf:destroy"]
+description = "terraform destroy; asks for confirmation"
+dir = "terraform"
+run = "terraform destroy"
