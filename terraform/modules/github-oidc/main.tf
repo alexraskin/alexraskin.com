@@ -1,24 +1,3 @@
-variable "repo" {
-  type        = string
-  description = "owner/name; only its main branch may assume the role."
-}
-
-variable "role_name" {
-  type = string
-}
-
-variable "state_bucket" {
-  type = string
-}
-
-variable "state_key_prefix" {
-  type = string
-}
-
-variable "site_bucket_arn" {
-  type = string
-}
-
 resource "aws_iam_openid_connect_provider" "github" {
   url            = "https://token.actions.githubusercontent.com"
   client_id_list = ["sts.amazonaws.com"]
@@ -92,8 +71,4 @@ resource "aws_iam_role_policy" "github_deploy" {
       },
     ]
   })
-}
-
-output "role_arn" {
-  value = aws_iam_role.github_deploy.arn
 }

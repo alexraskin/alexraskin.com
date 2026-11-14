@@ -1,34 +1,3 @@
-variable "name" {
-  type = string
-}
-
-variable "bucket_id" {
-  type = string
-}
-
-variable "bucket_arn" {
-  type = string
-}
-
-variable "bucket_regional_domain_name" {
-  type = string
-}
-
-variable "aliases" {
-  type    = list(string)
-  default = []
-}
-
-variable "acm_certificate_arn" {
-  type        = string
-  default     = null
-  description = "null = default *.cloudfront.net cert."
-}
-
-locals {
-  custom_cert = var.acm_certificate_arn != null
-}
-
 resource "aws_cloudfront_origin_access_control" "site" {
   name                              = var.name
   origin_access_control_origin_type = "s3"
@@ -41,10 +10,6 @@ resource "aws_cloudfront_function" "rewrite" {
   runtime = "cloudfront-js-2.0"
   publish = true
   code    = file("${path.module}/rewrite.js")
-}
-
-data "aws_cloudfront_cache_policy" "optimized" {
-  name = "Managed-CachingOptimized"
 }
 
 resource "aws_cloudfront_distribution" "site" {
@@ -112,16 +77,4 @@ resource "aws_s3_bucket_policy" "site" {
       Condition = { StringEquals = { "AWS:SourceArn" = aws_cloudfront_distribution.site.arn } }
     }]
   })
-}
-
-output "id" {
-  value = aws_cloudfront_distribution.site.id
-}
-
-output "arn" {
-  value = aws_cloudfront_distribution.site.arn
-}
-
-output "domain_name" {
-  value = aws_cloudfront_distribution.site.domain_name
 }

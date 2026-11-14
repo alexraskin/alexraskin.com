@@ -1,25 +1,55 @@
-terraform {
-  required_version = ">= 1.10"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 6.0"
-    }
-    cloudflare = {
-      source  = "cloudflare/cloudflare"
-      version = "~> 5.0"
-    }
-  }
+module "site_bucket" {
+  source = "./modules/s3-site"
 
-  backend "s3" {
-    bucket       = "alexraskin-tfstate"
-    key          = "website/terraform.tfstate"
-    region       = "us-east-1"
-    encrypt      = true
-    use_lockfile = true
+  bucket_name = var.bucket_name
+  site_dir    = "${path.module}/../public"
+}
+
+module "cdn" {
+  source = "./modules/cloudfront"
+
+  name                        = var.bucket_name
+  bucket_id                   = module.site_bucket.id
+  bucket_arn                  = module.site_bucket.arn
+  bucket_regional_domain_name = module.site_bucket.regional_domain_name
+  aliases                     = var.attach_domain ? local.hostnames : []
+  acm_certificate_arn         = var.attach_domain ? aws_acm_certificate_validation.site[0].certificate_arn : null
+}
+
+resource "aws_acm_certificate" "site" {
+  count                     = var.attach_domain ? 1 : 0
+  domain_name               = var.domain
+  subject_alternative_names = ["www.${var.domain}"]
+  validation_method         = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
-locals {
-  hostnames = [var.domain, "www.${var.domain}"]
+resource "aws_acm_certificate_validation" "site" {
+  count                   = var.attach_domain ? 1 : 0
+  certificate_arn         = aws_acm_certificate.site[0].arn
+  validation_record_fqdns = module.dns[0].acm_record_names
+}
+
+module "dns" {
+  source = "./modules/cloudflare-dns"
+  count  = var.attach_domain ? 1 : 0
+
+  zone_name              = var.domain
+  hostnames              = local.hostnames
+  target                 = module.cdn.domain_name
+  acm_validation_options = tolist(aws_acm_certificate.site[0].domain_validation_options)
+  cloudflare_comment     = local.cloudflare_comment
+}
+
+module "github_oidc" {
+  source = "./modules/github-oidc"
+
+  repo             = "alexraskin/alexraskin.com"
+  role_name        = "github-deploy-website"
+  state_bucket     = "alexraskin-tfstate"
+  state_key_prefix = "website"
+  site_bucket_arn  = module.site_bucket.arn
 }
