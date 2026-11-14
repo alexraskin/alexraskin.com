@@ -2,7 +2,7 @@ module "site_bucket" {
   source = "./modules/s3-site"
 
   bucket_name = var.bucket_name
-  site_dir    = "${path.module}/../public"
+  site_dir    = "${path.module}/../../public"
 }
 
 module "cdn" {
