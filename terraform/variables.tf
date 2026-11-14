@@ -1,3 +1,16 @@
+variable "environment" {
+  type = string
+  validation {
+    condition     = contains(["prod"], var.environment)
+    error_message = "environment must be prod."
+  }
+}
+
+variable "aws_region" {
+  type        = string
+  description = "Must be us-east-1: CloudFront only accepts ACM certs from there."
+}
+
 variable "bucket_name" {
   type    = string
   default = "alexraskin-website"

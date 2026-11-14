@@ -11,11 +11,5 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket       = "alexraskin-tfstate"
-    key          = "website/terraform.tfstate"
-    region       = "us-east-1"
-    encrypt      = true
-    use_lockfile = true
-  }
+  backend "s3" {}
 }

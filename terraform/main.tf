@@ -43,13 +43,3 @@ module "dns" {
   acm_validation_options = tolist(aws_acm_certificate.site[0].domain_validation_options)
   cloudflare_comment     = local.cloudflare_comment
 }
-
-module "github_oidc" {
-  source = "./modules/github-oidc"
-
-  repo             = "alexraskin/alexraskin.com"
-  role_name        = "github-deploy-website"
-  state_bucket     = "alexraskin-tfstate"
-  state_key_prefix = "website"
-  site_bucket_arn  = module.site_bucket.arn
-}
