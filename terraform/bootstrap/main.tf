@@ -1,10 +1,3 @@
-# An account holds one provider per URL. This project owns it; photography and
-# infrastructure read it as a data source.
-resource "aws_iam_openid_connect_provider" "github" {
-  url            = "https://token.actions.githubusercontent.com"
-  client_id_list = ["sts.amazonaws.com"]
-}
-
 # Named outside the site's resource names so the role can't edit its own policy.
 resource "aws_iam_role" "deploy" {
   for_each = var.environments

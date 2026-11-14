@@ -1,3 +1,8 @@
+# The account's GitHub OIDC provider, owned by alexraskin/infrastructure (00-global).
+data "aws_iam_openid_connect_provider" "github" {
+  url = "https://token.actions.githubusercontent.com"
+}
+
 # Trust: only jobs in this repo running in the GitHub environment named <env>.
 data "aws_iam_policy_document" "trust" {
   for_each = var.environments
@@ -6,7 +11,7 @@ data "aws_iam_policy_document" "trust" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
     principals {
       type        = "Federated"
-      identifiers = [aws_iam_openid_connect_provider.github.arn]
+      identifiers = [data.aws_iam_openid_connect_provider.github.arn]
     }
     condition {
       test     = "StringEquals"
