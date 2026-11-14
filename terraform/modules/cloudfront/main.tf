@@ -36,19 +36,11 @@ resource "aws_cloudfront_origin_access_control" "site" {
   signing_protocol                  = "sigv4"
 }
 
-# Pretty URLs like Cloudflare assets: /cosmo -> /cosmo.html, /dir/ -> /dir/index.html.
 resource "aws_cloudfront_function" "rewrite" {
   name    = "${var.name}-rewrite"
   runtime = "cloudfront-js-2.0"
   publish = true
-  code    = <<-JS
-    function handler(event) {
-      var r = event.request;
-      if (r.uri.endsWith("/")) r.uri += "index.html";
-      else if (r.uri.split("/").pop().indexOf(".") === -1) r.uri += ".html";
-      return r;
-    }
-  JS
+  code    = file("${path.module}/rewrite.js")
 }
 
 data "aws_cloudfront_cache_policy" "optimized" {
