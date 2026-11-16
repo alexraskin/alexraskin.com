@@ -4,8 +4,6 @@ variable "github_repository" {
   default     = "alexraskin/alexraskin.com"
 }
 
-# From: gh api repos/alexraskin/alexraskin.com/actions/oidc/customization/sub
-# (use_immutable_subject is false here, so it's the plain repo:<owner>/<repo> form).
 variable "github_sub_prefix" {
   description = "OIDC sub claim prefix for the repo; the trust appends :environment:<env>."
   type        = string
