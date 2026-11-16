@@ -1,9 +1,9 @@
-# The account's GitHub OIDC provider, owned by alexraskin/infrastructure (00-global).
+data "aws_caller_identity" "current" {}
+
 data "aws_iam_openid_connect_provider" "github" {
   url = "https://token.actions.githubusercontent.com"
 }
 
-# Trust: only jobs in this repo running in the GitHub environment named <env>.
 data "aws_iam_policy_document" "trust" {
   for_each = var.environments
 
@@ -26,7 +26,6 @@ data "aws_iam_policy_document" "trust" {
   }
 }
 
-# Terraform apply + site upload. No IAM permissions: the role can't touch itself.
 data "aws_iam_policy_document" "deploy" {
   for_each = var.environments
 
@@ -56,11 +55,89 @@ data "aws_iam_policy_document" "deploy" {
     ]
   }
 
-  # ponytail: CloudFront distributions/policies and ACM certs are addressed by
-  # generated IDs, so they can't be name-scoped. Tag conditions if this matters.
   statement {
-    sid       = "CdnAndCerts"
-    actions   = ["cloudfront:*", "acm:*"]
+    sid = "CdnAndCertsRead"
+    actions = [
+      "cloudfront:Get*",
+      "cloudfront:List*",
+      "cloudfront:Describe*",
+      "acm:DescribeCertificate",
+      "acm:ListCertificates",
+      "acm:ListTagsForCertificate",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "CdnAndCertsCreateTagged"
+    actions = [
+      "cloudfront:CreateDistribution",
+      "cloudfront:TagResource",
+      "acm:RequestCertificate",
+      "acm:AddTagsToCertificate",
+    ]
+    resources = ["*"]
+    condition {
+      test     = "StringEquals"
+      variable = "aws:RequestTag/Project"
+      values   = [local.tags.Project]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:RequestTag/Environment"
+      values   = [each.key]
+    }
+  }
+
+  statement {
+    sid = "CdnAndCertsManageTagged"
+    actions = [
+      "cloudfront:UpdateDistribution",
+      "cloudfront:DeleteDistribution",
+      "cloudfront:CreateInvalidation",
+      "cloudfront:TagResource",
+      "cloudfront:UntagResource",
+      "acm:DeleteCertificate",
+      "acm:AddTagsToCertificate",
+      "acm:RemoveTagsFromCertificate",
+    ]
+    resources = ["*"]
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/Project"
+      values   = [local.tags.Project]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/Environment"
+      values   = [each.key]
+    }
+    condition {
+      test     = "StringEqualsIfExists"
+      variable = "aws:RequestTag/Environment"
+      values   = [each.key]
+    }
+  }
+
+  statement {
+    sid = "CdnFunctions"
+    actions = [
+      "cloudfront:CreateFunction",
+      "cloudfront:UpdateFunction",
+      "cloudfront:PublishFunction",
+      "cloudfront:DeleteFunction",
+      "cloudfront:TestFunction",
+    ]
+    resources = ["arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:function/${local.site_bucket}-*"]
+  }
+
+  statement {
+    sid = "CdnOriginAccessControl"
+    actions = [
+      "cloudfront:CreateOriginAccessControl",
+      "cloudfront:UpdateOriginAccessControl",
+      "cloudfront:DeleteOriginAccessControl",
+    ]
     resources = ["*"]
   }
 }

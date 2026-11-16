@@ -3,12 +3,13 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project   = var.domain
-      ManagedBy = "terraform"
+      Project     = var.domain
+      Environment = var.environment
+      ManagedBy   = "terraform"
     }
   }
 }
 
 provider "cloudflare" {
-  api_token = var.cloudflare_token # Zone:DNS:Edit + Zone:Read
+  api_token = var.cloudflare_token
 }

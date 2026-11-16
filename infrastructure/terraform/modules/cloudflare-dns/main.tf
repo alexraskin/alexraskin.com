@@ -1,7 +1,6 @@
-# Keys must be known at plan; ACM options aren't until the cert exists. Assumes cert domains == hostnames.
 resource "cloudflare_dns_record" "acm" {
   for_each   = toset(var.hostnames)
-  depends_on = [cloudflare_dns_record.caa_amazon] # ACM checks CAA as soon as these appear
+  depends_on = [cloudflare_dns_record.caa_amazon]
 
   zone_id = data.cloudflare_zone.site.id
   comment = var.cloudflare_comment
@@ -11,8 +10,6 @@ resource "cloudflare_dns_record" "acm" {
   ttl     = 60
   proxied = false
 }
-
-# Unproxied: CloudFront is the CDN; Cloudflare only answers DNS. Apex CNAME is flattened by Cloudflare.
 resource "cloudflare_dns_record" "site" {
   for_each = toset(var.hostnames)
 
@@ -25,7 +22,6 @@ resource "cloudflare_dns_record" "site" {
   proxied = false
 }
 
-# Cloudflare Universal SSL publishes CAA for its own CAs only; ACM fails with CAA_ERROR without this.
 resource "cloudflare_dns_record" "caa_amazon" {
   zone_id = data.cloudflare_zone.site.id
   comment = var.cloudflare_comment
