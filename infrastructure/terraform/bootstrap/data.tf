@@ -127,6 +127,8 @@ data "aws_iam_policy_document" "deploy" {
       "cloudfront:PublishFunction",
       "cloudfront:DeleteFunction",
       "cloudfront:TestFunction",
+      "cloudfront:TagResource",
+      "cloudfront:UntagResource",
     ]
     resources = ["arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:function/${local.site_bucket}-*"]
   }
