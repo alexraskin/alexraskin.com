@@ -19,6 +19,11 @@ resource "aws_cloudfront_distribution" "site" {
   price_class         = "PriceClass_100"
   default_root_object = "index.html"
   aliases             = var.aliases
+  comment             = var.name
+
+  tags = {
+    Name = var.name
+  }
 
   origin {
     origin_id                = "s3"
