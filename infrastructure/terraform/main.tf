@@ -34,12 +34,11 @@ resource "aws_acm_certificate_validation" "site" {
 }
 
 module "dns" {
-  source = "./modules/cloudflare-dns"
+  source = "./modules/route53-dns"
   count  = var.attach_domain ? 1 : 0
 
   zone_name              = var.domain
   hostnames              = local.hostnames
-  target                 = module.cdn.domain_name
+  target                 = { domain_name = module.cdn.domain_name, hosted_zone_id = module.cdn.hosted_zone_id }
   acm_validation_options = tolist(aws_acm_certificate.site[0].domain_validation_options)
-  cloudflare_comment     = local.cloudflare_comment
 }

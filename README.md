@@ -16,9 +16,9 @@ mise run tf:plan
 mise run tf:apply
 ```
 
-Needs AWS creds, `CLOUDFLARE_API_TOKEN` (Zone:DNS:Edit + Zone:Read), and `budget_email` via `infrastructure/terraform/terraform.tfvars` or `TF_VAR_budget_email` (gitignored; repo is public).
+Needs AWS creds, the `alexraskin.com` Route 53 zone (owned by the infrastructure repo), and `budget_email` via `infrastructure/terraform/terraform.tfvars` or `TF_VAR_budget_email` (gitignored; repo is public).
 
-- `attach_domain` (default `false`): site only on `*.cloudfront.net`. Set `true` to add ACM cert + Cloudflare DNS for the apex and `www`.
+- `attach_domain` (default `false`): site only on `*.cloudfront.net`. Set `true` to add ACM cert + Route 53 records for the apex and `www`.
 - CI (`.github/workflows/deploy.yml`) runs `terraform apply` on push to `main` via GitHub OIDC (role `github-deploy-website`, main branch only).
 - CI role has read-only IAM, so changes to `modules/github-oidc` must be applied locally.
 
@@ -26,5 +26,5 @@ Needs AWS creds, `CLOUDFLARE_API_TOKEN` (Zone:DNS:Edit + Zone:Read), and `budget
 |---|---|
 | `s3-site` | Private bucket, uploads `public/` with MIME types + cache headers |
 | `cloudfront` | Distribution with OAC, pretty-URL rewrite function |
-| `cloudflare-dns` | CNAMEs + ACM validation records |
+| `route53-dns` | Alias records + ACM validation records |
 | `github-oidc` | OIDC provider + deploy role for CI |
