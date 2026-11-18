@@ -7,8 +7,11 @@ variable "hostnames" {
 }
 
 variable "target" {
-  type        = string
-  description = "CNAME target for every hostname (CloudFront domain)."
+  type = object({
+    domain_name    = string
+    hosted_zone_id = string
+  })
+  description = "CloudFront distribution every hostname aliases."
 }
 
 variable "acm_validation_options" {
@@ -18,8 +21,4 @@ variable "acm_validation_options" {
     resource_record_type  = string
     resource_record_value = string
   }))
-}
-
-variable "cloudflare_comment" {
-  type = string
 }

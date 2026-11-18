@@ -1,5 +1,9 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_route53_zone" "site" {
+  name = local.zone
+}
+
 data "aws_iam_openid_connect_provider" "github" {
   url = "https://token.actions.githubusercontent.com"
 }
@@ -141,5 +145,34 @@ data "aws_iam_policy_document" "deploy" {
       "cloudfront:DeleteOriginAccessControl",
     ]
     resources = ["*"]
+  }
+
+  statement {
+    sid = "DnsRead"
+    actions = [
+      "route53:GetChange",
+      "route53:GetHostedZone",
+      "route53:ListHostedZones",
+      "route53:ListHostedZonesByName",
+      "route53:ListResourceRecordSets",
+      "route53:ListTagsForResource",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid       = "DnsWriteOwnNames"
+    actions   = ["route53:ChangeResourceRecordSets"]
+    resources = [data.aws_route53_zone.site.arn]
+    condition {
+      test     = "ForAllValues:StringLike"
+      variable = "route53:ChangeResourceRecordSetsNormalizedRecordNames"
+      values   = local.dns_names
+    }
+    condition {
+      test     = "Null"
+      variable = "route53:ChangeResourceRecordSetsNormalizedRecordNames"
+      values   = ["false"]
+    }
   }
 }

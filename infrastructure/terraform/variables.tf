@@ -25,9 +25,3 @@ variable "attach_domain" {
   type    = bool
   default = true
 }
-
-variable "cloudflare_token" {
-  type      = string
-  default   = null
-  sensitive = true
-}
