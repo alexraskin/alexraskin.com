@@ -17,6 +17,8 @@ The full setup is public in my [infrastructure repo](https://github.com/alexrask
 
 ## How it is built
 
+![Homelab Diagram](/img/homelab-diagram.svg)
+
 Terraform builds the cluster, not just the VMs. One apply creates the VMs, pushes a machine config to each node, and bootstraps etcd.
 
 One file is the source of truth. `cluster.auto.tfvars.json` holds every address, VM ID, disk size, the VIP, and the Talos and Kubernetes versions. Terraform reads it. My scripts read the same file with `jq`. There is no second copy.
