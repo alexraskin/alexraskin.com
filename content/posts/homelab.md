@@ -1,0 +1,60 @@
++++
+title = "My Homelab"
+date = "2026-08-14"
+draft = false
+tags = ["homelab", "kubernetes", "talos", "terraform"]
+description = "Nine VMs on one Proxmox box, running a highly available Kubernetes cluster on Talos Linux."
+readingTime = false
++++
+
+I run a Kubernetes cluster at home. It is nine VMs on a single Proxmox box.
+
+Three are control plane nodes with embedded etcd. Three are workers. Three are tainted database workers. It runs on [Talos Linux](https://www.talos.dev).
+
+Talos has no SSH and no shell. It takes its whole configuration through its own API. I like that. There is nothing to log into and fix by hand.
+
+The full setup is public in my [infrastructure repo](https://github.com/alexraskin/infrastructure). It is not a template. You should not try to `terraform apply` it. The addresses, VM IDs, and zone IDs are mine. It is there as a worked example, and because I am quite fond of it.
+
+## How it is built
+
+Terraform builds the cluster, not just the VMs. One apply creates the VMs, pushes a machine config to each node, and bootstraps etcd.
+
+One file is the source of truth. `cluster.auto.tfvars.json` holds every address, VM ID, disk size, the VIP, and the Talos and Kubernetes versions. Terraform reads it. My scripts read the same file with `jq`. There is no second copy.
+
+There is no golden image, no cloud-init, and no Ansible step after. The whole thing rebuilds from a `terraform apply` and a git push.
+
+Every command is a `mise` task.
+
+```bash
+mise run bootstrap
+mise run health
+mise run status
+```
+
+## How it fits together
+
+Cilium is the CNI. I install it outside Flux on purpose. Nothing that reconciles from inside the cluster can install the reason the cluster has a pod network.
+
+Flux owns everything above that. Everything in `apps/` is deployed by Flux. Image tags are rewritten into git by image-automation, not by me.
+
+Storage is static. Talos ships no provisioner, so most volumes are written by hand and pinned to a node. The database workers run CloudNativePG on a second disk. Backups go to object storage outside the house.
+
+Secrets are SOPS encrypted to a single age key. The key lives in 1Password. Nothing sensitive is in git in plain text.
+
+## Reaching it
+
+No port is open to the internet at home.
+
+Nothing in the cluster is public. I reach it over Tailscale. My home firewall has nothing to forward.
+
+Talos cannot run `tailscaled` itself. The Tailscale operator runs in the cluster instead. A Connector re-advertises the cluster subnet, so `kubectl` works from anywhere. Individual services get their own tailnet device and a MagicDNS name.
+
+Monitoring is kube-prometheus-stack. Logs go to Loki, with chunks in R2.
+
+## Why I keep it this way
+
+I learn more from running this than from a cluster that hides everything. I broke most of this at least once. That is the point.
+
+It is also useful. It hosts my own services, gives me a real place to test ideas from work, and it stays up when one node goes down.
+
+If I need to rebuild it, I do not restore from notes. I run Terraform, install Cilium, and let Flux do the rest.

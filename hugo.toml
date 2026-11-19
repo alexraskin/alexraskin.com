@@ -11,7 +11,8 @@ pagination.pagerSize = 5
 [params]
   contentTypeName = "posts"
   subtitle = "Alex Raskin - DevOps Engineer"
-  showMenuItems = 4
+  showMenuItems = 5
+  readMore = "Read more"
   centerTheme = true
   [params.logo]
     logoText = "alex"
@@ -24,6 +25,10 @@ pagination.pagerSize = 5
   [[menu.main]]
     name = "Resume"
     url = "/resume/"
+    weight = 1
+  [[menu.main]]
+    name = "Tags"
+    url = "/tags/"
     weight = 1
   [[menu.main]]
     name = "Photography"

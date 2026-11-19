@@ -9,4 +9,3 @@ infrastructure/terraform/*.auto.tfvars
 public/
 resources/_gen/
 .hugo_build.lock
-*.pdf
