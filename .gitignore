@@ -3,6 +3,10 @@ node_modules/
 *.tfplan
 *.tfstate
 *.tfstate.*
-# Local secrets (cloudflare_token); committed env tfvars go under envs/.
 infrastructure/terraform/terraform.tfvars
 infrastructure/terraform/*.auto.tfvars
+# Hugo build output
+public/
+resources/_gen/
+.hugo_build.lock
+*.pdf

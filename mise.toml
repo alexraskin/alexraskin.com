@@ -2,11 +2,15 @@
 lockfile = true
 
 [tools]
-python = "3.13"
+hugo-extended = "0.170"
 terraform = "1.17"
 
 [tasks.dev]
-run = "python -m http.server -d public 8000"
+run = "hugo server"
+
+[tasks.build]
+description = "build site into public/"
+run = "hugo --minify --cleanDestinationDir"
 
 [tasks.lint]
 description = "terraform fmt check"
@@ -18,6 +22,7 @@ dir = "infrastructure/terraform"
 run = "terraform init -input=false -reconfigure -backend-config=envs/${TF_ENV:-prod}.backend.hcl"
 
 [tasks."tf:plan"]
+depends = ["build"]
 description = "terraform plan for $TF_ENV (default prod)"
 dir = "infrastructure/terraform"
 run = "terraform plan -input=false -var-file=envs/${TF_ENV:-prod}.tfvars -out=${TF_ENV:-prod}.tfplan"
