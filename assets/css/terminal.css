@@ -4,3 +4,9 @@
   --foreground: #cad3f5; /* text */
   --accent: #c6a0f6;     /* mauve */
 }
+
+/* Mobile menu dropdown: stop links wrapping mid-word in the narrow absolute box. */
+.menu--mobile .menu__dropdown {
+  min-width: 12rem;
+  white-space: nowrap;
+}
