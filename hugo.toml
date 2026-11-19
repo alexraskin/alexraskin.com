@@ -1,0 +1,39 @@
+baseURL = "https://alexraskin.com/"
+locale = "en-us"
+title = "Alex Raskin"
+theme = "terminal"
+enableRobotsTXT = true
+pagination.pagerSize = 5
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[params]
+  contentTypeName = "posts"
+  subtitle = "Alex Raskin - DevOps Engineer"
+  showMenuItems = 4
+  centerTheme = true
+  [params.logo]
+    logoText = "alex"
+    logoHomeLink = "/"
+  [params.twitter]
+    site = "@notalexraskin"
+    creator = "@notalexraskin"
+
+[menu]
+  [[menu.main]]
+    name = "Resume"
+    url = "/resume/"
+    weight = 1
+  [[menu.main]]
+    name = "Photography"
+    url = "https://photography.alexraskin.com/"
+    weight = 2
+  [[menu.main]]
+    name = "GitHub"
+    url = "https://github.com/alexraskin"
+    weight = 3
+  [[menu.main]]
+    name = "Twitter"
+    url = "https://twitter.com/notalexraskin"
+    weight = 4
