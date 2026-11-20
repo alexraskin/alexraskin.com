@@ -7,7 +7,7 @@ description = "Nine VMs on one Proxmox box, running a highly available Kubernete
 readingTime = false
 +++
 
-I run a Kubernetes cluster at home. It is nine VMs on a single Proxmox box.
+I run a Kubernetes cluster in my homelab. It is nine VMs on a single Proxmox box.
 
 Three are control plane nodes with embedded etcd. Three are workers. Three are tainted database workers. It runs on [Talos Linux](https://www.talos.dev).
 
@@ -51,7 +51,7 @@ Secrets are SOPS encrypted to a single age key. The key lives in 1Password. Noth
 
 No port is open to the internet at home.
 
-Nothing in the cluster is public. I reach it over Tailscale. My home firewall has nothing to forward.
+Nothing in the cluster is public. I reach it over Tailscale. My homelab firewall has nothing to forward.
 
 Talos cannot run `tailscaled` itself. The Tailscale operator runs in the cluster instead. A Connector re-advertises the cluster subnet, so `kubectl` works from anywhere. Individual services get their own tailnet device and a MagicDNS name.
 
@@ -59,7 +59,7 @@ The only public port I have is on a small NixOS VM in Oracle Cloud. HAProxy term
 
 ![Grafana dashboard for the cloud edge VM](/img/edge.png)
 
-It does almost nothing, which is what I want from it. Under 1% CPU, a few percent of memory, and egress is tracked per month so the free tier does not surprise me.
+Its main job is fronting Plex. Streams leave the house over the tailnet and go out to the internet from Oracle. The dashboard tracks egress per month, so the free tier never surprises me.
 
 ## Watching it
 
