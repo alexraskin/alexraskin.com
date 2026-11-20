@@ -1,4 +1,4 @@
-/* Catppuccin Macchiato. Overrides the theme's placeholder; picked up by head.html's css/*.css glob. */
+/* Catppuccin Macchiato. Appended last to the CSS bundle in layouts/partials/head.html so these :root vars win. */
 :root {
   --background: #24273a; /* base */
   --foreground: #cad3f5; /* text */

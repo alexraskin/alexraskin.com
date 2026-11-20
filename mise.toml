@@ -22,7 +22,6 @@ dir = "infrastructure/terraform"
 run = "terraform init -input=false -reconfigure -backend-config=envs/${TF_ENV:-prod}.backend.hcl"
 
 [tasks."tf:plan"]
-depends = ["build"]
 description = "terraform plan for $TF_ENV (default prod)"
 dir = "infrastructure/terraform"
 run = "terraform plan -input=false -var-file=envs/${TF_ENV:-prod}.tfvars -out=${TF_ENV:-prod}.tfplan"
@@ -31,6 +30,7 @@ run = "terraform plan -input=false -var-file=envs/${TF_ENV:-prod}.tfvars -out=${
 description = "terraform apply the saved plan for $TF_ENV (default prod)"
 dir = "infrastructure/terraform"
 run = "terraform apply ${TF_ENV:-prod}.tfplan"
+
 
 [tasks."tf:destroy"]
 description = "terraform destroy $TF_ENV (default prod); asks for confirmation"
