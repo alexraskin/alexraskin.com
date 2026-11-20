@@ -5,3 +5,7 @@ output "cloudfront_url" {
 output "distribution_id" {
   value = module.cdn.id
 }
+
+output "bucket_name" {
+  value = module.site_bucket.id
+}
