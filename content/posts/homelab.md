@@ -55,11 +55,11 @@ Nothing in the cluster is public. I reach it over Tailscale. My homelab firewall
 
 Talos cannot run `tailscaled` itself. The Tailscale operator runs in the cluster instead. A Connector re-advertises the cluster subnet, so `kubectl` works from anywhere. Individual services get their own tailnet device and a MagicDNS name.
 
-The only public port I have is on a small NixOS VM in Oracle Cloud. HAProxy terminates TLS there and forwards over the tailnet. It is also a Tailscale exit node. Its node exporter only listens on the tailnet, so the cluster scrapes it like any other host.
+The only public port I have is on a small NixOS VM in Oracle Cloud. HAProxy terminates TLS there and forwards over the tailnet, mostly to Plex. It is also a Tailscale exit node. Its node exporter only listens on the tailnet, so the cluster scrapes it like any other host.
 
 ![Grafana dashboard for the cloud edge VM](/img/edge.png)
 
-Its main job is fronting Plex. Streams leave the house over the tailnet and go out to the internet from Oracle. The dashboard tracks egress per month, so the free tier never surprises me.
+Plex streams go out through that VM, so the dashboard tracks egress per month. The free tier never surprises me.
 
 ## Watching it
 
