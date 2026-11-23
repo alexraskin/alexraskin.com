@@ -1,0 +1,75 @@
+==================================================================
+https://keybase.io/alexraskin
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://alexraskin.com
+  * I am alexraskin (https://keybase.io/alexraskin) on keybase.
+  * I have a public key with fingerprint B034 17F1 56B1 1C10 C9EE  364F 7EA5 562C 153D CEEC
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "012050bccb2c3fdb3596f0888d91506fd3e82cee64ca6aafc3bc5626a9e2fbd4d80c0a",
+      "fingerprint": "b03417f156b11c10c9ee364f7ea5562c153dceec",
+      "host": "keybase.io",
+      "key_id": "7ea5562c153dceec",
+      "kid": "01017b1eb5d8cb695477a1c0281114d98498664b05164deb5f05a409658a80cb83a50a",
+      "uid": "5fd991d0ab0f41774fb07ab0139fec19",
+      "username": "alexraskin"
+    },
+    "service": {
+      "hostname": "alexraskin.com",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 1
+  },
+  "ctime": 1795461321,
+  "expire_in": 157680000,
+  "prev": "e5facca09ad7f2b606b2801ee1dc9f6e418b7ecbedd1f64e78c16fc174f240cd",
+  "seqno": 49,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.1.17
+Comment: https://keybase.io/crypto
+
+yMNoAnicbVJrTBRXGN0Vql1SC31QSQskjEnbBCL3zs5zWUBpSxvQBCjBSKHLzJ07
+OF32vUt5+KDqSmkpCkugqBDTBU0WH8GCihUillSBQIOSmGgVjUQsFWhKVKCt6Syp
+v9r75+b77jnnnvPlG1wbognT7urIS4hMHnukHRk44tGYQw8OVRKiTSonDJWEGa9c
+uETCLrfJrEiEgQCQBDQQERJJpJclUU/zjAw4jpN4SANGlvSYIxHGDIUERhBkpBcR
+zZCMwGNSFiVK4gACApFAyIq1GDvtTsXqVmVFoKcgK0OaESFEECAeYz1DySwWaJWO
+IK2XVFWkErfbXEGGak4UXHiDYlN7amFasfc/+Oe+AWRFiEVa4pDI8DTFsgJEgOQg
+hJTEcxTPMQwlAhoylKTCZEALFOAZmhNUyyKnF+gV354VOVqWeB5KQBCBrBpnKVkE
+rFpAPS9jBPkg0IWdVsGCVbRQgsucgsusWImdCYTaL1UQDo42mOU/mA3IZlH5dqfN
+bUO2EvVtu9ttdxmCXHe5PQj+HIumf2VMomKV1FmqjFLsdCk2K2GAKhK5laAuZNWo
+DNSTMIHAZXbFiU1KEEGzDAfUE/wHl6qSmJYFhATACxIrkyIDGJHkAMQYSoiXGUxB
+TmQxErEkQZmhMMshyMgIqtFJCiCJCAZzWG2EgeJVn0KxqulSiq2C2+PExM7LAwWh
+Gm2YZvULq4JLpgnTRTxfvc6e8GeJ2WWpLuOkwxlys2WGmHusZDJNde12WDJYc6Lu
+vi5ydGb/mpeS5ioebMt+0+1d7paNrf3aYnLcF5+oCW8LP7nwp/Vi07Xq889myduj
+e2t3Pxnt++jejvh6e0rpyOzkzW+T0wcntg7r+svml38unoBFjm8aDud+kp9hmgkQ
+pJZ/bVlYyJl7ayFytSN1/sVcytDX3LGv1n+i6hi4d6jA1zhZvv63zg70+xFqfX2M
+6e47X3yZM5bx8MaxxcUPMg9qeyN1lTPtKcbcGKFr1pTZGJUX90YgaWOt5czfcsOe
+czWdd3xX0tJ7ob/5eIh+33zde3fSQt8//4dinebXRIqCDvdJ6+D1Ln/J5umZniXt
+OvzyKlNV4VnlvC+nmr5U4+3NyAIDNxy5RRuVhqdbk6W4AS5nMTrHfDj69HjgXOxU
+alN3gSxuutoQ02NLbdv8sP+UM8mZHNjy9NIvF7SlDWd0P1aYI2a/0lV+fzKLlcHE
+oQOxI97XHdSOqo9rfFNZc9e3zFoiAqfXxt+9Rb6d+Ej/6ZW0W/ubjIV7rM3pf3Uu
+Vf4UleItjNtk5AKeqB+O3r92gVse01jG/b82NX6d33LAe1bJI3c3Xg3RPPG3UuH+
+VqOnazjz1SFfZj752VS9edhb1N69FFu97ah56N0PPbcrdkUfb3m89zt0+eKDU9P9
+2W2Wxlf+AV7AxlA=
+=mu+0
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/alexraskin
+
+==================================================================
