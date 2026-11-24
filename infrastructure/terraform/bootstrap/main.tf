@@ -1,5 +1,5 @@
 module "deploy_role" {
-  source   = "git::https://github.com/alexraskin/terraform-hugo-module.git//modules/deploy_role?ref=v1.0.0"
+  source   = "git::https://github.com/alexraskin/terraform-hugo-module.git//modules/deploy_role?ref=v1.0.1"
   for_each = var.environments
 
   name              = "github-deploy-alexraskin-${each.key}"

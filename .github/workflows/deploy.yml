@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   site:
-    uses: alexraskin/terraform-hugo-module/.github/workflows/deploy.yml@v1.0.0
+    uses: alexraskin/terraform-hugo-module/.github/workflows/deploy.yml@v1.0.1
     permissions:
       contents: read
       id-token: write

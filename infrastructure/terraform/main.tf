@@ -1,5 +1,5 @@
 module "site" {
-  source    = "git::https://github.com/alexraskin/terraform-hugo-module.git//modules/site?ref=v1.0.0"
+  source    = "git::https://github.com/alexraskin/terraform-hugo-module.git//modules/site?ref=v1.0.1"
   providers = { aws = aws, aws.us_east_1 = aws.us_east_1 }
 
   name                    = local.name
@@ -10,7 +10,7 @@ module "site" {
 }
 
 module "dns" {
-  source = "git::https://github.com/alexraskin/terraform-hugo-module.git//modules/route53_dns?ref=v1.0.0"
+  source = "git::https://github.com/alexraskin/terraform-hugo-module.git//modules/route53_dns?ref=v1.0.1"
 
   zone_name                   = var.zone_name
   hostnames                   = module.site.hostnames
