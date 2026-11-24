@@ -15,6 +15,8 @@
 
 {{/* Override of the theme head: one CSS bundle instead of a <link> per file. assets/override.css goes last so its :root vars win. */}}
 {{ $css := (resources.Match "css/*.css") | append (resources.Get "override.css") | resources.Concat "css/bundle.css" | minify | fingerprint }}
+{{/* Fetch the Latin Fira Code subset alongside the CSS instead of after parsing it, so the font-display: swap flash is barely visible. crossorigin is required for font preloads, even same-origin. */}}
+<link rel="preload" href="/fonts/FiraCode-Latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{{ $css.Permalink }}" integrity="{{ $css.Data.Integrity }}">
 
 <!-- Icons -->
