@@ -10,7 +10,7 @@ terraform {
 
   backend "s3" {
     bucket       = "alexraskin-tfstate"
-    key          = "website/bootstrap/terraform.tfstate"
+    key          = "alexraskin/bootstrap/terraform.tfstate"
     region       = "us-east-1"
     use_lockfile = true
     encrypt      = true

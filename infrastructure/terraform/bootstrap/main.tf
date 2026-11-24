@@ -7,7 +7,7 @@ module "deploy_role" {
   environment       = each.key
   github_repository = var.github_repository
   github_sub_prefix = var.github_sub_prefix
-  state_key_prefix  = "website/${each.key}"
+  state_key_prefix  = "alexraskin/${each.key}"
   resource_prefix   = "alexraskin-${each.key}-"
   route53_zone_name = local.zone
   hostnames         = [local.zone, "www.${local.zone}"]
