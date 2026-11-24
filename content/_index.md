@@ -11,3 +11,5 @@ Most of what I build involves **Go, TypeScript, and Terraform**. At home, I run 
 My daily driver is a MacBook Air, configured with [nix-darwin](https://github.com/LnL7/nix-darwin).
 
 Away from the terminal, there's usually a cat named [Cosmo](/cosmo/), an interest in infrastructure, and an appreciation for a good Franzbrötchen.
+
+Want to reach me privately? Here's my [PGP key](/pgp/).
