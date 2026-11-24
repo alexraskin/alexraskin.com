@@ -1,11 +1,11 @@
-output "cloudfront_url" {
-  value = "https://${module.cdn.domain_name}"
-}
-
-output "distribution_id" {
-  value = module.cdn.id
+output "site_url" {
+  value = "https://${var.domain_name}"
 }
 
 output "bucket_name" {
-  value = module.site_bucket.id
+  value = module.site.bucket_name
+}
+
+output "distribution_id" {
+  value = module.site.distribution_id
 }

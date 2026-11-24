@@ -2,25 +2,48 @@
 lockfile = true
 
 [tools]
-# withdeploy build: plain hugo-extended lacks `hugo deploy`.
 "github:gohugoio/hugo" = { version = "0.170.1", asset_pattern = "hugo_withdeploy_*_linux-amd64.tar.gz" }
 terraform = "1.17"
+pre-commit = "latest"
+tflint = "latest"
+terraform-docs = "0.20.0"
+trivy = "latest"
+python = "3.13"
+shellcheck = "0.11"
 
 [tasks.dev]
+description = "Dev server on http://localhost:1313"
 run = "hugo server"
 
 [tasks.build]
-description = "build site into public/"
-run = "hugo --minify --cleanDestinationDir"
+description = "Production build into public/"
+run = "hugo --gc --minify --cleanDestinationDir"
+
+[tasks.deploy]
+description = "Sync public/ to S3 (deleting stale files) and invalidate CloudFront (run build first)"
+run = "hugo deploy --target=prod --invalidateCDN"
 
 [tasks.lint]
-description = "terraform fmt check"
-run = "terraform fmt -check -recursive infrastructure/terraform"
+description = "Run every pre-commit hook on all files"
+run = "pre-commit run --all-files"
 
 [tasks."tf:init"]
 description = "terraform init for $TF_ENV (default prod)"
 dir = "infrastructure/terraform"
 run = "terraform init -input=false -reconfigure -backend-config=envs/${TF_ENV:-prod}.backend.hcl"
+
+[tasks."tf:validate"]
+description = "Validate every Terraform root (modules through their root), no backend"
+# -lockfile=readonly: use the committed .terraform.lock.hcl, never write one.
+run = '''
+set -eu
+for d in infrastructure/terraform infrastructure/terraform/bootstrap; do
+  [ -d "$d" ] || continue
+  echo "$d"
+  terraform -chdir="$d" init -backend=false -lockfile=readonly -input=false >/dev/null
+  terraform -chdir="$d" validate
+done
+'''
 
 [tasks."tf:plan"]
 description = "terraform plan for $TF_ENV (default prod)"
@@ -30,14 +53,9 @@ run = "terraform plan -input=false -var-file=envs/${TF_ENV:-prod}.tfvars -out=${
 [tasks."tf:apply"]
 description = "terraform apply the saved plan for $TF_ENV (default prod)"
 dir = "infrastructure/terraform"
-run = "terraform apply ${TF_ENV:-prod}.tfplan"
-
+run = "terraform apply -input=false ${TF_ENV:-prod}.tfplan"
 
 [tasks."tf:destroy"]
-description = "terraform destroy $TF_ENV (default prod); asks for confirmation"
+description = "terraform destroy $TF_ENV (required, no default); asks for confirmation"
 dir = "infrastructure/terraform"
-run = "terraform destroy -var-file=envs/${TF_ENV:-prod}.tfvars"
-
-[tasks.deploy]
-description = "sync public/ to S3 and invalidate CloudFront (run build first)"
-run = "hugo deploy --target=prod --invalidateCDN"
+run = "terraform destroy -var-file=envs/${TF_ENV:?set TF_ENV explicitly}.tfvars"

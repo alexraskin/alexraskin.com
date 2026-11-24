@@ -42,6 +42,118 @@ checksum = "sha256:a1c81c53a8bc789f1af9494a6b6be1a9b1aa7782e22a1398f919d5df50558
 url = "https://github.com/gohugoio/hugo/releases/download/v0.170.1/hugo_withdeploy_0.170.1_linux-amd64.tar.gz"
 url_api = "https://api.github.com/repos/gohugoio/hugo/releases/assets/759871535"
 
+[[tools.pre-commit]]
+version = "4.7.0"
+backend = "aqua:pre-commit/pre-commit"
+
+[tools.pre-commit."platforms.linux-arm64"]
+checksum = "sha256:393488513aed286d7a5a978a1fe79b2f5a8802927242a2d241ff10c1a8e8c885"
+url = "https://github.com/pre-commit/pre-commit/releases/download/v4.7.0/pre-commit-4.7.0.pyz"
+url_api = "https://api.github.com/repos/pre-commit/pre-commit/releases/assets/637459099"
+
+[tools.pre-commit."platforms.linux-arm64-musl"]
+checksum = "sha256:393488513aed286d7a5a978a1fe79b2f5a8802927242a2d241ff10c1a8e8c885"
+url = "https://github.com/pre-commit/pre-commit/releases/download/v4.7.0/pre-commit-4.7.0.pyz"
+url_api = "https://api.github.com/repos/pre-commit/pre-commit/releases/assets/637459099"
+
+[tools.pre-commit."platforms.linux-x64"]
+checksum = "sha256:393488513aed286d7a5a978a1fe79b2f5a8802927242a2d241ff10c1a8e8c885"
+url = "https://github.com/pre-commit/pre-commit/releases/download/v4.7.0/pre-commit-4.7.0.pyz"
+url_api = "https://api.github.com/repos/pre-commit/pre-commit/releases/assets/637459099"
+
+[tools.pre-commit."platforms.linux-x64-musl"]
+checksum = "sha256:393488513aed286d7a5a978a1fe79b2f5a8802927242a2d241ff10c1a8e8c885"
+url = "https://github.com/pre-commit/pre-commit/releases/download/v4.7.0/pre-commit-4.7.0.pyz"
+url_api = "https://api.github.com/repos/pre-commit/pre-commit/releases/assets/637459099"
+
+[tools.pre-commit."platforms.macos-arm64"]
+checksum = "sha256:393488513aed286d7a5a978a1fe79b2f5a8802927242a2d241ff10c1a8e8c885"
+url = "https://github.com/pre-commit/pre-commit/releases/download/v4.7.0/pre-commit-4.7.0.pyz"
+url_api = "https://api.github.com/repos/pre-commit/pre-commit/releases/assets/637459099"
+
+[tools.pre-commit."platforms.macos-x64"]
+checksum = "sha256:393488513aed286d7a5a978a1fe79b2f5a8802927242a2d241ff10c1a8e8c885"
+url = "https://github.com/pre-commit/pre-commit/releases/download/v4.7.0/pre-commit-4.7.0.pyz"
+url_api = "https://api.github.com/repos/pre-commit/pre-commit/releases/assets/637459099"
+
+[[tools.python]]
+version = "3.13.18"
+backend = "core:python"
+
+[tools.python."platforms.linux-arm64"]
+checksum = "sha256:9c9da4fc81fcdda1683ec8f97674bae46e3d246243ce8d781973817e13e2ec12"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20261123/cpython-3.13.18+20261123-aarch64-unknown-linux-gnu-install_only_stripped.tar.gz"
+provenance = "github-attestations"
+
+[tools.python."platforms.linux-arm64-musl"]
+checksum = "sha256:4746967e0e1817ce8c00c28fcd3bba5c323c13255ba21a1e38e5f6ca1744f45e"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20261123/cpython-3.13.18+20261123-aarch64-unknown-linux-musl-install_only_stripped.tar.gz"
+provenance = "github-attestations"
+
+[tools.python."platforms.linux-x64"]
+checksum = "sha256:65d5c786e3cbd67533c346537ad0b8826ef158287b3cebaa34b30558cc330f59"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20261123/cpython-3.13.18+20261123-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz"
+provenance = "github-attestations"
+
+[tools.python."platforms.linux-x64-musl"]
+checksum = "sha256:d8d0f650c5342afb525c9a3312bfdd55931b2960262c6da99d82871f88813e76"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20261123/cpython-3.13.18+20261123-x86_64-unknown-linux-musl-install_only_stripped.tar.gz"
+provenance = "github-attestations"
+
+[tools.python."platforms.macos-arm64"]
+checksum = "sha256:1ee404a045f3de0e4ed59476fc9ec8c24ddece1e2a4c549a192a04b04b03b8c1"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20261123/cpython-3.13.18+20261123-aarch64-apple-darwin-install_only_stripped.tar.gz"
+provenance = "github-attestations"
+
+[tools.python."platforms.macos-x64"]
+checksum = "sha256:204e7d25132cd8e511c938d74dd6393a911d557a822289019302496befa2c4bd"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20261123/cpython-3.13.18+20261123-x86_64-apple-darwin-install_only_stripped.tar.gz"
+provenance = "github-attestations"
+
+[tools.python."platforms.windows-x64"]
+checksum = "sha256:96a8324c30e163daa32fe7a865a1fbb159f4a91033aaffb0066e2c21c2330a7f"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20261123/cpython-3.13.18+20261123-x86_64-pc-windows-msvc-install_only_stripped.tar.gz"
+provenance = "github-attestations"
+
+[[tools.shellcheck]]
+version = "0.11.0"
+backend = "aqua:koalaman/shellcheck"
+
+[tools.shellcheck."platforms.linux-arm64"]
+checksum = "sha256:12b331c1d2db6b9eb13cfca64306b1b157a86eb69db83023e261eaa7e7c14588"
+url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.aarch64.tar.xz"
+url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056934"
+
+[tools.shellcheck."platforms.linux-arm64-musl"]
+checksum = "sha256:12b331c1d2db6b9eb13cfca64306b1b157a86eb69db83023e261eaa7e7c14588"
+url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.aarch64.tar.xz"
+url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056934"
+
+[tools.shellcheck."platforms.linux-x64"]
+checksum = "sha256:8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198"
+url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz"
+url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056942"
+
+[tools.shellcheck."platforms.linux-x64-musl"]
+checksum = "sha256:8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198"
+url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz"
+url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056942"
+
+[tools.shellcheck."platforms.macos-arm64"]
+checksum = "sha256:56affdd8de5527894dca6dc3d7e0a99a873b0f004d7aabc30ae407d3f48b0a79"
+url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.darwin.aarch64.tar.xz"
+url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056932"
+
+[tools.shellcheck."platforms.macos-x64"]
+checksum = "sha256:3c89db4edcab7cf1c27bff178882e0f6f27f7afdf54e859fa041fca10febe4c6"
+url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.darwin.x86_64.tar.xz"
+url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056930"
+
+[tools.shellcheck."platforms.windows-x64"]
+checksum = "sha256:8a4e35ab0b331c85d73567b12f2a444df187f483e5079ceffa6bda1faa2e740e"
+url = "https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.zip"
+url_api = "https://api.github.com/repos/koalaman/shellcheck/releases/assets/279056944"
+
 [[tools.terraform]]
 version = "1.17.2"
 backend = "aqua:hashicorp/terraform"
@@ -73,3 +185,134 @@ url = "https://releases.hashicorp.com/terraform/1.17.2/terraform_1.17.2_darwin_a
 [tools.terraform."platforms.windows-x64"]
 checksum = "sha256:2244b7a379ea8c4b224a2eab411b7288f41ef36316fca27ae4b51b1cf2a53024"
 url = "https://releases.hashicorp.com/terraform/1.17.2/terraform_1.17.2_windows_amd64.zip"
+
+[[tools.terraform-docs]]
+version = "0.20.0"
+backend = "aqua:terraform-docs/terraform-docs"
+
+[tools.terraform-docs."platforms.linux-arm64"]
+checksum = "sha256:371b4ed983781d1efdd8f7de06264baac41b1d80927f7fd718c405a303d863a0"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.20.0/terraform-docs-v0.20.0-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/terraform-docs/terraform-docs/releases/assets/243634278"
+
+[tools.terraform-docs."platforms.linux-arm64-musl"]
+checksum = "sha256:371b4ed983781d1efdd8f7de06264baac41b1d80927f7fd718c405a303d863a0"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.20.0/terraform-docs-v0.20.0-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/terraform-docs/terraform-docs/releases/assets/243634278"
+
+[tools.terraform-docs."platforms.linux-x64"]
+checksum = "sha256:34ae01772412bb11474e6718ea62113e38ff5964ee570a98c69fafe3a6dff286"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.20.0/terraform-docs-v0.20.0-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/terraform-docs/terraform-docs/releases/assets/243634277"
+
+[tools.terraform-docs."platforms.linux-x64-musl"]
+checksum = "sha256:34ae01772412bb11474e6718ea62113e38ff5964ee570a98c69fafe3a6dff286"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.20.0/terraform-docs-v0.20.0-linux-amd64.tar.gz"
+url_api = "https://api.github.com/repos/terraform-docs/terraform-docs/releases/assets/243634277"
+
+[tools.terraform-docs."platforms.macos-arm64"]
+checksum = "sha256:8723013cfe0369c389f4e6cb6e3cfca1aebaefd67871e349e7547f2201564dad"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.20.0/terraform-docs-v0.20.0-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/terraform-docs/terraform-docs/releases/assets/243634275"
+
+[tools.terraform-docs."platforms.macos-x64"]
+checksum = "sha256:8c7ea42429d7f5e3dae3de32f3873fde0419332932549147f40916d3f613b8f7"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.20.0/terraform-docs-v0.20.0-darwin-amd64.tar.gz"
+url_api = "https://api.github.com/repos/terraform-docs/terraform-docs/releases/assets/243634256"
+
+[tools.terraform-docs."platforms.windows-x64"]
+checksum = "sha256:fb372a26f934dc0e163ca914a5aa99fe13d094b1f64f937efe9dc79bdddf05a0"
+url = "https://github.com/terraform-docs/terraform-docs/releases/download/v0.20.0/terraform-docs-v0.20.0-windows-amd64.zip"
+url_api = "https://api.github.com/repos/terraform-docs/terraform-docs/releases/assets/243634255"
+
+[[tools.tflint]]
+version = "0.66.0"
+backend = "aqua:terraform-linters/tflint"
+
+[tools.tflint."platforms.linux-arm64"]
+checksum = "sha256:1105a0a5ddee7cdac7957a3475571a946b839192ea1bc0c722c6c4686001067e"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.66.0/tflint_linux_arm64.zip"
+url_api = "https://api.github.com/repos/terraform-linters/tflint/releases/assets/724463994"
+provenance = "github-attestations"
+
+[tools.tflint."platforms.linux-arm64-musl"]
+checksum = "sha256:1105a0a5ddee7cdac7957a3475571a946b839192ea1bc0c722c6c4686001067e"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.66.0/tflint_linux_arm64.zip"
+url_api = "https://api.github.com/repos/terraform-linters/tflint/releases/assets/724463994"
+provenance = "github-attestations"
+
+[tools.tflint."platforms.linux-x64"]
+checksum = "sha256:22be11cadc25cd02401e94c0ccc91aa63467debb8485c2a755d98f4c0a9d1e2e"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.66.0/tflint_linux_amd64.zip"
+url_api = "https://api.github.com/repos/terraform-linters/tflint/releases/assets/724464090"
+provenance = "github-attestations"
+
+[tools.tflint."platforms.linux-x64-musl"]
+checksum = "sha256:22be11cadc25cd02401e94c0ccc91aa63467debb8485c2a755d98f4c0a9d1e2e"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.66.0/tflint_linux_amd64.zip"
+url_api = "https://api.github.com/repos/terraform-linters/tflint/releases/assets/724464090"
+provenance = "github-attestations"
+
+[tools.tflint."platforms.macos-arm64"]
+checksum = "sha256:859b26af07ead7e65cee7eec9d050b2e2571dc28395b7a39191cae088cd67803"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.66.0/tflint_darwin_arm64.zip"
+url_api = "https://api.github.com/repos/terraform-linters/tflint/releases/assets/724463988"
+provenance = "github-attestations"
+
+[tools.tflint."platforms.macos-x64"]
+checksum = "sha256:e2d98b60adb2602a252ee9efb036e237edf13c8fda91f4d513d3357e1a01a889"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.66.0/tflint_darwin_amd64.zip"
+url_api = "https://api.github.com/repos/terraform-linters/tflint/releases/assets/724463991"
+provenance = "github-attestations"
+
+[tools.tflint."platforms.windows-x64"]
+checksum = "sha256:e3acd1d89c735ce6e09108c9277f26076ebeb385c1f77a73c1cbf1826ed626a7"
+url = "https://github.com/terraform-linters/tflint/releases/download/v0.66.0/tflint_windows_amd64.zip"
+url_api = "https://api.github.com/repos/terraform-linters/tflint/releases/assets/724464085"
+provenance = "github-attestations"
+
+[[tools.trivy]]
+version = "0.76.2"
+backend = "aqua:aquasecurity/trivy"
+
+[tools.trivy."platforms.linux-arm64"]
+checksum = "sha256:ab9d51f86e6a5fb936f605faff6b593ac51bc378fff4d3e8b9d58358b9c367c3"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.76.2/trivy_0.76.2_Linux-ARM64.tar.gz"
+url_api = "https://api.github.com/repos/aquasecurity/trivy/releases/assets/713401022"
+provenance = "cosign"
+
+[tools.trivy."platforms.linux-arm64-musl"]
+checksum = "sha256:ab9d51f86e6a5fb936f605faff6b593ac51bc378fff4d3e8b9d58358b9c367c3"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.76.2/trivy_0.76.2_Linux-ARM64.tar.gz"
+url_api = "https://api.github.com/repos/aquasecurity/trivy/releases/assets/713401022"
+provenance = "cosign"
+
+[tools.trivy."platforms.linux-x64"]
+checksum = "sha256:bc0fc726e017b8927a62b2d3531d7a84ee01769daf5c99ed866dced54089fdbf"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.76.2/trivy_0.76.2_Linux-64bit.tar.gz"
+url_api = "https://api.github.com/repos/aquasecurity/trivy/releases/assets/713401165"
+provenance = "cosign"
+
+[tools.trivy."platforms.linux-x64-musl"]
+checksum = "sha256:bc0fc726e017b8927a62b2d3531d7a84ee01769daf5c99ed866dced54089fdbf"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.76.2/trivy_0.76.2_Linux-64bit.tar.gz"
+url_api = "https://api.github.com/repos/aquasecurity/trivy/releases/assets/713401165"
+provenance = "cosign"
+
+[tools.trivy."platforms.macos-arm64"]
+checksum = "sha256:ae7ea358326960406b703c77b2ac490190797d80b306b5b50c2a27221da0a5b8"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.76.2/trivy_0.76.2_macOS-ARM64.tar.gz"
+url_api = "https://api.github.com/repos/aquasecurity/trivy/releases/assets/713400755"
+provenance = "cosign"
+
+[tools.trivy."platforms.macos-x64"]
+checksum = "sha256:e08bb9ea449ecf66c6bfb03cbb8697c503ff33d35fc585c9747e3eaeb7ed4c7b"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.76.2/trivy_0.76.2_macOS-64bit.tar.gz"
+url_api = "https://api.github.com/repos/aquasecurity/trivy/releases/assets/713400752"
+provenance = "cosign"
+
+[tools.trivy."platforms.windows-x64"]
+checksum = "sha256:691f737a7e5566a673c3a74dab9160552ec32101e953b659e5c77443d16dddb6"
+url = "https://github.com/aquasecurity/trivy/releases/download/v0.76.2/trivy_0.76.2_windows-64bit.zip"
+url_api = "https://api.github.com/repos/aquasecurity/trivy/releases/assets/713401033"
+provenance = "cosign"

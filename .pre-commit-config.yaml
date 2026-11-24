@@ -1,0 +1,68 @@
+minimum_pre_commit_version: "3.5.0"
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit]
+fail_fast: false
+
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.109.5
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_tflint
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+      - id: terraform_docs
+        args:
+          # This hook prefixes the repo root itself; __GIT_WORKING_DIR__ would double it.
+          - --args=--config=.terraform-docs.yml
+      - id: terraform_trivy
+        stages: [pre-push]
+        args:
+          - --args=--skip-dirs=**/.terraform
+          # A saved plan is scanned instead of the .tf files, which drops every trivy:ignore.
+          - --args=--skip-files=**/*.tfplan
+
+  # Validate each Terraform root, not each changed directory: that covers the modules
+  # through the root, and terraform init never runs inside a module, so the only
+  # .terraform.lock.hcl files are the committed ones at the roots. (pre-commit-terraform's
+  # terraform_validate inits every changed dir, leaving lock files in modules that made
+  # terraform-docs print versions CI could not reproduce.)
+  - repo: local
+    hooks:
+      - id: terraform-validate-roots
+        name: Terraform validate (roots)
+        entry: mise run tf:validate
+        language: system
+        files: \.tf$
+        pass_filenames: false
+        stages: [pre-push]
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.2
+    hooks:
+      - id: codespell
+        args: ["--skip=*.lock,*.tfstate,*.svg,.git"]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: check-case-conflict
+      - id: mixed-line-ending
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+      - id: check-yaml
+        args: [--allow-multiple-documents]

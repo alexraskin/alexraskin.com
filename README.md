@@ -4,26 +4,25 @@ Hugo site ([terminal](https://github.com/panr/hugo-theme-terminal) theme, Catppu
 
 ```sh
 git submodule update --init  # theme
-mise trust                   # first time only
+mise trust && mise install && pre-commit install  # first time only
 mise run dev                 # hugo server
 ```
 
-## Terraform
+## Infrastructure and deployment
 
-`infrastructure/terraform/` provisions S3 + CloudFront + DNS. `mise run deploy` (`hugo deploy`) uploads changed files from `public/`, sets cache headers, and invalidates CloudFront; targets and cache rules live under `[deployment]` in `hugo.toml`.
+Shared with the other Hugo sites through
+[alexraskin/terraform-hugo-module](https://github.com/alexraskin/terraform-hugo-module):
+its `site` and `route53_dns` modules make up `infrastructure/terraform/`, its
+`deploy_role` the CI role in `bootstrap/` (applied by hand), and its reusable
+workflow runs CI. `mise run deploy` (`hugo deploy`) uploads `public/` with the
+targets and cache rules under `[deployment]` in `hugo.toml`.
 
 ```sh
-mise run tf:plan
-mise run tf:apply
+mise run lint                    # pre-commit hooks
+mise run tf:init && mise run tf:plan && mise run tf:apply
 mise run build && mise run deploy
 ```
 
-- CI (`.github/workflows/deploy.yml`) runs `terraform apply` then `mise run deploy` on push to `main` via GitHub OIDC (role `github-deploy-website`, main branch only).
-- CI role has read-only IAM, so changes to `modules/github-oidc` must be applied locally.
-
-| Module | Does |
-|---|---|
-| `s3-site` | Private bucket (contents uploaded by `hugo deploy`) |
-| `cloudfront` | Distribution with OAC; function maps `/dir/` -> `/dir/index.html`, 301s `/dir` -> `/dir/` |
-| `route53-dns` | Alias records + ACM validation records |
-| `github-oidc` | OIDC provider + deploy role for CI |
+`.github/workflows/deploy.yml` lints and builds every push/PR and, on `main`,
+applies Terraform and deploys via GitHub OIDC (role `github-deploy-alexraskin-prod`,
+`prod` environment only).

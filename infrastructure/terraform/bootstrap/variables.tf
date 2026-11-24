@@ -5,7 +5,7 @@ variable "github_repository" {
 }
 
 variable "github_sub_prefix" {
-  description = "OIDC sub claim prefix for the repo; the trust appends :environment:<env>."
+  description = "OIDC sub claim prefix, from `gh api repos/alexraskin/alexraskin.com/actions/oidc/customization/sub`; the trust appends :environment:<env>."
   type        = string
   default     = "repo:alexraskin/alexraskin.com"
 }

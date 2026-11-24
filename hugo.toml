@@ -46,7 +46,7 @@ pagination.pagerSize = 5
 [deployment]
   [[deployment.targets]]
     name = "prod"
-    URL = "s3://alexraskin-website?region=us-east-1"
+    URL = "s3://alexraskin-prod-web-088966585880?region=us-east-1"
     cloudFrontDistributionID = "E1MLOWZLXWD8KN"
 
   [[deployment.matchers]]
