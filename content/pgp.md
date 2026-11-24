@@ -9,7 +9,7 @@ Want to send me something private? Encrypt it to my PGP key and email [hi@alexra
 Download: [pgp.asc](/pgp.asc)
 
 ```sh
-gpg --locate-keys hi@alexraskin.com
+gpg --keyserver hkps://keys.openpgp.org --recv-keys EA38FEC0C2495E0D685ED874040FB029008FD76E
 # or
 curl -s https://alexraskin.com/pgp.asc | gpg --import
 ```
