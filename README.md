@@ -10,19 +10,20 @@ mise run dev                 # hugo server
 
 ## Terraform
 
-`infrastructure/terraform/` mirrors `public/` to S3 + CloudFront. `tf:plan` runs `build` first.
+`infrastructure/terraform/` provisions S3 + CloudFront + DNS. `mise run deploy` (`hugo deploy`) uploads changed files from `public/`, sets cache headers, and invalidates CloudFront; targets and cache rules live under `[deployment]` in `hugo.toml`.
 
 ```sh
 mise run tf:plan
 mise run tf:apply
+mise run build && mise run deploy
 ```
 
-- CI (`.github/workflows/deploy.yml`) runs `terraform apply` on push to `main` via GitHub OIDC (role `github-deploy-website`, main branch only).
+- CI (`.github/workflows/deploy.yml`) runs `terraform apply` then `mise run deploy` on push to `main` via GitHub OIDC (role `github-deploy-website`, main branch only).
 - CI role has read-only IAM, so changes to `modules/github-oidc` must be applied locally.
 
 | Module | Does |
 |---|---|
-| `s3-site` | Private bucket, uploads `public/` with MIME types + cache headers |
+| `s3-site` | Private bucket (contents uploaded by `hugo deploy`) |
 | `cloudfront` | Distribution with OAC; function maps `/dir/` -> `/dir/index.html`, 301s `/dir` -> `/dir/` |
 | `route53-dns` | Alias records + ACM validation records |
 | `github-oidc` | OIDC provider + deploy role for CI |

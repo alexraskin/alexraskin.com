@@ -22,8 +22,6 @@ jobs:
     env:
       MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
       TF_ENV: prod
-      IMMUTABLE: public, max-age=31536000, immutable
-      EDGE: public, max-age=0, s-maxage=31536000
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -37,28 +35,4 @@ jobs:
       - run: mise run tf:init
       - run: mise run tf:plan
       - run: mise run tf:apply
-
-      - name: Read Terraform outputs
-        run: |
-          tf() { terraform -chdir=infrastructure/terraform output -raw "$1"; }
-          {
-            echo "WEBSITE=s3://$(tf bucket_name)"
-            echo "DISTRIBUTION_ID=$(tf distribution_id)"
-          } >> "$GITHUB_ENV"
-
-      - name: Upload website
-        run: |
-          # css/ and fonts/ are content-hashed by Hugo, so cache forever.
-          for d in css fonts; do
-            aws s3 sync "public/$d" "$WEBSITE/$d" --size-only --cache-control "$IMMUTABLE"
-          done
-          aws s3 sync public "$WEBSITE" --delete --exclude 'css/*' --exclude 'fonts/*' --cache-control "$EDGE"
-
-      - name: Invalidate CloudFront
-        run: aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths '/*' --query Invalidation.Id --output text
-
-      - name: Prune unreferenced files
-        run: |
-          for d in css fonts; do
-            aws s3 sync "public/$d" "$WEBSITE/$d" --size-only --delete
-          done
+      - run: mise run deploy

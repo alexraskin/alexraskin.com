@@ -2,7 +2,8 @@
 lockfile = true
 
 [tools]
-hugo-extended = "0.170"
+# withdeploy build: plain hugo-extended lacks `hugo deploy`.
+"github:gohugoio/hugo" = { version = "0.170.1", asset_pattern = "hugo_withdeploy_*_linux-amd64.tar.gz" }
 terraform = "1.17"
 
 [tasks.dev]
@@ -36,3 +37,7 @@ run = "terraform apply ${TF_ENV:-prod}.tfplan"
 description = "terraform destroy $TF_ENV (default prod); asks for confirmation"
 dir = "infrastructure/terraform"
 run = "terraform destroy -var-file=envs/${TF_ENV:-prod}.tfvars"
+
+[tasks.deploy]
+description = "sync public/ to S3 and invalidate CloudFront (run build first)"
+run = "hugo deploy --target=prod --invalidateCDN"
