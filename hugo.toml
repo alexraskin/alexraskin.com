@@ -13,6 +13,7 @@ pagination.pagerSize = 5
 [params]
   contentTypeName = "posts"
   subtitle = "Alex Raskin - DevOps Engineer"
+  repo = "https://github.com/alexraskin/alexraskin.com"
   readMore = "Read more"
   [params.logo]
     logoText = "alex"

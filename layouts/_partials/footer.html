@@ -1,3 +1,7 @@
 <footer class="footer">
   <span>built with <a href="https://gohugo.io" rel="noopener">hugo</a></span>
+  {{- with site.Params.commit }}
+  {{- $short := substr . 0 7 }}
+  <span>{{ with site.Params.repo }}<a href="{{ . }}/commit/{{ $.Site.Params.commit }}" rel="noopener">{{ $short }}</a>{{ else }}{{ $short }}{{ end }}</span>
+  {{- end }}
 </footer>
