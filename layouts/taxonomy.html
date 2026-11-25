@@ -1,8 +1,8 @@
 {{ define "main" }}
-  <h1 class="title"><span class="title__mark" aria-hidden="true">#</span>{{ lower .Title }}</h1>
-  <ul class="tag-cloud">
+  <h1 class="title">{{ .Title }}</h1>
+  <ul class="post-list">
     {{- range .Data.Terms.ByCount }}
-    <li><a href="{{ .Page.RelPermalink }}">#{{ .Name }}</a><span>{{ .Count }}</span></li>
+    <li><a href="{{ .Page.RelPermalink }}"><span class="post-list__title">{{ .Name }}</span><time>{{ .Count }} {{ cond (eq .Count 1) "post" "posts" }}</time></a></li>
     {{- end }}
   </ul>
 {{ end }}

@@ -8,41 +8,34 @@ pagination.pagerSize = 5
   unsafe = true
 
 [markup.highlight]
-  style = "catppuccin-macchiato"
+  noClasses = false
 
 [params]
   contentTypeName = "posts"
-  subtitle = "Alex Raskin - DevOps Engineer"
+  subtitle = "Alexander (Alex) Raskin - DevOps Engineer"
+  fullName = "Alexander Raskin"
   repo = "https://github.com/alexraskin/alexraskin.com"
   readMore = "Read more"
-  [params.logo]
-    logoText = "alex"
-    logoHomeLink = "/"
+  dateFormat = "January 2, 2006"
+  github = "https://github.com/alexraskin"
+  twitterURL = "https://twitter.com/notalexraskin"
   [params.twitter]
     site = "@notalexraskin"
     creator = "@notalexraskin"
 
 [menu]
   [[menu.main]]
-    name = "Resume"
-    url = "/resume/"
-    weight = 1
-  [[menu.main]]
     name = "Projects"
     url = "/projects/"
     weight = 2
   [[menu.main]]
-    name = "Photography"
-    url = "https://photography.alexraskin.com/"
+    name = "Resume"
+    url = "/resume/"
     weight = 3
   [[menu.main]]
-    name = "GitHub"
-    url = "https://github.com/alexraskin"
+    name = "Photography"
+    url = "https://photography.alexraskin.com/"
     weight = 4
-  [[menu.main]]
-    name = "Twitter"
-    url = "https://twitter.com/notalexraskin"
-    weight = 5
 
 [deployment]
   [[deployment.targets]]

@@ -1,22 +1,9 @@
 {{ define "main" }}
 <article>
-  <h1 class="title"><span class="title__mark" aria-hidden="true">#</span>{{ .Title | markdownify }}</h1>
+  <h1 class="title">{{ .Title | markdownify }}</h1>
   {{ partial "post-meta.html" . }}
   <div class="prose">
     {{ .Content }}
   </div>
-
-  {{- if eq .Type (site.Params.contentTypeName | default "posts") }}
-  {{- if or .NextInSection .PrevInSection }}
-  <nav class="post-nav">
-    {{- with .PrevInSection }}
-    <a href="{{ .RelPermalink }}" rel="prev"><small>← older</small>{{ .Title }}</a>
-    {{- end }}
-    {{- with .NextInSection }}
-    <a class="post-nav__next" href="{{ .RelPermalink }}" rel="next"><small>newer →</small>{{ .Title }}</a>
-    {{- end }}
-  </nav>
-  {{- end }}
-  {{- end }}
 </article>
 {{ end }}

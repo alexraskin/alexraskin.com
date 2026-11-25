@@ -1,7 +1,12 @@
 <footer class="footer">
   <span>built with <a href="https://gohugo.io" rel="noopener">hugo</a></span>
-  {{- with site.Params.commit }}
-  {{- $short := substr . 0 7 }}
-  <span>{{ with site.Params.repo }}<a href="{{ . }}/commit/{{ $.Site.Params.commit }}" rel="noopener">{{ $short }}</a>{{ else }}{{ $short }}{{ end }}</span>
-  {{- end }}
+  <ul class="footer__links">
+    {{- with site.Params.github }}<li><a href="{{ . }}" rel="me noopener">GitHub</a></li>{{ end }}
+    {{- with site.Params.twitterURL }}<li><a href="{{ . }}" rel="me noopener">Twitter</a></li>{{ end }}
+    <li><a href="{{ "/pgp/" | relURL }}">PGP</a></li>
+    {{- with site.Params.commit }}
+    {{- $short := substr . 0 7 }}
+    <li>{{ with site.Params.repo }}<a class="footer__commit" href="{{ . }}/commit/{{ $.Site.Params.commit }}" rel="noopener">{{ $short }}</a>{{ else }}<span class="footer__commit">{{ $short }}</span>{{ end }}</li>
+    {{- end }}
+  </ul>
 </footer>

@@ -16,16 +16,19 @@
 {{- end }}
 <link rel="canonical" href="{{ .Permalink }}">
 
-{{- /* One fingerprinted bundle: fonts, base styles, then syntax. */}}
+{{- /* One fingerprinted bundle: fonts, base styles, then syntax colors. */}}
 {{- $css := slice
   (resources.Get "css/fonts.css")
   (resources.Get "css/main.css")
+  (resources.Get "css/syntax.css")
   | resources.Concat "css/bundle.css" | minify | fingerprint }}
-{{- /* Fetch the Latin Fira Code subset alongside the CSS so the font-display: swap flash is barely visible. crossorigin is required for font preloads, even same-origin. */}}
 <link rel="preload" href="/fonts/FiraCode-Latin.woff2" as="font" type="font/woff2" crossorigin>
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#1e1e2e">
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 
-<link rel="icon" href="{{ "favicon.png" | absURL }}">
+<link rel="icon" href="{{ "favicon.svg" | absURL }}" type="image/svg+xml">
+<link rel="icon" href="{{ "favicon.png" | absURL }}" sizes="32x32">
 <link rel="apple-touch-icon" href="{{ "apple-touch-icon.png" | absURL }}">
 <link rel="manifest" href="{{ "site.webmanifest" | absURL }}">
 
@@ -51,12 +54,28 @@
   {{- with $.Resources.GetMatch . }}{{ $cover = .Permalink }}{{ end }}
 {{- end }}
 <meta property="og:image" content="{{ $cover }}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="627">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
 {{- if and .IsPage (not .Date.IsZero) }}
 <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
 {{- end }}
 
 {{- with .OutputFormats.Get "rss" }}
 <link rel="alternate" type="application/rss+xml" href="{{ .RelPermalink }}" title="{{ site.Title }}">
+{{- end }}
+
+{{- if .IsHome }}
+{{- $sameAs := slice }}
+{{- with site.Params.github }}{{ $sameAs = $sameAs | append . }}{{ end }}
+{{- with site.Params.twitterURL }}{{ $sameAs = $sameAs | append . }}{{ end }}
+{{- $person := dict
+  "@context" "https://schema.org"
+  "@type" "Person"
+  "name" site.Title
+  "alternateName" (site.Params.fullName | default site.Title)
+  "jobTitle" "DevOps Engineer"
+  "url" site.BaseURL
+  "image" ("og-image.png" | absURL)
+  "sameAs" $sameAs }}
+<script type="application/ld+json">{{ $person | jsonify | safeJS }}</script>
 {{- end }}

@@ -1,22 +1,16 @@
-/* Palette: Catppuccin Macchiato. */
+/* Plain and quiet: one narrow column in Fira Code, colored with Catppuccin Mocha. */
 :root {
-  --base: #24273a;
-  --mantle: #1e2030;
-  --surface: #363a4f;
-  --overlay: #6e738d;
-  --subtext: #a5adcb;
-  --text: #cad3f5;
-  --mauve: #c6a0f6;
-  --blue: #8aadf4;
-  --green: #a6da95;
-  --red: #ed8796;
+  --bg: #1e1e2e;      /* base */
+  --text: #cdd6f4;    /* text */
+  --muted: #a6adc8;   /* subtext0 */
+  --faint: #6c7086;   /* overlay0 */
+  --rule: #313244;    /* surface0 */
+  --surface: #181825; /* mantle */
+  --inline: #313244;  /* surface0 */
+  --accent: #cba6f7;  /* mauve */
 
-  --accent: var(--mauve);
-  --rule: color-mix(in srgb, var(--text) 12%, transparent);
-
-  --font: "Fira Code", ui-monospace, Menlo, Consolas, monospace;
-  --measure: 72ch;
-  --radius: 6px;
+  --mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --width: 40rem;
 }
 
 *,
@@ -32,15 +26,11 @@ html {
 
 body {
   margin: 0;
-  background: var(--base);
+  background: var(--bg);
   color: var(--text);
-  font: 15px/1.7 var(--font);
+  font: 15px/1.7 var(--mono);
   overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
-}
-
-::selection {
-  background: color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 /* ---------- Layout ---------- */
@@ -48,65 +38,43 @@ body {
 .container {
   display: flex;
   flex-direction: column;
-  max-width: calc(var(--measure) + 48px);
+  max-width: calc(var(--width) + 48px);
   min-height: 100vh;
   margin: 0 auto;
-  padding: 48px 24px;
+  padding: 40px 24px;
 }
 
 .content {
   flex: 1;
 }
 
-/* ---------- Header: a shell prompt ---------- */
-
 .header {
-  margin-bottom: 56px;
-}
-
-.prompt {
-  display: inline-flex;
+  display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0;
-  color: var(--text);
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-bottom: 72px;
+}
+
+.site-name {
+  color: var(--accent);
   font-weight: 600;
   text-decoration: none;
-}
-
-.prompt__user { color: var(--green); }
-.prompt__colon { color: var(--subtext); }
-.prompt__path { color: var(--blue); }
-.prompt__sign { color: var(--accent); margin: 0 1ch; }
-
-.cursor {
-  display: inline-block;
-  width: 0.6em;
-  height: 1.15em;
-  align-self: center;
-  background: var(--text);
-  animation: blink 1.1s steps(1) infinite;
-}
-
-@keyframes blink {
-  50% { opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cursor { animation: none; }
 }
 
 .nav ul {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 22px;
-  margin: 10px 0 0;
+  gap: 4px 20px;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .nav a {
-  color: var(--subtext);
+  color: var(--muted);
+  font-size: 0.94em;
   text-decoration: none;
 }
 
@@ -115,17 +83,17 @@ body {
   color: var(--accent);
 }
 
-.nav__ext {
-  margin-left: 2px;
-  color: var(--overlay);
-  font-size: 0.8em;
-}
-
 /* ---------- Text ---------- */
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+}
 
 a {
   color: var(--accent);
+  text-decoration-line: underline;
   text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
 
@@ -134,127 +102,119 @@ a:hover {
 }
 
 a:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid currentColor;
   outline-offset: 2px;
   border-radius: 2px;
 }
 
-/* Page titles and headings are shown the way they're written: # Title, ## Section. */
-.title,
-.prose :is(h1, h2, h3, h4, h5, h6) {
-  color: var(--text);
-  font-weight: 700;
-  line-height: 1.35;
-}
-
 .title {
-  margin: 0 0 8px;
-  font-size: 1.6rem;
+  margin: 0 0 6px;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
-.title__mark,
-.heading-mark {
-  margin-right: 1ch;
-  color: var(--accent);
-  font-weight: 400;
-  text-decoration: none;
+.meta {
+  margin: 0 0 40px;
+  color: var(--muted);
+  font-size: 0.94em;
 }
 
-.heading-mark {
-  opacity: 0.7;
+/* Pages without a date still need room under the title. */
+.title + .prose {
+  margin-top: 32px;
 }
 
-.heading-mark:hover {
-  opacity: 1;
+.prose :is(h1, h2, h3, h4, h5, h6) {
+  position: relative;
+  margin: 2em 0 0.5em;
+  font-weight: 650;
+  line-height: 1.3;
 }
 
-.prose h1 { font-size: 1.4rem; }
-.prose h2 { font-size: 1.2rem; }
-.prose h3 { font-size: 1.05rem; }
+.prose h1 { font-size: 1.6rem; }
+.prose h2 { font-size: 1.35rem; }
+.prose h3 { font-size: 1.12rem; }
 .prose :is(h4, h5, h6) { font-size: 1rem; }
 
-.prose :is(h1, h2, h3, h4, h5, h6) {
-  margin: 2.2em 0 0.6em;
+.anchor {
+  margin-left: 0.4em;
+  color: var(--faint);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+:is(h1, h2, h3, h4, h5, h6):hover .anchor,
+.anchor:focus-visible {
+  opacity: 1;
 }
 
 .prose > :first-child {
   margin-top: 0;
 }
 
-.prose :is(p, ul, ol, blockquote, table, figure) {
-  margin: 0 0 1.2em;
-}
-
-.prose strong {
-  color: var(--text);
-  font-weight: 700;
+.prose :is(p, ul, ol, blockquote, table, figure, pre) {
+  margin: 0 0 1.25em;
 }
 
 .prose :is(ul, ol) {
-  padding-left: 3ch;
+  padding-left: 1.4em;
 }
 
 .prose :is(ul, ol) :is(ul, ol) {
   margin-bottom: 0;
 }
 
-.prose ul {
-  list-style: none;
-}
-
-.prose ul > li {
-  position: relative;
-}
-
-.prose ul > li::before {
-  content: "*";
-  position: absolute;
-  left: -2ch;
-  color: var(--accent);
-}
-
-.prose ol > li::marker {
-  color: var(--accent);
-}
-
 .prose li + li {
   margin-top: 0.3em;
+}
+
+.prose li::marker {
+  color: var(--muted);
 }
 
 blockquote {
   margin-left: 0;
   margin-right: 0;
-  padding: 2px 0 2px 2ch;
-  border-left: 2px solid var(--accent);
-  color: var(--subtext);
+  padding-left: 1.1em;
+  border-left: 3px solid var(--accent);
+  color: var(--muted);
 }
 
 blockquote > :last-child {
   margin-bottom: 0;
 }
 
+/* Section breaks read as a centered "* * *". */
 hr {
   margin: 2.5em 0;
   border: 0;
-  border-top: 1px dashed var(--rule);
+  text-align: center;
+}
+
+hr::after {
+  content: "* * *";
+  color: var(--faint);
+  letter-spacing: 0.5em;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95em;
+  font-size: 0.94em;
 }
 
 th,
 td {
-  padding: 6px 12px 6px 0;
+  padding: 8px 12px 8px 0;
   border-bottom: 1px solid var(--rule);
   text-align: left;
   vertical-align: top;
 }
 
 th {
-  color: var(--subtext);
   font-weight: 600;
 }
 
@@ -262,38 +222,51 @@ img {
   display: block;
   max-width: 100%;
   height: auto;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius);
+  border-radius: 8px;
 }
 
 .prose p > img {
   margin: 1.6em 0;
 }
 
-mark {
-  background: color-mix(in srgb, var(--accent) 30%, transparent);
-  color: var(--text);
+/* Footnotes */
+.footnotes {
+  margin-top: 3em;
+  color: var(--muted);
+  font-size: 0.9em;
+}
+
+.footnotes hr {
+  display: none;
+}
+
+sup a {
+  text-decoration: none;
 }
 
 /* ---------- Code ---------- */
 
 code,
-kbd {
-  font-family: var(--font);
+kbd,
+pre {
+  font-family: var(--mono);
   font-size: 0.92em;
   font-feature-settings: normal;
 }
 
+pre code {
+  font-size: inherit;
+}
+
 :not(pre) > code {
-  padding: 1px 5px;
+  padding: 2px 5px;
   border-radius: 4px;
-  background: var(--surface);
-  color: var(--text);
+  background: var(--inline);
 }
 
 kbd {
-  padding: 0 5px;
-  border: 1px solid var(--overlay);
+  padding: 1px 5px;
+  border: 1px solid var(--rule);
   border-bottom-width: 2px;
   border-radius: 4px;
 }
@@ -302,65 +275,33 @@ kbd {
   margin: 0 0 1.4em;
   overflow: hidden;
   border: 1px solid var(--rule);
-  border-radius: var(--radius);
-  background: var(--mantle);
+  border-radius: 8px;
+  background: var(--surface);
 }
 
 .code figcaption {
-  padding: 4px 14px;
+  padding: 5px 16px;
   border-bottom: 1px solid var(--rule);
-  color: var(--overlay);
-  font-size: 0.8em;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.75em;
 }
 
 .code pre {
   margin: 0;
-  padding: 14px;
+  padding: 14px 16px;
   overflow-x: auto;
+  line-height: 1.6;
   tab-size: 4;
-  /* Hugo's inline chroma styles set their own background. */
-  background: transparent !important;
 }
 
-/* ---------- Meta, lists of posts ---------- */
-
-.meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 2ch;
-  margin-bottom: 40px;
-  color: var(--overlay);
+/* Let the block's mantle show through Chroma's own background. */
+.code .chroma {
+  background: transparent;
 }
 
-.meta__tags {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0 1.5ch;
-}
-
-.meta__tags a {
-  color: var(--subtext);
-  text-decoration: none;
-}
-
-.meta__tags a:hover {
-  color: var(--accent);
-}
-
-/* A shell command echoed into the page: "$ ls -t posts/". */
-.cmd {
-  margin: 48px 0 16px;
-  color: var(--overlay);
-}
-
-.cmd::before {
-  content: "$ ";
-  color: var(--accent);
-}
-
-.error {
-  color: var(--red);
-}
+/* ---------- Lists of posts ---------- */
 
 .post-list {
   margin: 0;
@@ -368,88 +309,34 @@ kbd {
   list-style: none;
 }
 
-.post-list li {
-  display: grid;
-  grid-template-columns: 11ch 1fr;
-  gap: 0 2ch;
-  padding: 10px 0;
-}
-
-.post-list li + li {
-  border-top: 1px dashed var(--rule);
-}
-
-.post-list time {
-  color: var(--overlay);
+.post-list a {
+  display: block;
+  padding: 12px 0;
+  color: var(--text);
+  text-decoration: none;
 }
 
 .post-list__title {
-  color: var(--text);
+  display: block;
   font-weight: 600;
-  text-decoration: none;
 }
 
-.post-list__title:hover {
+.post-list a:hover .post-list__title {
   color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--faint);
+  text-underline-offset: 3px;
 }
 
-.post-list p {
-  margin: 2px 0 0;
-  color: var(--subtext);
+.post-list__description {
+  display: block;
+  margin: 2px 0;
+  color: var(--muted);
 }
 
-.tag-cloud {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 24px;
-  margin: 32px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.tag-cloud span {
-  margin-left: 6px;
-  color: var(--overlay);
-  font-size: 0.85em;
-}
-
-/* ---------- Pagers ---------- */
-
-.pager,
-.post-nav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 16px;
-  margin-top: 48px;
-}
-
-.pager__right,
-.post-nav__next {
-  margin-left: auto;
-  text-align: right;
-}
-
-.post-nav {
-  padding-top: 24px;
-  border-top: 1px dashed var(--rule);
-}
-
-.post-nav a {
-  display: flex;
-  flex-direction: column;
-  max-width: 48%;
-  color: var(--text);
-  text-decoration: none;
-}
-
-.post-nav a:hover {
-  color: var(--accent);
-}
-
-.post-nav small {
-  color: var(--overlay);
-  font-size: 0.85em;
+.post-list time {
+  color: var(--muted);
+  font-size: 0.9em;
 }
 
 /* ---------- Footer ---------- */
@@ -457,19 +344,36 @@ kbd {
 .footer {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 2ch;
-  margin-top: 80px;
-  color: var(--overlay);
-  font-size: 0.85em;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-top: 96px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 0.88em;
 }
 
-.footer span + span::before {
-  content: "·";
-  margin-right: 2ch;
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .footer a {
   color: inherit;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: var(--accent);
+}
+
+.footer__commit {
+  font-family: var(--mono);
+  font-size: 0.92em;
 }
 
 /* ---------- Small screens & print ---------- */
@@ -484,23 +388,16 @@ kbd {
   }
 
   .header {
-    margin-bottom: 40px;
+    margin-bottom: 48px;
   }
 
-  .post-list li {
-    grid-template-columns: 1fr;
-  }
-
-  .post-nav a {
-    max-width: 100%;
+  .title {
+    font-size: 1.7rem;
   }
 }
 
 @media print {
   .nav,
-  .cursor,
-  .pager,
-  .post-nav,
   .footer {
     display: none;
   }

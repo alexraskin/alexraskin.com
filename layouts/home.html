@@ -2,7 +2,4 @@
   {{- with .Content }}
   <div class="prose">{{ . }}</div>
   {{- end }}
-  {{- $type := site.Params.contentTypeName | default "posts" }}
-  <p class="cmd">ls -t {{ $type }}/</p>
-  {{ partial "post-list.html" (.Paginate (where site.RegularPages "Type" $type)) }}
 {{ end }}
