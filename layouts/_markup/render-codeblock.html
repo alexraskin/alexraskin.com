@@ -1,0 +1,4 @@
+<figure class="code">
+  {{- with .Type }}<figcaption>{{ . }}</figcaption>{{ end }}
+  {{- transform.Highlight .Inner .Type .Options }}
+</figure>

@@ -1,9 +1,8 @@
 # website
 
-Hugo site ([terminal](https://github.com/panr/hugo-theme-terminal) theme, Catppuccin Macchiato colors in `assets/css/terminal.css`) served from S3 + CloudFront. `mise run build` renders into `public/` (gitignored).
+Hugo site with its own layouts in `layouts/` (Fira Code, Catppuccin Macchiato colors in `assets/css/main.css`), served from S3 + CloudFront. `mise run build` renders into `public/` (gitignored).
 
 ```sh
-git submodule update --init  # theme
 mise trust && mise install && pre-commit install  # first time only
 mise run dev                 # hugo server
 ```

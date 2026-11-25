@@ -1,0 +1,7 @@
+{{ define "main" }}
+  <h1 class="title"><span class="title__mark" aria-hidden="true">#</span>{{ .Title }}</h1>
+  {{- with .Content }}
+  <div class="prose">{{ . }}</div>
+  {{- end }}
+  {{ partial "post-list.html" .Paginator }}
+{{ end }}

@@ -1,0 +1,62 @@
+{{- $description := site.Params.subtitle -}}
+{{- if not .IsHome -}}
+  {{- $description = .Description | default .Summary | plainify -}}
+{{- end -}}
+{{- $title := cond .IsHome site.Title (printf "%s :: %s" .Title site.Title) -}}
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ $title }}</title>
+<meta name="description" content="{{ $description }}">
+{{- with .Params.keywords }}
+<meta name="keywords" content="{{ delimit . ", " }}">
+{{- end }}
+{{- if .Params.noindex }}
+<meta name="robots" content="noindex">
+{{- end }}
+<link rel="canonical" href="{{ .Permalink }}">
+
+{{- /* One fingerprinted bundle: fonts, base styles, then syntax. */}}
+{{- $css := slice
+  (resources.Get "css/fonts.css")
+  (resources.Get "css/main.css")
+  | resources.Concat "css/bundle.css" | minify | fingerprint }}
+{{- /* Fetch the Latin Fira Code subset alongside the CSS so the font-display: swap flash is barely visible. crossorigin is required for font preloads, even same-origin. */}}
+<link rel="preload" href="/fonts/FiraCode-Latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+
+<link rel="icon" href="{{ "favicon.png" | absURL }}">
+<link rel="apple-touch-icon" href="{{ "apple-touch-icon.png" | absURL }}">
+<link rel="manifest" href="{{ "site.webmanifest" | absURL }}">
+
+{{- with site.Params.twitter }}
+<meta name="twitter:card" content="summary">
+{{- with .site }}
+<meta name="twitter:site" content="{{ . }}">
+{{- end }}
+{{- with .creator }}
+<meta name="twitter:creator" content="{{ . }}">
+{{- end }}
+{{- end }}
+
+<meta property="og:locale" content="{{ site.Language.Lang }}">
+<meta property="og:type" content="{{ cond .IsPage "article" "website" }}">
+<meta property="og:title" content="{{ cond .IsHome site.Title .Title }}">
+<meta property="og:description" content="{{ $description }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+{{- $cover := "og-image.png" | absURL }}
+{{- with .Params.cover }}
+  {{- $cover = . | absURL }}
+  {{- with $.Resources.GetMatch . }}{{ $cover = .Permalink }}{{ end }}
+{{- end }}
+<meta property="og:image" content="{{ $cover }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+{{- if and .IsPage (not .Date.IsZero) }}
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+{{- end }}
+
+{{- with .OutputFormats.Get "rss" }}
+<link rel="alternate" type="application/rss+xml" href="{{ .RelPermalink }}" title="{{ site.Title }}">
+{{- end }}

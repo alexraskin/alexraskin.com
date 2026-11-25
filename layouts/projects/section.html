@@ -1,0 +1,11 @@
+{{ define "main" }}
+  <h1 class="title"><span class="title__mark" aria-hidden="true">#</span>{{ lower .Title }}</h1>
+  {{- with .Content }}
+  <div class="prose">{{ . }}</div>
+  {{- end }}
+  {{- /* Posts opt in with `project = true` in their front matter; they still show on the home page too. */}}
+  {{- $type := site.Params.contentTypeName | default "posts" }}
+  {{- $projects := where (where site.RegularPages "Type" $type) "Params.project" true }}
+  <p class="cmd">ls -t {{ $type }}/ | grep project</p>
+  {{ partial "post-list.html" (.Paginate $projects) }}
+{{ end }}

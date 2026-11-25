@@ -1,0 +1,507 @@
+/* Palette: Catppuccin Macchiato. */
+:root {
+  --base: #24273a;
+  --mantle: #1e2030;
+  --surface: #363a4f;
+  --overlay: #6e738d;
+  --subtext: #a5adcb;
+  --text: #cad3f5;
+  --mauve: #c6a0f6;
+  --blue: #8aadf4;
+  --green: #a6da95;
+  --red: #ed8796;
+
+  --accent: var(--mauve);
+  --rule: color-mix(in srgb, var(--text) 12%, transparent);
+
+  --font: "Fira Code", ui-monospace, Menlo, Consolas, monospace;
+  --measure: 72ch;
+  --radius: 6px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--base);
+  color: var(--text);
+  font: 15px/1.7 var(--font);
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* ---------- Layout ---------- */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  max-width: calc(var(--measure) + 48px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.content {
+  flex: 1;
+}
+
+/* ---------- Header: a shell prompt ---------- */
+
+.header {
+  margin-bottom: 56px;
+}
+
+.prompt {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0;
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.prompt__user { color: var(--green); }
+.prompt__colon { color: var(--subtext); }
+.prompt__path { color: var(--blue); }
+.prompt__sign { color: var(--accent); margin: 0 1ch; }
+
+.cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.15em;
+  align-self: center;
+  background: var(--text);
+  animation: blink 1.1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor { animation: none; }
+}
+
+.nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav a {
+  color: var(--subtext);
+  text-decoration: none;
+}
+
+.nav a:hover,
+.nav a[aria-current="page"] {
+  color: var(--accent);
+}
+
+.nav__ext {
+  margin-left: 2px;
+  color: var(--overlay);
+  font-size: 0.8em;
+}
+
+/* ---------- Text ---------- */
+
+a {
+  color: var(--accent);
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Page titles and headings are shown the way they're written: # Title, ## Section. */
+.title,
+.prose :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 1.6rem;
+}
+
+.title__mark,
+.heading-mark {
+  margin-right: 1ch;
+  color: var(--accent);
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.heading-mark {
+  opacity: 0.7;
+}
+
+.heading-mark:hover {
+  opacity: 1;
+}
+
+.prose h1 { font-size: 1.4rem; }
+.prose h2 { font-size: 1.2rem; }
+.prose h3 { font-size: 1.05rem; }
+.prose :is(h4, h5, h6) { font-size: 1rem; }
+
+.prose :is(h1, h2, h3, h4, h5, h6) {
+  margin: 2.2em 0 0.6em;
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose :is(p, ul, ol, blockquote, table, figure) {
+  margin: 0 0 1.2em;
+}
+
+.prose strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.prose :is(ul, ol) {
+  padding-left: 3ch;
+}
+
+.prose :is(ul, ol) :is(ul, ol) {
+  margin-bottom: 0;
+}
+
+.prose ul {
+  list-style: none;
+}
+
+.prose ul > li {
+  position: relative;
+}
+
+.prose ul > li::before {
+  content: "*";
+  position: absolute;
+  left: -2ch;
+  color: var(--accent);
+}
+
+.prose ol > li::marker {
+  color: var(--accent);
+}
+
+.prose li + li {
+  margin-top: 0.3em;
+}
+
+blockquote {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 2px 0 2px 2ch;
+  border-left: 2px solid var(--accent);
+  color: var(--subtext);
+}
+
+blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+hr {
+  margin: 2.5em 0;
+  border: 0;
+  border-top: 1px dashed var(--rule);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+
+th,
+td {
+  padding: 6px 12px 6px 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  color: var(--subtext);
+  font-weight: 600;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+}
+
+.prose p > img {
+  margin: 1.6em 0;
+}
+
+mark {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--text);
+}
+
+/* ---------- Code ---------- */
+
+code,
+kbd {
+  font-family: var(--font);
+  font-size: 0.92em;
+  font-feature-settings: normal;
+}
+
+:not(pre) > code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+kbd {
+  padding: 0 5px;
+  border: 1px solid var(--overlay);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+}
+
+.code {
+  margin: 0 0 1.4em;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--mantle);
+}
+
+.code figcaption {
+  padding: 4px 14px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--overlay);
+  font-size: 0.8em;
+}
+
+.code pre {
+  margin: 0;
+  padding: 14px;
+  overflow-x: auto;
+  tab-size: 4;
+  /* Hugo's inline chroma styles set their own background. */
+  background: transparent !important;
+}
+
+/* ---------- Meta, lists of posts ---------- */
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 2ch;
+  margin-bottom: 40px;
+  color: var(--overlay);
+}
+
+.meta__tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0 1.5ch;
+}
+
+.meta__tags a {
+  color: var(--subtext);
+  text-decoration: none;
+}
+
+.meta__tags a:hover {
+  color: var(--accent);
+}
+
+/* A shell command echoed into the page: "$ ls -t posts/". */
+.cmd {
+  margin: 48px 0 16px;
+  color: var(--overlay);
+}
+
+.cmd::before {
+  content: "$ ";
+  color: var(--accent);
+}
+
+.error {
+  color: var(--red);
+}
+
+.post-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.post-list li {
+  display: grid;
+  grid-template-columns: 11ch 1fr;
+  gap: 0 2ch;
+  padding: 10px 0;
+}
+
+.post-list li + li {
+  border-top: 1px dashed var(--rule);
+}
+
+.post-list time {
+  color: var(--overlay);
+}
+
+.post-list__title {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.post-list__title:hover {
+  color: var(--accent);
+}
+
+.post-list p {
+  margin: 2px 0 0;
+  color: var(--subtext);
+}
+
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  margin: 32px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tag-cloud span {
+  margin-left: 6px;
+  color: var(--overlay);
+  font-size: 0.85em;
+}
+
+/* ---------- Pagers ---------- */
+
+.pager,
+.post-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 48px;
+}
+
+.pager__right,
+.post-nav__next {
+  margin-left: auto;
+  text-align: right;
+}
+
+.post-nav {
+  padding-top: 24px;
+  border-top: 1px dashed var(--rule);
+}
+
+.post-nav a {
+  display: flex;
+  flex-direction: column;
+  max-width: 48%;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.post-nav a:hover {
+  color: var(--accent);
+}
+
+.post-nav small {
+  color: var(--overlay);
+  font-size: 0.85em;
+}
+
+/* ---------- Footer ---------- */
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 2ch;
+  margin-top: 80px;
+  color: var(--overlay);
+  font-size: 0.85em;
+}
+
+.footer span + span::before {
+  content: "·";
+  margin-right: 2ch;
+}
+
+.footer a {
+  color: inherit;
+}
+
+/* ---------- Small screens & print ---------- */
+
+@media (max-width: 600px) {
+  body {
+    font-size: 14px;
+  }
+
+  .container {
+    padding: 28px 16px;
+  }
+
+  .header {
+    margin-bottom: 40px;
+  }
+
+  .post-list li {
+    grid-template-columns: 1fr;
+  }
+
+  .post-nav a {
+    max-width: 100%;
+  }
+}
+
+@media print {
+  .nav,
+  .cursor,
+  .pager,
+  .post-nav,
+  .footer {
+    display: none;
+  }
+}

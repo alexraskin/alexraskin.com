@@ -1,0 +1,21 @@
+{{- /* Context: a paginator. */ -}}
+<ul class="post-list">
+  {{- range .Pages }}
+  <li>
+    <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format (site.Params.dateFormat | default "2006-01-02") }}</time>
+    <div>
+      <a class="post-list__title" href="{{ .RelPermalink }}">{{ .Title | markdownify }}</a>
+      {{- with .Description | default .Summary }}
+      <p>{{ . | plainify }}</p>
+      {{- end }}
+    </div>
+  </li>
+  {{- end }}
+</ul>
+
+{{- if or .HasPrev .HasNext }}
+<nav class="pager">
+  {{- with .Next }}<a href="{{ .URL }}">← older</a>{{ end }}
+  {{- with .Prev }}<a class="pager__right" href="{{ .URL }}">newer →</a>{{ end }}
+</nav>
+{{- end }}
