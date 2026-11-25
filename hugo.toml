@@ -1,19 +1,20 @@
 baseURL = "https://alexraskin.com/"
 locale = "en-us"
 title = "Alex Raskin"
-theme = "terminal"
 enableRobotsTXT = true
 pagination.pagerSize = 5
 
 [markup.goldmark.renderer]
   unsafe = true
 
+[markup.highlight]
+  style = "catppuccin-macchiato"
+
 [params]
   contentTypeName = "posts"
   subtitle = "Alex Raskin - DevOps Engineer"
-  showMenuItems = 5
+  repo = "https://github.com/alexraskin/alexraskin.com"
   readMore = "Read more"
-  centerTheme = true
   [params.logo]
     logoText = "alex"
     logoHomeLink = "/"
@@ -27,21 +28,25 @@ pagination.pagerSize = 5
     url = "/resume/"
     weight = 1
   [[menu.main]]
+    name = "Projects"
+    url = "/projects/"
+    weight = 2
+  [[menu.main]]
     name = "Tags"
     url = "/tags/"
-    weight = 1
+    weight = 3
   [[menu.main]]
     name = "Photography"
     url = "https://photography.alexraskin.com/"
-    weight = 2
+    weight = 4
   [[menu.main]]
     name = "GitHub"
     url = "https://github.com/alexraskin"
-    weight = 3
+    weight = 5
   [[menu.main]]
     name = "Twitter"
     url = "https://twitter.com/notalexraskin"
-    weight = 4
+    weight = 6
 
 [deployment]
   [[deployment.targets]]

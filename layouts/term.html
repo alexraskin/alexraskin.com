@@ -1,0 +1,5 @@
+{{ define "main" }}
+  <h1 class="title"><span class="title__mark" aria-hidden="true">#</span>{{ .Data.Term }}</h1>
+  <p class="cmd">grep -l "{{ .Data.Term }}" posts/*</p>
+  {{ partial "post-list.html" .Paginator }}
+{{ end }}

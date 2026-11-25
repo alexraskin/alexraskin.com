@@ -2,6 +2,7 @@
 title = "My Homelab"
 date = "2026-08-14"
 draft = false
+project = true
 tags = ["homelab", "kubernetes", "talos", "terraform"]
 description = "Nine VMs on one Proxmox box, running a highly available Kubernetes cluster on Talos Linux."
 readingTime = false

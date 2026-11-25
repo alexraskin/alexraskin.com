@@ -1,0 +1,18 @@
+{{- $user := site.Params.logo.logoText | default "alex" -}}
+{{- $host := (urls.Parse site.BaseURL).Host -}}
+{{- $path := cond .IsHome "~" (printf "~%s" (strings.TrimSuffix "/" .RelPermalink)) -}}
+<header class="header">
+  <a class="prompt" href="{{ "/" | relURL }}" aria-label="{{ site.Title }}, home">
+    <span class="prompt__user">{{ $user }}@{{ $host }}</span><span class="prompt__colon">:</span><span class="prompt__path">{{ $path }}</span>
+    <span class="prompt__sign">$</span><span class="cursor" aria-hidden="true"></span>
+  </a>
+  {{- with site.Menus.main }}
+  <nav class="nav" aria-label="Main">
+    <ul>
+      {{- range . }}
+      <li><a href="{{ .URL }}"{{ if or ($.IsMenuCurrent "main" .) (eq .URL $.RelPermalink) }} aria-current="page"{{ end }}>{{ lower .Name }}{{ if hasPrefix .URL "http" }}<span class="nav__ext" aria-hidden="true">↗</span>{{ end }}</a></li>
+      {{- end }}
+    </ul>
+  </nav>
+  {{- end }}
+</header>

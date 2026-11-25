@@ -2,6 +2,7 @@
 title = "Abfahrt Board"
 date = "2026-10-15"
 draft = false
+project = true
 tags = ["hamburg", "esp32", "trains"]
 description = "I built a small departure board for my fiancée, so she does not have to check her phone to catch the train."
 readingTime = false
