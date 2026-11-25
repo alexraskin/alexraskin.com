@@ -1,21 +1,20 @@
-{{- /* Context: a paginator. */ -}}
+{{- /* Context: a slice of pages, or a dict with "pages" and "descriptions" (bool) to show each page's description. */ -}}
+{{- $pages := . }}
+{{- $descriptions := false }}
+{{- if reflect.IsMap . }}
+  {{- $pages = .pages }}
+  {{- $descriptions = .descriptions }}
+{{- end }}
 <ul class="post-list">
-  {{- range .Pages }}
+  {{- range $pages }}
   <li>
-    <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format (site.Params.dateFormat | default "2006-01-02") }}</time>
-    <div>
-      <a class="post-list__title" href="{{ .RelPermalink }}">{{ .Title | markdownify }}</a>
-      {{- with .Description | default .Summary }}
-      <p>{{ . | plainify }}</p>
-      {{- end }}
-    </div>
+    <a href="{{ .RelPermalink }}">
+      <span class="post-list__title">{{ .Title | markdownify }}</span>
+      {{- if $descriptions }}{{ with .Description }}
+      <span class="post-list__description">{{ . | plainify }}</span>
+      {{- end }}{{ end }}
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format (site.Params.dateFormat | default "January 2, 2006") }}</time>
+    </a>
   </li>
   {{- end }}
 </ul>
-
-{{- if or .HasPrev .HasNext }}
-<nav class="pager">
-  {{- with .Next }}<a href="{{ .URL }}">← older</a>{{ end }}
-  {{- with .Prev }}<a class="pager__right" href="{{ .URL }}">newer →</a>{{ end }}
-</nav>
-{{- end }}

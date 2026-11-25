@@ -1,18 +1,6 @@
-{{- $tags := .GetTerms "tags" -}}
-{{- if or (not .Date.IsZero) $tags }}
-<div class="meta">
-  {{- if not .Date.IsZero }}
-  <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format (site.Params.dateFormat | default "2006-01-02") }}</time>
-  {{- end }}
-  {{- if .Params.readingTime }}
-  <span>{{ .ReadingTime }} min read</span>
-  {{- end }}
-  {{- with $tags }}
-  <span class="meta__tags">
-    {{- range . }}
-    <a href="{{ .RelPermalink }}">#{{ .Data.Term }}</a>
-    {{- end }}
-  </span>
-  {{- end }}
-</div>
+{{- if not .Date.IsZero }}
+<p class="meta">
+  <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format (site.Params.dateFormat | default "January 2, 2006") }}</time>
+  {{- if .Params.readingTime }} · {{ .ReadingTime }} min read{{ end }}
+</p>
 {{- end }}

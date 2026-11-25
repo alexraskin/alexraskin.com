@@ -1,10 +1,8 @@
 {{ define "main" }}
 <article>
-  <h1 class="title"><span class="title__mark" aria-hidden="true">#</span>404</h1>
+  <h1 class="title">Page not found</h1>
   <div class="prose">
-    <p class="cmd">cd ./this-page</p>
-    <p class="error">cd: no such file or directory</p>
-    <p><a href="{{ "/" | relURL }}">cd ~</a></p>
+    <p>There's nothing here. Try the <a href="{{ "/" | relURL }}">home page</a>.</p>
   </div>
 </article>
 {{ end }}
