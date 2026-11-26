@@ -1,4 +1,4 @@
-/* Plain and quiet: one narrow column in Fira Code, colored with Catppuccin Mocha. */
+/* Plain and quiet: one narrow column in JetBrains Mono, colored with Catppuccin Mocha. */
 :root {
   --bg: #1e1e2e;      /* base */
   --text: #cdd6f4;    /* text */
@@ -9,7 +9,7 @@
   --inline: #313244;  /* surface0 */
   --accent: #cba6f7;  /* mauve */
 
-  --mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --width: 40rem;
 }
 

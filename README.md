@@ -1,6 +1,6 @@
 # website
 
-Hugo site with its own layouts in `layouts/` (Fira Code, Catppuccin Macchiato colors in `assets/css/main.css`), served from S3 + CloudFront. `mise run build` renders into `public/` (gitignored).
+Hugo site with its own layouts in `layouts/` (JetBrains Mono, Catppuccin Macchiato colors in `assets/css/main.css`), served from S3 + CloudFront. `mise run build` renders into `public/` (gitignored).
 
 ```sh
 mise trust && mise install && pre-commit install  # first time only
