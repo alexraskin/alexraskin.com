@@ -17,8 +17,7 @@ run = "hugo server"
 
 [tasks.build]
 description = "Production build into public/"
-# HUGO_PARAMS_COMMIT becomes site.Params.commit; the footer shows it.
-run = 'HUGO_PARAMS_COMMIT="$(git rev-parse HEAD 2>/dev/null)" hugo --gc --minify --cleanDestinationDir'
+run = 'hugo --gc --minify --cleanDestinationDir'
 
 [tasks.deploy]
 description = "Sync public/ to S3 (deleting stale files) and invalidate CloudFront (run build first)"
