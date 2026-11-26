@@ -2,7 +2,6 @@
 title = "Abfahrt Board"
 date = "2026-10-15"
 draft = false
-project = true
 tags = ["hamburg", "esp32", "trains"]
 description = "I built a small departure board for my fiancée, so she does not have to check her phone to catch the train."
 readingTime = false
@@ -14,7 +13,7 @@ Not the train itself. The checking. She would be getting ready to leave, then ha
 
 I thought that was a problem I could fix. And honestly, it sounded like a fun project.
 
-![Abfahrt board showing U2 and bus 30 departures from Osterstraße](/img/abfahrt-board.jpeg)
+![Abfahrt board showing U2 and bus 30 departures from Osterstraße](frame.jpeg)
 
 I had wanted to learn more about ESPs for a while. I bought a Cheap Yellow Display, an ESP32 with a small 2.8 inch screen, and started there. With help from AI on the firmware parts I did not know, and my own infrastructure knowledge for the backend, it came together faster than I expected.
 

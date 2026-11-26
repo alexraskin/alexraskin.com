@@ -3,5 +3,5 @@
   {{- with .Content }}
   <div class="prose">{{ . }}</div>
   {{- end }}
-  {{ partial "post-list.html" .Pages }}
+  {{ partial "post-list.html" (dict "pages" .Pages "descriptions" true) }}
 {{ end }}

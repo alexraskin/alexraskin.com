@@ -2,7 +2,6 @@
 title = "My Homelab"
 date = "2026-08-14"
 draft = false
-project = true
 tags = ["homelab", "kubernetes", "talos", "terraform"]
 description = "Nine VMs on one Proxmox box, running a highly available Kubernetes cluster on Talos Linux."
 readingTime = false
@@ -18,7 +17,7 @@ The full setup is public in my [infrastructure repo](https://github.com/alexrask
 
 ## How it is built
 
-![Homelab Diagram](/img/homelab-diagram.svg)
+![Homelab Diagram](diagram.svg)
 
 Terraform builds the cluster, not just the VMs. One apply creates the VMs, pushes a machine config to each node, and bootstraps etcd.
 
@@ -58,7 +57,7 @@ Talos cannot run `tailscaled` itself. The Tailscale operator runs in the cluster
 
 The only public port I have is on a small NixOS VM in Oracle Cloud. HAProxy terminates TLS there and forwards over the tailnet, mostly to Plex. It is also a Tailscale exit node. Its node exporter only listens on the tailnet, so the cluster scrapes it like any other host.
 
-![Grafana dashboard for the cloud edge VM](/img/edge.png)
+![Grafana dashboard for the cloud edge VM](edge.png)
 
 Plex streams go out through that VM, so the dashboard tracks egress per month. The free tier never surprises me.
 
@@ -68,17 +67,17 @@ Monitoring is kube-prometheus-stack. Logs go to Loki, with chunks in R2.
 
 The Proxmox host is scraped by `pve-exporter`. One box, ten guests, and every VM's CPU, memory, disk, and network on one page.
 
-![Grafana dashboard for the Proxmox host and its guests](/img/pve.png)
+![Grafana dashboard for the Proxmox host and its guests](pve.png)
 
 Host memory sits around 80%. That is the real limit of running nine VMs on one machine, not CPU.
 
 Postgres gets its own dashboard from the CloudNativePG metrics. Three instances, one primary and two replicas, with replication lag at zero. Base backups and WAL go to object storage, kept for 30 days.
 
-![Grafana dashboard for the CloudNativePG cluster](/img/cnpg.png)
+![Grafana dashboard for the CloudNativePG cluster](cnpg.png)
 
 For the quick "is it up" answer I use [Gatus](https://gatus.io). It checks every node, the API VIP, the edge, and the platform services, and alerts me on Discord. Its history is stored in the same CNPG cluster.
 
-![Gatus status page showing nodes and services as healthy](/img/status_page.png)
+![Gatus status page showing nodes and services as healthy](status_page.png)
 
 Those red bars on `cloud-edge` were me rebooting it.
 

@@ -1,9 +1,0 @@
-{{ define "main" }}
-  <h1 class="title">{{ .Title }}</h1>
-  {{- with .Content }}
-  <div class="prose">{{ . }}</div>
-  {{- end }}
-  {{- /* Posts opt in with `project = true` in their front matter; they still show under Writing too. */}}
-  {{- $type := site.Params.contentTypeName | default "posts" }}
-  {{ partial "post-list.html" (dict "pages" (where (where site.RegularPages "Type" $type) "Params.project" true) "descriptions" true) }}
-{{ end }}

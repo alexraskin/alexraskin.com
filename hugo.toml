@@ -25,15 +25,15 @@ pagination.pagerSize = 5
 
 [menu]
   [[menu.main]]
-    name = "Projects"
-    url = "/projects/"
+    name = "Posts"
+    url = "/posts/"
     weight = 2
   [[menu.main]]
     name = "Resume"
     url = "/resume/"
     weight = 3
   [[menu.main]]
-    name = "Photography"
+    name = "Photos"
     url = "https://photography.alexraskin.com/"
     weight = 4
 
